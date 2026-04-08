@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="800" fill="#1a1b26"/>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#c0caf5"/>
+    </marker>
+  </defs>
+
+  <!-- Version label -->
+  <text x="1150" y="30" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="end">whitt architecture diagrams v1.0</text>
+
+  <!-- Title -->
+  <text x="600" y="60" fill="#c0caf5" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">System Overview - 4 Project Architecture</text>
+
+  <!-- Project boxes -->
+  <!-- whitt (top) -->
+  <rect x="450" y="100" width="300" height="80" rx="10" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="600" y="135" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">whitt</text>
+  <text x="600" y="158" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Tauri Desktop App</text>
+
+  <!-- agent-queue (middle-left) -->
+  <rect x="100" y="300" width="300" height="80" rx="10" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+  <text x="250" y="335" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">agent-queue</text>
+  <text x="250" y="358" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Task Queue Service</text>
+
+  <!-- yaml-to-rust-agentsdk (middle-right) -->
+  <rect x="800" y="300" width="300" height="80" rx="10" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="950" y="335" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">yaml-to-rust-agentsdk</text>
+  <text x="950" y="358" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">YAML Execution Engine</text>
+
+  <!-- model-router (bottom) -->
+  <rect x="450" y="500" width="300" height="80" rx="10" fill="#e0af68" stroke="#e0af68" stroke-width="2"/>
+  <text x="600" y="535" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">model-router</text>
+  <text x="600" y="558" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">LLM Model Router</text>
+
+  <!-- Connection arrows -->
+  <!-- whitt to agent-queue -->
+  <line x1="520" y1="180" x2="280" y2="300" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="380" y="230" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(-30, 380, 230)">CLI subprocess</text>
+
+  <!-- whitt to yaml-to-rust-agentsdk -->
+  <line x1="680" y1="180" x2="920" y2="300" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="820" y="230" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(30, 820, 230)">CLI subprocess</text>
+
+  <!-- agent-queue to yaml-to-rust-agentsdk -->
+  <line x1="400" y1="340" x2="800" y2="340" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="600" y="330" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">queue management</text>
+
+  <!-- yaml-to-rust-agentsdk to model-router -->
+  <line x1="950" y1="380" x2="650" y2="500" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="800" y="430" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(-40, 800, 430)">model selection</text>
+
+  <!-- Legend -->
+  <rect x="50" y="630" width="1100" height="120" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+  <text x="600" y="660" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Legend</text>
+
+  <!-- Legend items -->
+  <rect x="100" y="680" width="30" height="30" rx="5" fill="#bb9af7"/>
+  <text x="140" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">whitt - Desktop App</text>
+
+  <rect x="350" y="680" width="30" height="30" rx="5" fill="#9ece6a"/>
+  <text x="390" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">agent-queue - Task Queue</text>
+
+  <rect x="600" y="680" width="30" height="30" rx="5" fill="#7aa2f7"/>
+  <text x="640" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">yaml-to-rust-agentsdk - Execution Engine</text>
+
+  <rect x="880" y="680" width="30" height="30" rx="5" fill="#e0af68"/>
+  <text x="920" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">model-router - Model Router</text>
+
+  <!-- Flow labels -->
+  <text x="100" y="735" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">↘ CLI subprocess: Tauri spawns CLI processes via Rust command layer</text>
+  <text x="100" y="755" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">→ queue management: agent-queue schedules and tracks task execution</text>
+  <text x="100" y="775" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">↘ model selection: yaml-to-rust-agentsdk queries model-router for LLM selection</text>
+</svg>

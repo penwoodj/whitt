@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+  
+  <defs>
+    <marker id="arrow3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#565f89"/>
+    </marker>
+    <marker id="arrow3blue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7aa2f7"/>
+    </marker>
+    <marker id="arrow3green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9ece6a"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="40" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">03 - Queue Integration: State Machine &amp; Data Flow</text>
+  <text x="600" y="62" text-anchor="middle" fill="#565f89" font-size="12">MVP-A: Whitt internal queue → MVP-B: agent-queue integration</text>
+
+  <!-- Whitt Box -->
+  <rect x="30" y="85" width="340" height="680" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="200" y="110" text-anchor="middle" fill="#bb9af7" font-size="16" font-weight="bold">Whitt (UI/TUI)</text>
+  <text x="200" y="128" text-anchor="middle" fill="#565f89" font-size="11">DISPLAY LAYER - No execution logic</text>
+
+  <!-- Chat UI -->
+  <rect x="50" y="145" width="300" height="80" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="200" y="170" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Chat UI (React)</text>
+  <text x="200" y="190" text-anchor="middle" fill="#a9b1d6" font-size="11">User types prompt → Submit button</text>
+  <text x="200" y="210" text-anchor="middle" fill="#565f89" font-size="10">MVP: Single chat, future: multi-chat tabs</text>
+
+  <!-- Queue Display -->
+  <rect x="50" y="245" width="300" height="100" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="200" y="270" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Queue Panel (React)</text>
+  <text x="200" y="290" text-anchor="middle" fill="#a9b1d6" font-size="11">VecDeque&lt;ChatTask&gt; visualization</text>
+  <text x="200" y="308" text-anchor="middle" fill="#a9b1d6" font-size="11">Status: QUEUED | RUNNING | DONE</text>
+  <text x="200" y="326" text-anchor="middle" fill="#565f89" font-size="10">Smart blocking: navigate away = queue</text>
+  <text x="200" y="340" text-anchor="middle" fill="#565f89" font-size="10">Navigate back = resume active task</text>
+
+  <!-- Results Display -->
+  <rect x="50" y="365" width="300" height="80" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="200" y="390" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Results Panel</text>
+  <text x="200" y="410" text-anchor="middle" fill="#a9b1d6" font-size="11">Workflow output, artifacts, logs</text>
+  <text x="200" y="428" text-anchor="middle" fill="#565f89" font-size="10">Streamed via stderr JSON events</text>
+
+  <!-- Whitt Internal Queue -->
+  <rect x="50" y="465" width="300" height="130" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="200" y="488" text-anchor="middle" fill="#e0af68" font-size="13" font-weight="bold">Internal Queue (MVP-A)</text>
+  <text x="200" y="508" text-anchor="middle" fill="#a9b1d6" font-size="11">VecDeque&lt;ChatTask&gt; in Tauri Rust</text>
+  <text x="200" y="526" text-anchor="middle" fill="#a9b1d6" font-size="11">JSON persistence: ~/.whitt/queue.json</text>
+  <text x="200" y="548" text-anchor="middle" fill="#565f89" font-size="10">Simple: FIFO + active task blocking</text>
+  <text x="200" y="566" text-anchor="middle" fill="#565f89" font-size="10">No priority, no retry, no DLQ</text>
+  <text x="200" y="584" text-anchor="middle" fill="#e0af68" font-size="10">⚠ REPLACED by agent-queue in MVP-B</text>
+
+  <!-- Tauri Bridge -->
+  <rect x="50" y="615" width="300" height="60" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="200" y="640" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Tauri IPC Bridge</text>
+  <text x="200" y="658" text-anchor="middle" fill="#a9b1d6" font-size="11">invoke("submit_prompt") / events</text>
+
+  <!-- agent-queue Box -->
+  <rect x="430" y="85" width="340" height="680" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="2"/>
+  <text x="600" y="110" text-anchor="middle" fill="#9ece6a" font-size="16" font-weight="bold">agent-queue</text>
+  <text x="600" y="128" text-anchor="middle" fill="#565f89" font-size="11">QUEUE ORCHESTRATION (MVP-B+)</text>
+
+  <!-- State Machine -->
+  <rect x="450" y="145" width="300" height="230" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="600" y="168" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Task State Machine</text>
+  
+  <!-- State boxes -->
+  <rect x="470" y="180" width="70" height="24" rx="4" fill="#414868"/>
+  <text x="505" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">NEW</text>
+  <rect x="550" y="180" width="70" height="24" rx="4" fill="#414868"/>
+  <text x="585" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">QUEUED</text>
+  <rect x="630" y="180" width="70" height="24" rx="4" fill="#414868"/>
+  <text x="665" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">SCHEDULED</text>
+  <rect x="470" y="215" width="70" height="24" rx="4" fill="#414868"/>
+  <text x="505" y="231" text-anchor="middle" fill="#c0caf5" font-size="10">LEASED</text>
+  <rect x="550" y="215" width="70" height="24" rx="4" fill="#e0af68" stroke="#e0af68" stroke-width="1"/>
+  <text x="585" y="231" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">RUNNING</text>
+  <rect x="630" y="215" width="70" height="24" rx="4" fill="#9ece6a"/>
+  <text x="665" y="231" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">DONE</text>
+  <rect x="470" y="250" width="70" height="24" rx="4" fill="#f7768e"/>
+  <text x="505" y="266" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">FAILED</text>
+  <rect x="550" y="250" width="70" height="24" rx="4" fill="#ff9e64"/>
+  <text x="585" y="266" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">DLQ</text>
+  <rect x="630" y="250" width="70" height="24" rx="4" fill="#bb9af7"/>
+  <text x="665" y="266" text-anchor="middle" fill="#1a1b26" font-size="10">CANCELED</text>
+  <rect x="470" y="285" width="70" height="24" rx="4" fill="#565f89"/>
+  <text x="505" y="301" text-anchor="middle" fill="#c0caf5" font-size="10">EXPIRED</text>
+  
+  <!-- Arrows between states -->
+  <line x1="540" y1="192" x2="550" y2="192" stroke="#565f89" stroke-width="1" marker-end="url(#arrow3green)"/>
+  <line x1="620" y1="192" x2="630" y2="192" stroke="#565f89" stroke-width="1" marker-end="url(#arrow3green)"/>
+  <line x1="600" y1="204" x2="505" y2="215" stroke="#565f89" stroke-width="1" marker-end="url(#arrow3)"/>
+  <line x1="540" y1="227" x2="550" y2="227" stroke="#565f89" stroke-width="1" marker-end="url(#arrow3green)"/>
+  <line x1="620" y1="227" x2="630" y2="227" stroke="#565f89" stroke-width="1" marker-end="url(#arrow3green)"/>
+  <line x1="585" y1="239" x2="505" y2="250" stroke="#f7768e" stroke-width="1" marker-end="url(#arrow3)"/>
+  <line x1="585" y1="239" x2="585" y2="250" stroke="#ff9e64" stroke-width="1" marker-end="url(#arrow3)"/>
+  
+  <!-- Retry info -->
+  <text x="600" y="330" text-anchor="middle" fill="#a9b1d6" font-size="10">Retry: 3 attempts, exp backoff (1s→2s→4s)</text>
+  <text x="600" y="345" text-anchor="middle" fill="#a9b1d6" font-size="10">Lease: 60s TTL, 15s heartbeat</text>
+  <text x="600" y="360" text-anchor="middle" fill="#a9b1d6" font-size="10">Failed 3x → DLQ (manual triage)</text>
+
+  <!-- 25 Queue Levels -->
+  <rect x="450" y="395" width="300" height="90" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="600" y="418" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">25 Queue Categories</text>
+  <text x="600" y="438" text-anchor="middle" fill="#a9b1d6" font-size="10">ASAP, Whenever, Scheduled-Once, Repeat-Cron</text>
+  <text x="600" y="453" text-anchor="middle" fill="#a9b1d6" font-size="10">Deadline-Driven, Rate-Limited, Quota-Governed</text>
+  <text x="600" y="468" text-anchor="middle" fill="#a9b1d6" font-size="10">Human-Gated, Sandbox, Experiment, DLQ...</text>
+
+  <!-- Scheduler -->
+  <rect x="450" y="505" width="300" height="70" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="600" y="528" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Scheduler Engine</text>
+  <text x="600" y="548" text-anchor="middle" fill="#a9b1d6" font-size="10">EDF, WRR, DRR, Fair Share, Work Stealing</text>
+  <text x="600" y="563" text-anchor="middle" fill="#565f89" font-size="10">SQLite WAL mode persistence</text>
+
+  <!-- Hooks -->
+  <rect x="450" y="595" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="600" y="618" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Event Hooks (QL-026)</text>
+  <text x="600" y="638" text-anchor="middle" fill="#a9b1d6" font-size="10">Webhook, file watcher, git hook, timer, email</text>
+
+  <!-- CLI -->
+  <rect x="450" y="675" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="600" y="698" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">CLI (Clap 4.x)</text>
+  <text x="600" y="718" text-anchor="middle" fill="#a9b1d6" font-size="10">enqueue, list, inspect, cancel, retry, drain</text>
+
+  <!-- yaml-to-rust-agentsdk Box -->
+  <rect x="830" y="85" width="340" height="340" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="1000" y="110" text-anchor="middle" fill="#7aa2f7" font-size="16" font-weight="bold">yaml-to-rust-agentsdk</text>
+  <text x="1000" y="128" text-anchor="middle" fill="#565f89" font-size="11">EXECUTION ENGINE</text>
+
+  <rect x="850" y="145" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+  <text x="1000" y="168" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">CLI: compile + execute</text>
+  <text x="1000" y="186" text-anchor="middle" fill="#a9b1d6" font-size="10">JSON stdout/stderr protocol</text>
+
+  <rect x="850" y="215" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+  <text x="1000" y="238" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Compiler Pipeline</text>
+  <text x="1000" y="256" text-anchor="middle" fill="#a9b1d6" font-size="10">YAML → WorkflowSpec → WorkflowIR</text>
+
+  <rect x="850" y="285" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+  <text x="1000" y="308" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">LLM Backends</text>
+  <text x="1000" y="326" text-anchor="middle" fill="#a9b1d6" font-size="10">LM Studio, Ollama, llama.cpp</text>
+
+  <rect x="850" y="355" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+  <text x="1000" y="378" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Tools &amp; Artifacts</text>
+  <text x="1000" y="396" text-anchor="middle" fill="#a9b1d6" font-size="10">File, Web, Shell, Sub-workflows</text>
+
+  <!-- Arrows: Whitt → agent-queue → yaml-to-rust-agentsdk -->
+  <path d="M350 400 L430 400" stroke="#bb9af7" stroke-width="2" marker-end="url(#arrow3)" stroke-dasharray="6,3"/>
+  <text x="390" y="393" text-anchor="middle" fill="#bb9af7" font-size="10">CLI: enqueue</text>
+  
+  <path d="M750 320 L830 320" stroke="#9ece6a" stroke-width="2" marker-end="url(#arrow3blue)" stroke-dasharray="6,3"/>
+  <text x="790" y="313" text-anchor="middle" fill="#9ece6a" font-size="10">CLI: execute</text>
+
+  <path d="M750 400 L830 400" stroke="#7aa2f7" stroke-width="2" marker-end="url(#arrow3blue)" stroke-dasharray="6,3"/>
+  <text x="790" y="393" text-anchor="middle" fill="#565f89" font-size="10">JSON result</text>
+
+  <!-- MVP Timeline -->
+  <rect x="830" y="445" width="340" height="320" rx="8" fill="#24283b" stroke="#565f89" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="1000" y="470" text-anchor="middle" fill="#c0caf5" font-size="14" font-weight="bold">Evolution Timeline</text>
+
+  <rect x="850" y="490" width="300" height="60" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1"/>
+  <text x="1000" y="510" text-anchor="middle" fill="#e0af68" font-size="12" font-weight="bold">MVP-A (Current)</text>
+  <text x="1000" y="528" text-anchor="middle" fill="#a9b1d6" font-size="10">Whitt internal VecDeque queue</text>
+  <text x="1000" y="542" text-anchor="middle" fill="#a9b1d6" font-size="10">Direct CLI calls to yaml-to-rust-agentsdk</text>
+
+  <rect x="850" y="560" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="1000" y="580" text-anchor="middle" fill="#9ece6a" font-size="12" font-weight="bold">MVP-B (After agent-queue code)</text>
+  <text x="1000" y="598" text-anchor="middle" fill="#a9b1d6" font-size="10">Replace internal queue with agent-queue CLI</text>
+  <text x="1000" y="612" text-anchor="middle" fill="#a9b1d6" font-size="10">25 queue levels, retry, DLQ, scheduling</text>
+
+  <rect x="850" y="630" width="300" height="60" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="1000" y="650" text-anchor="middle" fill="#bb9af7" font-size="12" font-weight="bold">MVP-C (Local network)</text>
+  <text x="1000" y="668" text-anchor="middle" fill="#a9b1d6" font-size="10">Multi-machine queue orchestration</text>
+  <text x="1000" y="682" text-anchor="middle" fill="#a9b1d6" font-size="10">Private LAN compute distribution</text>
+
+  <rect x="850" y="700" width="300" height="45" rx="6" fill="#1f2335" stroke="#f7768e" stroke-width="1"/>
+  <text x="1000" y="720" text-anchor="middle" fill="#f7768e" font-size="12" font-weight="bold">Phase D (P2P Future)</text>
+  <text x="1000" y="735" text-anchor="middle" fill="#a9b1d6" font-size="10">Gamified compute sharing network</text>
+
+  <!-- Legend -->
+  <rect x="30" y="695" width="340" height="70" rx="6" fill="#1f2335" stroke="#565f89" stroke-width="1"/>
+  <text x="200" y="715" text-anchor="middle" fill="#c0caf5" font-size="12" font-weight="bold">Key Insight</text>
+  <text x="200" y="733" text-anchor="middle" fill="#a9b1d6" font-size="10">Whitt NEVER manages queue state transitions.</text>
+  <text x="200" y="748" text-anchor="middle" fill="#a9b1d6" font-size="10">It only DISPLAYS state from agent-queue.</text>
+</svg>

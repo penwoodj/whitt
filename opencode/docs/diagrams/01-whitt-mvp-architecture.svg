@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="800" fill="#1a1b26"/>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#c0caf5"/>
+    </marker>
+  </defs>
+
+  <!-- Version label -->
+  <text x="1150" y="30" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="end">whitt architecture diagrams v1.0</text>
+
+  <!-- Title -->
+  <text x="600" y="60" fill="#c0caf5" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">Whitt MVP Architecture - Data Flow</text>
+
+  <!-- Section labels -->
+  <text x="200" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Frontend (React)</text>
+  <text x="600" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Backend (Tauri Rust)</text>
+  <text x="1000" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CLI Services</text>
+
+  <!-- Left: React UI Components -->
+  <rect x="50" y="120" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="200" y="145" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Chat UI</text>
+  <text x="200" y="162" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Conversation interface</text>
+
+  <rect x="50" y="200" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="200" y="225" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Queue Panel</text>
+  <text x="200" y="242" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Task monitoring & controls</text>
+
+  <rect x="50" y="280" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="200" y="305" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Settings Panel</text>
+  <text x="200" y="322" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Configuration management</text>
+
+  <!-- Middle: Tauri Command Layer -->
+  <rect x="450" y="120" width="300" height="220" rx="10" fill="#ff9e64" stroke="#ff9e64" stroke-width="2"/>
+  <text x="600" y="145" fill="#1a1b26" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" font-weight="bold">Tauri Command Layer</text>
+  <text x="600" y="165" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Rust Bridge & Process Spawner</text>
+
+  <!-- Rust commands -->
+  <rect x="470" y="180" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+  <text x="600" y="203" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_yaml_compile()</text>
+
+  <rect x="470" y="225" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+  <text x="600" y="248" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_queue_enqueue()</text>
+
+  <rect x="470" y="270" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+  <text x="600" y="293" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_queue_status()</text>
+
+  <!-- Right: CLI Invocations -->
+  <rect x="850" y="120" width="300" height="220" rx="10" fill="#1a1b26" stroke="#c0caf5" stroke-width="2"/>
+  <text x="1000" y="145" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CLI Subprocess Calls</text>
+
+  <!-- yaml-to-rust-agentsdk CLI -->
+  <rect x="870" y="170" width="260" height="70" rx="8" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="1000" y="195" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">yaml-to-rust-agentsdk</text>
+  <text x="1000" y="215" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">compile, execute, validate</text>
+  <text x="1000" y="230" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">JSON subprocess protocol</text>
+
+  <!-- agent-queue CLI -->
+  <rect x="870" y="260" width="260" height="70" rx="8" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+  <text x="1000" y="285" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">agent-queue</text>
+  <text x="1000" y="305" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">enqueue, list, inspect</text>
+  <text x="1000" y="320" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">JSON subprocess protocol</text>
+
+  <!-- Horizontal flow arrows (React to Tauri) -->
+  <line x1="350" y1="150" x2="450" y2="150" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="350" y1="230" x2="450" y2="230" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="350" y1="310" x2="450" y2="310" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Horizontal flow arrows (Tauri to CLI) -->
+  <line x1="750" y1="197" x2="850" y2="197" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="750" y1="242" x2="850" y2="295" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Bottom: Data Flow -->
+  <rect x="50" y="400" width="1100" height="150" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+  <text x="600" y="430" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Data Flow Sequence</text>
+
+  <!-- Flow steps -->
+  <circle cx="130" cy="475" r="30" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="130" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">USER</text>
+  <text x="130" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">PROMPT</text>
+
+  <line x1="165" y1="475" x2="235" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="270" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="270" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">COMPILE</text>
+  <text x="270" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">YAML</text>
+
+  <line x1="305" y1="475" x2="375" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="410" cy="475" r="30" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+  <text x="410" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">ENQUEUE</text>
+  <text x="410" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">TASK</text>
+
+  <line x1="445" y1="475" x2="515" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="550" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="550" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">EXECUTE</text>
+  <text x="550" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">STEPS</text>
+
+  <line x1="585" y1="475" x2="655" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="690" cy="475" r="30" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+  <text x="690" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">QUEUE</text>
+  <text x="690" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">TRACK</text>
+
+  <line x1="725" y1="475" x2="795" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="830" cy="475" r="30" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+  <text x="830" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">UPDATE</text>
+  <text x="830" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">UI</text>
+
+  <line x1="865" y1="475" x2="935" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="970" cy="475" r="30" fill="#e0af68" stroke="#e0af68" stroke-width="2"/>
+  <text x="970" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">MODEL</text>
+  <text x="970" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">ROUTER</text>
+
+  <line x1="1005" y1="475" x2="1075" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <circle cx="1110" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="1110" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">RESULT</text>
+  <text x="1110" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">RETURN</text>
+
+  <!-- Step descriptions -->
+  <text x="130" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">User sends</text>
+  <text x="130" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">prompt via Chat UI</text>
+
+  <text x="270" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">YAML compiled</text>
+  <text x="270" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">to workflow</text>
+
+  <text x="410" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Task added to</text>
+  <text x="410" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">agent-queue</text>
+
+  <text x="550" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Workflow steps</text>
+  <text x="550" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">executed</text>
+
+  <text x="690" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Queue tracks</text>
+  <text x="690" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">progress</text>
+
+  <text x="830" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Real-time UI</text>
+  <text x="830" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">updates</text>
+
+  <text x="970" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Model selection</text>
+  <text x="970" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">via router</text>
+
+  <text x="1110" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Final result</text>
+  <text x="1110" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">returned to user</text>
+
+  <!-- Key insights -->
+  <rect x="50" y="580" width="1100" height="180" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+  <text x="600" y="610" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">MVP Architecture Key Insights</text>
+
+  <text x="80" y="650" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Process Isolation:</text>
+  <text x="210" y="650" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">CLI tools run as separate subprocesses via Tauri's command system</text>
+
+  <text x="80" y="680" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• JSON Communication:</text>
+  <text x="210" y="680" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">All CLI interactions use stdin/stdout JSON protocol for structured data exchange</text>
+
+  <text x="80" y="710" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Async State Sync:</text>
+  <text x="210" y="710" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">Queue status polled periodically; future version will use WebSocket for real-time updates</text>
+
+  <text x="80" y="740" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Error Handling:</text>
+  <text x="210" y="740" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">Each subprocess returns structured JSON errors; Tauri layer aggregates for UI display</text>
+</svg>

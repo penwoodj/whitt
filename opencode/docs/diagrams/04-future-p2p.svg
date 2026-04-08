@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+  
+  <defs>
+    <marker id="arrow4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#565f89"/>
+    </marker>
+    <marker id="arrow4p2p" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#bb9af7"/>
+    </marker>
+    <marker id="arrow4gold" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e0af68"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="35" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">04 - Future: P2P Gamified Compute Sharing</text>
+  <text x="600" y="55" text-anchor="middle" fill="#565f89" font-size="12">Phase D Vision • Far Future • Build MVP First</text>
+
+  <!-- Phase A: Single Machine (current) -->
+  <rect x="30" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="2"/>
+  <text x="160" y="103" text-anchor="middle" fill="#9ece6a" font-size="14" font-weight="bold">Phase A: Local Machine</text>
+  <text x="160" y="120" text-anchor="middle" fill="#565f89" font-size="10">CURRENT / MVP-A</text>
+
+  <rect x="45" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="160" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">Whitt UI ← yaml-to-rust-agentsdk</text>
+  <rect x="45" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="160" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">Internal VecDeque queue</text>
+  <rect x="45" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="160" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Local LLM (Ollama/LM Studio)</text>
+  <rect x="45" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="160" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">16GB RAM, CPU-only</text>
+  <rect x="45" y="295" width="230" height="45" rx="4" fill="#9ece6a" opacity="0.15"/>
+  <text x="160" y="315" text-anchor="middle" fill="#9ece6a" font-size="11" font-weight="bold">✓ Working Now</text>
+  <text x="160" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Single user, single machine</text>
+
+  <!-- Phase B: agent-queue -->
+  <rect x="310" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#e0af68" stroke-width="2"/>
+  <text x="440" y="103" text-anchor="middle" fill="#e0af68" font-size="14" font-weight="bold">Phase B: Queue Orchestration</text>
+  <text x="440" y="120" text-anchor="middle" fill="#565f89" font-size="10">MVP-B (after agent-queue code)</text>
+
+  <rect x="325" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="440" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">Whitt UI ← agent-queue CLI</text>
+  <rect x="325" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="440" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">25 queue levels, retry, DLQ</text>
+  <rect x="325" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="440" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">model-router integration</text>
+  <rect x="325" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="440" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">Smart model scaling</text>
+  <rect x="325" y="295" width="230" height="45" rx="4" fill="#e0af68" opacity="0.15"/>
+  <text x="440" y="315" text-anchor="middle" fill="#e0af68" font-size="11" font-weight="bold">🔄 Next Step</text>
+  <text x="440" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Still single machine</text>
+
+  <!-- Phase C: Local Network -->
+  <rect x="590" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="2"/>
+  <text x="720" y="103" text-anchor="middle" fill="#7aa2f7" font-size="14" font-weight="bold">Phase C: Private LAN</text>
+  <text x="720" y="120" text-anchor="middle" fill="#565f89" font-size="10">Multi-machine orchestration</text>
+
+  <rect x="605" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="720" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">agent-queue distributes work</text>
+  <rect x="605" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="720" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">LAN discovery (mDNS/DHT)</text>
+  <rect x="605" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="720" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Work stealing across nodes</text>
+  <rect x="605" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+  <text x="720" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">No cloud, no internet</text>
+  <rect x="605" y="295" width="230" height="45" rx="4" fill="#7aa2f7" opacity="0.15"/>
+  <text x="720" y="315" text-anchor="middle" fill="#7aa2f7" font-size="11" font-weight="bold">📋 Planned</text>
+  <text x="720" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">On-prem private network only</text>
+
+  <!-- Phase D: P2P -->
+  <rect x="870" y="80" width="300" height="280" rx="8" fill="#24283b" stroke="#f7768e" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="1020" y="103" text-anchor="middle" fill="#f7768e" font-size="14" font-weight="bold">Phase D: P2P Network</text>
+  <text x="1020" y="120" text-anchor="middle" fill="#565f89" font-size="10">Gamified compute sharing</text>
+
+  <rect x="885" y="135" width="270" height="30" rx="4" fill="#1f2335"/>
+  <text x="1020" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">DHT-based P2P overlay network</text>
+  <rect x="885" y="175" width="270" height="30" rx="4" fill="#1f2335"/>
+  <text x="1020" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">Share workflows → earn credits</text>
+  <rect x="885" y="215" width="270" height="30" rx="4" fill="#1f2335"/>
+  <text x="1020" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Proof-of-satisfaction verification</text>
+  <rect x="885" y="255" width="270" height="30" rx="4" fill="#1f2335"/>
+  <text x="1020" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">No idle-time compute required</text>
+  <rect x="885" y="295" width="270" height="45" rx="4" fill="#f7768e" opacity="0.15"/>
+  <text x="1020" y="315" text-anchor="middle" fill="#f7768e" font-size="11" font-weight="bold">🚀 Far Future Vision</text>
+  <text x="1020" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Speculative, build A-C first</text>
+
+  <!-- Arrows between phases -->
+  <path d="M290 220 L310 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow4)"/>
+  <path d="M570 220 L590 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow4)"/>
+  <path d="M850 220 L870 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow4)" stroke-dasharray="4,2"/>
+
+  <!-- === P2P Detail Section === -->
+  <rect x="30" y="385" width="560" height="390" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="1"/>
+  <text x="310" y="410" text-anchor="middle" fill="#bb9af7" font-size="16" font-weight="bold">P2P Gamification Mechanics</text>
+
+  <!-- Credit Economy -->
+  <rect x="50" y="425" width="250" height="150" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1"/>
+  <text x="175" y="448" text-anchor="middle" fill="#e0af68" font-size="13" font-weight="bold">Credit Economy</text>
+  <text x="65" y="468" fill="#a9b1d6" font-size="10">• Share workflow → earn credits</text>
+  <text x="65" y="483" fill="#a9b1d6" font-size="10">• Credits = compute on other nodes</text>
+  <text x="65" y="498" fill="#a9b1d6" font-size="10">• High-quality = more credits</text>
+  <text x="65" y="513" fill="#a9b1d6" font-size="10">• No mandatory idle-time sharing</text>
+  <text x="65" y="528" fill="#a9b1d6" font-size="10">• Rate: very minimal per user</text>
+  <text x="65" y="543" fill="#a9b1d6" font-size="10">• Popular workflows = free compute</text>
+  <text x="65" y="558" fill="#a9b1d6" font-size="10">• Efficient workflows earn more</text>
+
+  <!-- Proof System -->
+  <rect x="320" y="425" width="250" height="150" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+  <text x="445" y="448" text-anchor="middle" fill="#9ece6a" font-size="13" font-weight="bold">Proof of Satisfaction</text>
+  <text x="335" y="468" fill="#a9b1d6" font-size="10">• Verify output before credits</text>
+  <text x="335" y="483" fill="#a9b1d6" font-size="10">• Proof of objective achievement</text>
+  <text x="335" y="498" fill="#a9b1d6" font-size="10">• Reputation scores per node</text>
+  <text x="335" y="513" fill="#a9b1d6" font-size="10">• Stake-based anti-sybil</text>
+  <text x="335" y="528" fill="#a9b1d6" font-size="10">• Byzantine fault tolerance</text>
+  <text x="335" y="543" fill="#a9b1d6" font-size="10">• Audit trail on-chain (optional)</text>
+  <text x="335" y="558" fill="#a9b1d6" font-size="10">• Automatic quality scoring</text>
+
+  <!-- Workflow Sharing -->
+  <rect x="50" y="590" width="520" height="80" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+  <text x="310" y="613" text-anchor="middle" fill="#7aa2f7" font-size="13" font-weight="bold">Workflow Sharing Model</text>
+  <text x="65" y="633" fill="#a9b1d6" font-size="10">1. User publishes workflow to DHT network (YAML + metadata)</text>
+  <text x="65" y="648" fill="#a9b1d6" font-size="10">2. Other users execute workflow on their hardware, verify satisfaction</text>
+  <text x="65" y="663" fill="#a9b1d6" font-size="10">3. Publisher earns compute credits proportional to verified satisfaction</text>
+
+  <!-- Incentive Alignment -->
+  <rect x="50" y="685" width="520" height="75" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+  <text x="310" y="708" text-anchor="middle" fill="#bb9af7" font-size="13" font-weight="bold">Incentive Alignment</text>
+  <text x="65" y="728" fill="#a9b1d6" font-size="10">• Efficient workflows = more users = more credits (positive feedback loop)</text>
+  <text x="65" y="743" fill="#a9b1d6" font-size="10">• Bloated/slow workflows = fewer users = fewer credits (natural selection)</text>
+
+  <!-- === Non-Goals Section === -->
+  <rect x="610" y="385" width="560" height="390" rx="8" fill="#24283b" stroke="#f7768e" stroke-width="1"/>
+  <text x="890" y="410" text-anchor="middle" fill="#f7768e" font-size="16" font-weight="bold">Non-Goals &amp; Constraints</text>
+
+  <rect x="630" y="425" width="520" height="180" rx="6" fill="#1f2335"/>
+  <text x="890" y="448" text-anchor="middle" fill="#f7768e" font-size="13" font-weight="bold">❌ Will NOT Support</text>
+  <text x="645" y="468" fill="#f7768e" font-size="10">• General HTTP/cloud LLM providers (OpenAI, Anthropic, etc.)</text>
+  <text x="645" y="483" fill="#f7768e" font-size="10">• Internet-routable API endpoints</text>
+  <text x="645" y="498" fill="#f7768e" font-size="10">• Cloud-hosted model serving</text>
+  <text x="645" y="513" fill="#f7768e" font-size="10">• Centralized servers or brokers</text>
+  <text x="645" y="528" fill="#f7768e" font-size="10">• Cryptocurrency/token economics (no crypto)</text>
+  <text x="645" y="543" fill="#f7768e" font-size="10">• Mandatory compute contribution during idle</text>
+  <text x="645" y="558" fill="#f7768e" font-size="10">• User data monetization</text>
+  <text x="645" y="573" fill="#f7768e" font-size="10">• Vendor lock-in to any model provider</text>
+  <text x="645" y="588" fill="#f7768e" font-size="10">• Remote execution without explicit user consent</text>
+
+  <rect x="630" y="620" width="520" height="140" rx="6" fill="#1f2335"/>
+  <text x="890" y="643" text-anchor="middle" fill="#9ece6a" font-size="13" font-weight="bold">✅ Design Principles</text>
+  <text x="645" y="663" fill="#a9b1d6" font-size="10">• Local-first: everything works offline on a single machine</text>
+  <text x="645" y="678" fill="#a9b1d6" font-size="10">• Privacy-first: no data leaves the local network</text>
+  <text x="645" y="693" fill="#a9b1d6" font-size="10">• On-prem only: private LAN, no public internet</text>
+  <text x="645" y="708" fill="#a9b1d6" font-size="10">• User consent: explicit approval for any network activity</text>
+  <text x="645" y="723" fill="#a9b1d6" font-size="10">• Efficiency incentive: better workflows = more compute</text>
+  <text x="645" y="738" fill="#a9b1d6" font-size="10">• Graceful degradation: works at every phase independently</text>
+  <text x="645" y="753" fill="#a9b1d6" font-size="10">• 16GB DDR4 MVP target: optimize later, not now</text>
+</svg>

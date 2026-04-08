@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+  
+  <text x="600" y="35" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">05 - Feature Ownership / Scope Boundaries</text>
+  <text x="600" y="55" text-anchor="middle" fill="#565f89" font-size="12">Each feature has exactly ONE owner • Zero ambiguity • Clear boundaries</text>
+
+  <!-- Column Headers -->
+  <rect x="30" y="75" width="270" height="35" rx="6" fill="#7aa2f7"/>
+  <text x="165" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">yaml-to-rust-agentsdk</text>
+
+  <rect x="315" y="75" width="270" height="35" rx="6" fill="#9ece6a"/>
+  <text x="450" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">agent-queue</text>
+
+  <rect x="600" y="75" width="270" height="35" rx="6" fill="#bb9af7"/>
+  <text x="735" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">Whitt (UI/TUI)</text>
+
+  <rect x="885" y="75" width="285" height="35" rx="6" fill="#e0af68"/>
+  <text x="1027" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">model-router</text>
+
+  <!-- yaml-to-rust-agentsdk features -->
+  <rect x="30" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="1"/>
+  
+  <text x="45" y="142" fill="#7aa2f7" font-size="11" font-weight="bold">IN SCOPE:</text>
+  <text x="45" y="160" fill="#c0caf5" font-size="10">✓ YAML schema parsing</text>
+  <text x="45" y="176" fill="#c0caf5" font-size="10">✓ Variable interpolation (${ }/{{ }})</text>
+  <text x="45" y="192" fill="#c0caf5" font-size="10">✓ WorkflowIR compiler</text>
+  <text x="45" y="208" fill="#c0caf5" font-size="10">✓ DAG validation</text>
+  <text x="45" y="224" fill="#c0caf5" font-size="10">✓ Step executor (seq/par/hybrid)</text>
+  <text x="45" y="240" fill="#c0caf5" font-size="10">✓ LLM backend trait</text>
+  <text x="45" y="256" fill="#c0caf5" font-size="10">✓ LM Studio / Ollama / llama.cpp</text>
+  <text x="45" y="272" fill="#c0caf5" font-size="10">✓ Tool framework (file/web/shell)</text>
+  <text x="45" y="288" fill="#c0caf5" font-size="10">✓ Sub-workflow execution</text>
+  <text x="45" y="304" fill="#c0caf5" font-size="10">✓ Code generation mode</text>
+  <text x="45" y="320" fill="#c0caf5" font-size="10">✓ Docker packaging</text>
+  <text x="45" y="336" fill="#c0caf5" font-size="10">✓ RAG integration</text>
+  <text x="45" y="352" fill="#c0caf5" font-size="10">✓ Checkpointing / resume</text>
+  <text x="45" y="368" fill="#c0caf5" font-size="10">✓ Local file access (sandboxed)</text>
+  <text x="45" y="384" fill="#c0caf5" font-size="10">✓ CLI: compile, execute, validate</text>
+  <text x="45" y="400" fill="#c0caf5" font-size="10">✓ JSON stdout/stderr protocol</text>
+  <text x="45" y="416" fill="#c0caf5" font-size="10">✓ Quality loops (verify-repair)</text>
+  <text x="45" y="432" fill="#c0caf5" font-size="10">✓ Memory &amp; search (local)</text>
+  <text x="45" y="448" fill="#c0caf5" font-size="10">✓ Metrics collection</text>
+  <text x="45" y="464" fill="#c0caf5" font-size="10">✓ Self-improvement loop</text>
+
+  <text x="45" y="490" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+  <text x="45" y="508" fill="#f7768e" font-size="10">✗ UI / TUI / frontend</text>
+  <text x="45" y="524" fill="#f7768e" font-size="10">✗ Queue scheduling</text>
+  <text x="45" y="540" fill="#f7768e" font-size="10">✗ Task state management</text>
+  <text x="45" y="556" fill="#f7768e" font-size="10">✗ Retry / DLQ logic</text>
+  <text x="45" y="572" fill="#f7768e" font-size="10">✗ Automation / cron</text>
+  <text x="45" y="588" fill="#f7768e" font-size="10">✗ Autonomy / human override</text>
+  <text x="45" y="604" fill="#f7768e" font-size="10">✗ P2P / networking</text>
+  <text x="45" y="620" fill="#f7768e" font-size="10">✗ Model selection/routing</text>
+  <text x="45" y="636" fill="#f7768e" font-size="10">✗ HTTP REST/WebSocket server</text>
+  <text x="45" y="652" fill="#f7768e" font-size="10">✗ Cloud provider integrations</text>
+
+  <rect x="40" y="665" width="250" height="95" rx="4" fill="#7aa2f7" opacity="0.1"/>
+  <text x="165" y="685" text-anchor="middle" fill="#7aa2f7" font-size="11" font-weight="bold">Communication:</text>
+  <text x="45" y="703" fill="#a9b1d6" font-size="10">CLI subprocess (stdin/stdout JSON)</text>
+  <text x="45" y="719" fill="#a9b1d6" font-size="10">Post-MVP: Rust library API</text>
+  <text x="45" y="735" fill="#a9b1d6" font-size="10">(Cargo.toml dependency)</text>
+  <text x="45" y="751" fill="#a9b1d6" font-size="10">NO HTTP, NO gRPC</text>
+
+  <!-- agent-queue features -->
+  <rect x="315" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="1"/>
+  
+  <text x="330" y="142" fill="#9ece6a" font-size="11" font-weight="bold">IN SCOPE:</text>
+  <text x="330" y="160" fill="#c0caf5" font-size="10">✓ 25 queue categories</text>
+  <text x="330" y="176" fill="#c0caf5" font-size="10">✓ 10-state task machine</text>
+  <text x="330" y="192" fill="#c0caf5" font-size="10">✓ Lease protocol (60s TTL)</text>
+  <text x="330" y="208" fill="#c0caf5" font-size="10">✓ Retry: exp backoff, max 3</text>
+  <text x="330" y="224" fill="#c0caf5" font-size="10">✓ Dead Letter Queue (DLQ)</text>
+  <text x="330" y="240" fill="#c0caf5" font-size="10">✓ EDF / WRR / DRR scheduling</text>
+  <text x="330" y="256" fill="#c0caf5" font-size="10">✓ Fair share + work stealing</text>
+  <text x="330" y="272" fill="#c0caf5" font-size="10">✓ Event hooks (QL-026)</text>
+  <text x="330" y="288" fill="#c0caf5" font-size="10">✓ Audit logging</text>
+  <text x="330" y="304" fill="#c0caf5" font-size="10">✓ Backpressure management</text>
+  <text x="330" y="320" fill="#c0caf5" font-size="10">✓ Multi-tenancy / quotas</text>
+  <text x="330" y="336" fill="#c0caf5" font-size="10">✓ CLI: enqueue/list/inspect/cancel</text>
+  <text x="330" y="352" fill="#c0caf5" font-size="10">✓ SQLite WAL persistence</text>
+  <text x="330" y="368" fill="#c0caf5" font-size="10">✓ Delegates execution to SDK</text>
+  <text x="330" y="384" fill="#c0caf5" font-size="10">✓ Future: LAN distribution</text>
+  <text x="330" y="400" fill="#c0caf5" font-size="10">✓ Future: P2P orchestration</text>
+
+  <text x="330" y="426" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+  <text x="330" y="444" fill="#f7768e" font-size="10">✗ Workflow execution</text>
+  <text x="330" y="460" fill="#f7768e" font-size="10">✗ LLM calls / tool invocation</text>
+  <text x="330" y="476" fill="#f7768e" font-size="10">✗ UI / TUI / frontend</text>
+  <text x="330" y="492" fill="#f7768e" font-size="10">✗ Model selection</text>
+  <text x="330" y="508" fill="#f7768e" font-size="10">✗ Prompt rendering</text>
+  <text x="330" y="524" fill="#f7768e" font-size="10">✗ YAML schema handling</text>
+  <text x="330" y="540" fill="#f7768e" font-size="10">✗ Code generation</text>
+
+  <rect x="325" y="555" width="250" height="205" rx="4" fill="#9ece6a" opacity="0.1"/>
+  <text x="450" y="575" text-anchor="middle" fill="#9ece6a" font-size="11" font-weight="bold">Current Status:</text>
+  <text x="330" y="593" fill="#e0af68" font-size="10">⚠ PLANNING ONLY - NO CODE</text>
+  <text x="330" y="611" fill="#a9b1d6" font-size="10">10,292+ lines of documentation</text>
+  <text x="330" y="629" fill="#a9b1d6" font-size="10">48 P0 requirements defined</text>
+  <text x="330" y="647" fill="#a9b1d6" font-size="10">178 hours estimated</text>
+  <text x="330" y="665" fill="#a9b1d6" font-size="10">156 tests planned</text>
+  <text x="330" y="683" fill="#a9b1d6" font-size="10">Single-process Tokio runtime</text>
+  <text x="330" y="701" fill="#a9b1d6" font-size="10">SQLite WAL mode</text>
+  <text x="330" y="719" fill="#a9b1d6" font-size="10">Whitt uses internal queue until</text>
+  <text x="330" y="737" fill="#a9b1d6" font-size="10">agent-queue has working code</text>
+  <text x="330" y="751" fill="#a9b1d6" font-size="10">(MVP-A → MVP-B transition)</text>
+
+  <!-- Whitt features -->
+  <rect x="600" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="1"/>
+  
+  <text x="615" y="142" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (MVP-A):</text>
+  <text x="615" y="160" fill="#c0caf5" font-size="10">✓ Tauri desktop shell</text>
+  <text x="615" y="176" fill="#c0caf5" font-size="10">✓ React chat UI</text>
+  <text x="615" y="192" fill="#c0caf5" font-size="10">✓ Internal VecDeque queue</text>
+  <text x="615" y="208" fill="#c0caf5" font-size="10">✓ Smart blocking (active task)</text>
+  <text x="615" y="224" fill="#c0caf5" font-size="10">✓ Queue panel (sent order list)</text>
+  <text x="615" y="240" fill="#c0caf5" font-size="10">✓ Results display panel</text>
+  <text x="615" y="256" fill="#c0caf5" font-size="10">✓ Calls SDK CLI (compile+execute)</text>
+  <text x="615" y="272" fill="#c0caf5" font-size="10">✓ 16GB DDR4 target</text>
+  <text x="615" y="288" fill="#c0caf5" font-size="10">✓ CPU-only support</text>
+
+  <text x="615" y="314" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (MVP-B+):</text>
+  <text x="615" y="332" fill="#c0caf5" font-size="10">✓ agent-queue CLI integration</text>
+  <text x="615" y="348" fill="#c0caf5" font-size="10">✓ Queue state visualization</text>
+  <text x="615" y="364" fill="#c0caf5" font-size="10">✓ Settings panel (model config)</text>
+  <text x="615" y="380" fill="#c0caf5" font-size="10">✓ First-run wizard</text>
+  <text x="615" y="396" fill="#c0caf5" font-size="10">✓ Multi-chat tabs</text>
+  <text x="615" y="412" fill="#c0caf5" font-size="10">✓ Ratatui TUI mode</text>
+  <text x="615" y="428" fill="#c0caf5" font-size="10">✓ Artifact browser</text>
+
+  <text x="615" y="454" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (Phase C/D):</text>
+  <text x="615" y="472" fill="#c0caf5" font-size="10">✓ LAN node management UI</text>
+  <text x="615" y="488" fill="#c0caf5" font-size="10">✓ P2P workflow marketplace</text>
+  <text x="615" y="504" fill="#c0caf5" font-size="10">✓ Credit dashboard</text>
+  <text x="615" y="520" fill="#c0caf5" font-size="10">✓ Reputation display</text>
+
+  <text x="615" y="546" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+  <text x="615" y="564" fill="#f7768e" font-size="10">✗ Workflow execution logic</text>
+  <text x="615" y="580" fill="#f7768e" font-size="10">✗ Queue state transitions</text>
+  <text x="615" y="596" fill="#f7768e" font-size="10">✗ LLM backend management</text>
+  <text x="615" y="612" fill="#f7768e" font-size="10">✗ Model routing decisions</text>
+  <text x="615" y="628" fill="#f7768e" font-size="10">✗ YAML compilation</text>
+
+  <rect x="610" y="645" width="250" height="115" rx="4" fill="#bb9af7" opacity="0.1"/>
+  <text x="735" y="665" text-anchor="middle" fill="#bb9af7" font-size="11" font-weight="bold">Communication:</text>
+  <text x="615" y="683" fill="#a9b1d6" font-size="10">Tauri IPC (invoke + events)</text>
+  <text x="615" y="699" fill="#a9b1d6" font-size="10">CLI subprocess to SDK + queue</text>
+  <text x="615" y="715" fill="#a9b1d6" font-size="10">JSON event stream (stderr)</text>
+  <text x="615" y="731" fill="#a9b1d6" font-size="10">NO HTTP server in Whitt</text>
+  <text x="615" y="747" fill="#a9b1d6" font-size="10">Whitt DISPLAYS, never EXECUTES</text>
+
+  <!-- model-router features -->
+  <rect x="885" y="120" width="285" height="650" rx="8" fill="#24283b" stroke="#e0af68" stroke-width="1"/>
+  
+  <text x="900" y="142" fill="#e0af68" font-size="11" font-weight="bold">IN SCOPE:</text>
+  <text x="900" y="160" fill="#c0caf5" font-size="10">✓ Two-layer routing</text>
+  <text x="900" y="176" fill="#c0caf5" font-size="10">  (task classification + ranking)</text>
+  <text x="900" y="192" fill="#c0caf5" font-size="10">✓ Hybrid retrieval (dense+sparse)</text>
+  <text x="900" y="208" fill="#c0caf5" font-size="10">✓ Similarity-aware statistics</text>
+  <text x="900" y="224" fill="#c0caf5" font-size="10">✓ Adaptive ranking (3 phases)</text>
+  <text x="900" y="240" fill="#c0caf5" font-size="10">✓ Specialization-based retry</text>
+  <text x="900" y="256" fill="#c0caf5" font-size="10">✓ Multi-stage verification</text>
+  <text x="900" y="272" fill="#c0caf5" font-size="10">✓ Model catalog (HW tiers)</text>
+  <text x="900" y="288" fill="#c0caf5" font-size="10">✓ Workflow compensation snippets</text>
+  <text x="900" y="304" fill="#c0caf5" font-size="10">✓ Auto scale up/down by resources</text>
+
+  <text x="900" y="330" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+  <text x="900" y="348" fill="#f7768e" font-size="10">✗ Workflow execution</text>
+  <text x="900" y="364" fill="#f7768e" font-size="10">✗ UI / TUI</text>
+  <text x="900" y="380" fill="#f7768e" font-size="10">✗ Queue management</text>
+  <text x="900" y="396" fill="#f7768e" font-size="10">✗ LLM inference (delegates to</text>
+  <text x="900" y="412" fill="#f7768e" font-size="10">   Ollama/LM Studio/llama.cpp)</text>
+  <text x="900" y="428" fill="#f7768e" font-size="10">✗ Distributed routing</text>
+  <text x="900" y="444" fill="#f7768e" font-size="10">✗ GPU acceleration</text>
+
+  <rect x="895" y="460" width="265" height="300" rx="4" fill="#e0af68" opacity="0.1"/>
+  <text x="1027" y="480" text-anchor="middle" fill="#e0af68" font-size="11" font-weight="bold">Current Status:</text>
+  <text x="900" y="498" fill="#e0af68" font-size="10">⚠ DESIGN DOCS ONLY - NO CODE</text>
+  <text x="900" y="516" fill="#a9b1d6" font-size="10">3,900+ lines of documentation</text>
+  <text x="900" y="534" fill="#a9b1d6" font-size="10">Moved to ~/code/model-router/</text>
+  <text x="900" y="552" fill="#a9b1d6" font-size="10">Tech: Python 3.11+</text>
+  <text x="900" y="570" fill="#a9b1d6" font-size="10">FastEmbed (ONNX, 384-dim)</text>
+  <text x="900" y="588" fill="#a9b1d6" font-size="10">SQLite + sqlite-vec + FTS5</text>
+  <text x="900" y="606" fill="#a9b1d6" font-size="10">~380-400MB memory budget</text>
+  <text x="900" y="624" fill="#a9b1d6" font-size="10">Phase 1: TinyRouter (wk 1-4)</text>
+  <text x="900" y="642" fill="#a9b1d6" font-size="10">Phase 2: LearnedRouter (wk 5-12)</text>
+  <text x="900" y="660" fill="#a9b1d6" font-size="10">Phase 3: AdaptiveRouter (wk 13-24)</text>
+  <text x="900" y="684" fill="#a9b1d6" font-size="10">SDK calls model-router CLI to</text>
+  <text x="900" y="702" fill="#a9b1d6" font-size="10">select optimal model before</text>
+  <text x="900" y="720" fill="#a9b1d6" font-size="10">execution. Compensates with</text>
+  <text x="900" y="738" fill="#a9b1d6" font-size="10">smaller-model sub-workflow</text>
+  <text x="900" y="756" fill="#a9b1d6" font-size="10">snippets when needed.</text>
+</svg>

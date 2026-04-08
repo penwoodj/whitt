@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitt Architecture Diagrams</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #1a1b26;
+            color: #c0caf5;
+            min-height: 100vh;
+        }
+        header {
+            background: #24283b;
+            padding: 20px 30px;
+            border-bottom: 2px solid #414868;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        header h1 {
+            font-size: 24px;
+            color: #bb9af7;
+            margin-bottom: 4px;
+        }
+        header p {
+            font-size: 14px;
+            color: #565f89;
+        }
+        nav {
+            display: flex;
+            gap: 8px;
+            padding: 16px 30px;
+            background: #1f2335;
+            border-bottom: 1px solid #414868;
+            flex-wrap: wrap;
+        }
+        nav button {
+            background: #24283b;
+            color: #c0caf5;
+            border: 1px solid #414868;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        nav button:hover {
+            background: #414868;
+            border-color: #7aa2f7;
+        }
+        nav button.active {
+            background: #7aa2f7;
+            color: #1a1b26;
+            border-color: #7aa2f7;
+            font-weight: 600;
+        }
+        main {
+            padding: 20px 30px;
+        }
+        .diagram-container {
+            background: #24283b;
+            border: 1px solid #414868;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .diagram-header {
+            padding: 12px 20px;
+            background: #1f2335;
+            border-bottom: 1px solid #414868;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .diagram-header h2 {
+            font-size: 16px;
+            color: #bb9af7;
+        }
+        .diagram-header .zoom-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .diagram-header .zoom-controls button {
+            background: #414868;
+            color: #c0caf5;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .diagram-header .zoom-controls button:hover {
+            background: #565f89;
+        }
+        .diagram-header .zoom-controls span {
+            font-size: 12px;
+            color: #565f89;
+            min-width: 40px;
+            text-align: center;
+        }
+        .diagram-body {
+            padding: 20px;
+            overflow: auto;
+            max-height: calc(100vh - 200px);
+            text-align: center;
+        }
+        .diagram-body svg {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .notes {
+            padding: 16px 20px;
+            background: #1f2335;
+            border-top: 1px solid #414868;
+        }
+        .notes h3 {
+            font-size: 14px;
+            color: #e0af68;
+            margin-bottom: 8px;
+        }
+        .notes ul {
+            list-style: none;
+            padding: 0;
+        }
+        .notes li {
+            font-size: 13px;
+            color: #a9b1d6;
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .notes li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #565f89;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            padding: 12px 20px;
+            background: #1f2335;
+            border-top: 1px solid #414868;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Whitt Architecture Diagrams</h1>
+        <p>4-project system architecture • Version 1.0 • ~/code/whitt/opencode/docs/diagrams/</p>
+    </header>
+
+    <nav id="nav">
+        <button class="active" onclick="showDiagram('00')">System Overview</button>
+        <button onclick="showDiagram('01')">Whitt MVP Architecture</button>
+        <button onclick="showDiagram('02')">Communication Protocols</button>
+        <button onclick="showDiagram('03')">Queue Integration</button>
+        <button onclick="showDiagram('04')">Future P2P Vision</button>
+        <button onclick="showDiagram('05')">Scope Boundaries</button>
+    </nav>
+
+    <main>
+        <!-- Diagram 0: System Overview -->
+        <div id="diagram-00" class="diagram-container">
+            <div class="diagram-header">
+                <h2>00 - System Overview</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('00', -0.1)">−</button>
+                    <span id="zoom-00">100%</span>
+                    <button onclick="zoom('00', 0.1)">+</button>
+                    <button onclick="resetZoom('00')">Reset</button>
+                </div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#bb9af7"></div>Whitt (UI/TUI)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#9ece6a"></div>agent-queue (Scheduling)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#7aa2f7"></div>yaml-to-rust-agentsdk (Execution)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#e0af68"></div>model-router (Model Selection)</div>
+            </div>
+            <div class="diagram-body" id="body-00">
+                <img src="00-system-overview.svg" alt="System Overview" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>Key Points</h3>
+                <ul>
+                    <li>Whitt is the user-facing shell - it displays, it doesn't execute</li>
+                    <li>agent-queue orchestrates scheduling - it delegates execution to yaml-to-rust-agentsdk</li>
+                    <li>yaml-to-rust-agentsdk is the execution engine - it runs workflows and calls LLMs</li>
+                    <li>model-router selects the best model for each task (future integration)</li>
+                    <li>All communication is CLI subprocess (JSON stdin/stdout) in MVP</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 1: Whitt MVP Architecture -->
+        <div id="diagram-01" class="diagram-container hidden">
+            <div class="diagram-header">
+                <h2>01 - Whitt MVP Architecture</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('01', -0.1)">−</button>
+                    <span id="zoom-01">100%</span>
+                    <button onclick="zoom('01', 0.1)">+</button>
+                    <button onclick="resetZoom('01')">Reset</button>
+                </div>
+            </div>
+            <div class="diagram-body" id="body-01">
+                <img src="01-whitt-mvp-architecture.svg" alt="Whitt MVP Architecture" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>Data Flow</h3>
+                <ul>
+                    <li>User types prompt in Chat UI</li>
+                    <li>Whitt calls yaml-to-rust-agentsdk CLI to compile prompt → YAML workflow</li>
+                    <li>Compiled workflow enqueued via agent-queue CLI</li>
+                    <li>agent-queue dispatches to yaml-to-rust-agentsdk CLI for execution</li>
+                    <li>Results stream back through queue state → Whitt UI updates</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 2: Communication Protocols -->
+        <div id="diagram-02" class="diagram-container hidden">
+            <div class="diagram-header">
+                <h2>02 - Communication Protocols</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('02', -0.1)">−</button>
+                    <span id="zoom-02">100%</span>
+                    <button onclick="zoom('02', 0.1)">+</button>
+                    <button onclick="resetZoom('02')">Reset</button>
+                </div>
+            </div>
+            <div class="diagram-body" id="body-02">
+                <img src="02-comm-protocols.svg" alt="Communication Protocols" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>Protocol Details</h3>
+                <ul>
+                    <li>All protocols use CLI subprocess invocation (stdin/stdout JSON)</li>
+                    <li>No HTTP, no REST, no WebSocket, no gRPC in MVP</li>
+                    <li>Post-MVP: Rust library API (direct function calls via Cargo dependency)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 3: Queue Integration -->
+        <div id="diagram-03" class="diagram-container hidden">
+            <div class="diagram-header">
+                <h2>03 - Queue Integration</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('03', -0.1)">−</button>
+                    <span id="zoom-03">100%</span>
+                    <button onclick="zoom('03', 0.1)">+</button>
+                    <button onclick="resetZoom('03')">Reset</button>
+                </div>
+            </div>
+            <div class="diagram-body" id="body-03">
+                <img src="03-queue-integration.svg" alt="Queue Integration" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>State Machine</h3>
+                <ul>
+                    <li>10 states: NEW → QUEUED → SCHEDULED → LEASED → RUNNING → DONE/FAILED/DLQ/CANCELED/EXPIRED</li>
+                    <li>Lease protocol: 60s TTL, 15s heartbeat</li>
+                    <li>Retry: max 3 attempts with exponential backoff (1s → 2s → 4s)</li>
+                    <li>Whitt displays state but does NOT manage transitions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 4: Future P2P -->
+        <div id="diagram-04" class="diagram-container hidden">
+            <div class="diagram-header">
+                <h2>04 - Future P2P Gamified Compute Sharing</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('04', -0.1)">−</button>
+                    <span id="zoom-04">100%</span>
+                    <button onclick="zoom('04', 0.1)">+</button>
+                    <button onclick="resetZoom('04')">Reset</button>
+                </div>
+            </div>
+            <div class="diagram-body" id="body-04">
+                <img src="04-future-p2p.svg" alt="Future P2P Vision" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>P2P Vision</h3>
+                <ul>
+                    <li>Share useful workflows → earn compute credits</li>
+                    <li>Proof-of-satisfaction verifies quality before credits awarded</li>
+                    <li>No mandatory idle-time compute contribution required</li>
+                    <li>Phase D (far future) - build stable MVP first</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 5: Scope Boundaries -->
+        <div id="diagram-05" class="diagram-container hidden">
+            <div class="diagram-header">
+                <h2>05 - Feature Ownership / Scope Boundaries</h2>
+                <div class="zoom-controls">
+                    <button onclick="zoom('05', -0.1)">−</button>
+                    <span id="zoom-05">100%</span>
+                    <button onclick="zoom('05', 0.1)">+</button>
+                    <button onclick="resetZoom('05')">Reset</button>
+                </div>
+            </div>
+            <div class="diagram-body" id="body-05">
+                <img src="05-scope-boundaries.svg" alt="Scope Boundaries" style="max-width:100%">
+            </div>
+            <div class="notes">
+                <h3>Ownership Rules</h3>
+                <ul>
+                    <li>Each feature has exactly ONE owner (or shared with clear boundaries)</li>
+                    <li>Whitt = display and interaction only, NO execution logic</li>
+                    <li>agent-queue = scheduling and state only, NO execution logic</li>
+                    <li>yaml-to-rust-agentsdk = execution only, NO UI, NO scheduling</li>
+                    <li>model-router = model selection only, NO execution, NO UI</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const zoomLevels = {};
+
+        function showDiagram(id) {
+            document.querySelectorAll('.diagram-container').forEach(el => el.classList.add('hidden'));
+            document.getElementById('diagram-' + id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function zoom(id, delta) {
+            const img = document.querySelector('#body-' + id + ' img');
+            if (!img) return;
+            const current = zoomLevels[id] || 1;
+            const next = Math.max(0.3, Math.min(3, current + delta));
+            zoomLevels[id] = next;
+            img.style.transform = `scale(${next})`;
+            img.style.transformOrigin = 'top center';
+            document.getElementById('zoom-' + id).textContent = Math.round(next * 100) + '%';
+        }
+
+        function resetZoom(id) {
+            const img = document.querySelector('#body-' + id + ' img');
+            if (!img) return;
+            zoomLevels[id] = 1;
+            img.style.transform = 'scale(1)';
+            document.getElementById('zoom-' + id).textContent = '100%';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '5') {
+                showDiagram('0' + e.key);
+                document.querySelectorAll('nav button')[parseInt(e.key)].click();
+            }
+        });
+    </script>
+</body>
+</html>
