@@ -196,7 +196,49 @@
                 <div class="legend-item"><div class="legend-color" style="background:#e0af68"></div>model-router (Model Selection)</div>
             </div>
             <div class="diagram-body" id="body-00">
-                <img src="00-system-overview.svg" alt="System Overview" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect x="0" y="0" width="1200" height="800" fill="#1a1b26"/>
+                  <defs>
+                    <marker id="arrowhead00" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#c0caf5"/>
+                    </marker>
+                  </defs>
+                  <text x="1150" y="30" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="end">whitt architecture diagrams v1.0</text>
+                  <text x="600" y="60" fill="#c0caf5" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">System Overview - 4 Project Architecture</text>
+                  <rect x="450" y="100" width="300" height="80" rx="10" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="600" y="135" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">whitt</text>
+                  <text x="600" y="158" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Tauri Desktop App</text>
+                  <rect x="100" y="300" width="300" height="80" rx="10" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="250" y="335" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">agent-queue</text>
+                  <text x="250" y="358" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Task Queue Service</text>
+                  <rect x="800" y="300" width="300" height="80" rx="10" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="950" y="335" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">yaml-to-rust-agentsdk</text>
+                  <text x="950" y="358" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">YAML Execution Engine</text>
+                  <rect x="450" y="500" width="300" height="80" rx="10" fill="#e0af68" stroke="#e0af68" stroke-width="2"/>
+                  <text x="600" y="535" fill="#1a1b26" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" font-weight="bold">model-router</text>
+                  <text x="600" y="558" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">LLM Model Router</text>
+                  <line x1="520" y1="180" x2="280" y2="300" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead00)"/>
+                  <text x="380" y="230" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(-30, 380, 230)">CLI subprocess</text>
+                  <line x1="680" y1="180" x2="920" y2="300" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead00)"/>
+                  <text x="820" y="230" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(30, 820, 230)">CLI subprocess</text>
+                  <line x1="400" y1="340" x2="800" y2="340" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead00)"/>
+                  <text x="600" y="330" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">queue management</text>
+                  <line x1="950" y1="380" x2="650" y2="500" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead00)"/>
+                  <text x="800" y="430" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" transform="rotate(-40, 800, 430)">model selection</text>
+                  <rect x="50" y="630" width="1100" height="120" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+                  <text x="600" y="660" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Legend</text>
+                  <rect x="100" y="680" width="30" height="30" rx="5" fill="#bb9af7"/>
+                  <text x="140" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">whitt - Desktop App</text>
+                  <rect x="350" y="680" width="30" height="30" rx="5" fill="#9ece6a"/>
+                  <text x="390" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">agent-queue - Task Queue</text>
+                  <rect x="600" y="680" width="30" height="30" rx="5" fill="#7aa2f7"/>
+                  <text x="640" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">yaml-to-rust-agentsdk - Execution Engine</text>
+                  <rect x="880" y="680" width="30" height="30" rx="5" fill="#e0af68"/>
+                  <text x="920" y="700" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12">model-router - Model Router</text>
+                  <text x="100" y="735" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">↘ CLI subprocess: Tauri spawns CLI processes via Rust command layer</text>
+                  <text x="100" y="755" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">→ queue management: agent-queue schedules and tracks task execution</text>
+                  <text x="100" y="775" fill="#737aa2" font-family="Arial, sans-serif" font-size="11">↘ model selection: yaml-to-rust-agentsdk queries model-router for LLM selection</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>Key Points</h3>
@@ -222,7 +264,111 @@
                 </div>
             </div>
             <div class="diagram-body" id="body-01">
-                <img src="01-whitt-mvp-architecture.svg" alt="Whitt MVP Architecture" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect x="0" y="0" width="1200" height="800" fill="#1a1b26"/>
+                  <defs>
+                    <marker id="arrowhead01" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#c0caf5"/>
+                    </marker>
+                  </defs>
+                  <text x="1150" y="30" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="end">whitt architecture diagrams v1.0</text>
+                  <text x="600" y="60" fill="#c0caf5" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">Whitt MVP Architecture - Data Flow</text>
+                  <text x="200" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Frontend (React)</text>
+                  <text x="600" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Backend (Tauri Rust)</text>
+                  <text x="1000" y="95" fill="#737aa2" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CLI Services</text>
+                  <rect x="50" y="120" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="200" y="145" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Chat UI</text>
+                  <text x="200" y="162" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Conversation interface</text>
+                  <rect x="50" y="200" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="200" y="225" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Queue Panel</text>
+                  <text x="200" y="242" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Task monitoring & controls</text>
+                  <rect x="50" y="280" width="300" height="60" rx="8" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="200" y="305" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Settings Panel</text>
+                  <text x="200" y="322" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Configuration management</text>
+                  <rect x="450" y="120" width="300" height="220" rx="10" fill="#ff9e64" stroke="#ff9e64" stroke-width="2"/>
+                  <text x="600" y="145" fill="#1a1b26" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" font-weight="bold">Tauri Command Layer</text>
+                  <text x="600" y="165" fill="#1a1b26" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Rust Bridge & Process Spawner</text>
+                  <rect x="470" y="180" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+                  <text x="600" y="203" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_yaml_compile()</text>
+                  <rect x="470" y="225" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+                  <text x="600" y="248" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_queue_enqueue()</text>
+                  <rect x="470" y="270" width="260" height="35" rx="5" fill="#1a1b26" stroke="#ff9e64" stroke-width="1"/>
+                  <text x="600" y="293" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11" text-anchor="middle">invoke_queue_status()</text>
+                  <rect x="850" y="120" width="300" height="220" rx="10" fill="#1a1b26" stroke="#c0caf5" stroke-width="2"/>
+                  <text x="1000" y="145" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">CLI Subprocess Calls</text>
+                  <rect x="870" y="170" width="260" height="70" rx="8" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="1000" y="195" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">yaml-to-rust-agentsdk</text>
+                  <text x="1000" y="215" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">compile, execute, validate</text>
+                  <text x="1000" y="230" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">JSON subprocess protocol</text>
+                  <rect x="870" y="260" width="260" height="70" rx="8" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="1000" y="285" fill="#1a1b26" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">agent-queue</text>
+                  <text x="1000" y="305" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">enqueue, list, inspect</text>
+                  <text x="1000" y="320" fill="#1a1b26" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">JSON subprocess protocol</text>
+                  <line x1="350" y1="150" x2="450" y2="150" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <line x1="350" y1="230" x2="450" y2="230" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <line x1="350" y1="310" x2="450" y2="310" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <line x1="750" y1="197" x2="850" y2="197" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <line x1="750" y1="242" x2="850" y2="295" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <rect x="50" y="400" width="1100" height="150" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+                  <text x="600" y="430" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">Data Flow Sequence</text>
+                  <circle cx="130" cy="475" r="30" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="130" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">USER</text>
+                  <text x="130" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">PROMPT</text>
+                  <line x1="165" y1="475" x2="235" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="270" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="270" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">COMPILE</text>
+                  <text x="270" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">YAML</text>
+                  <line x1="305" y1="475" x2="375" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="410" cy="475" r="30" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="410" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">ENQUEUE</text>
+                  <text x="410" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">TASK</text>
+                  <line x1="445" y1="475" x2="515" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="550" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="550" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">EXECUTE</text>
+                  <text x="550" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">STEPS</text>
+                  <line x1="585" y1="475" x2="655" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="690" cy="475" r="30" fill="#9ece6a" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="690" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">QUEUE</text>
+                  <text x="690" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">TRACK</text>
+                  <line x1="725" y1="475" x2="795" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="830" cy="475" r="30" fill="#bb9af7" stroke="#bb9af7" stroke-width="2"/>
+                  <text x="830" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">UPDATE</text>
+                  <text x="830" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">UI</text>
+                  <line x1="865" y1="475" x2="935" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="970" cy="475" r="30" fill="#e0af68" stroke="#e0af68" stroke-width="2"/>
+                  <text x="970" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">MODEL</text>
+                  <text x="970" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">ROUTER</text>
+                  <line x1="1005" y1="475" x2="1075" y2="475" stroke="#c0caf5" stroke-width="2" marker-end="url(#arrowhead01)"/>
+                  <circle cx="1110" cy="475" r="30" fill="#7aa2f7" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="1110" y="470" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">RESULT</text>
+                  <text x="1110" y="485" fill="#1a1b26" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">RETURN</text>
+                  <text x="130" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">User sends</text>
+                  <text x="130" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">prompt via Chat UI</text>
+                  <text x="270" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">YAML compiled</text>
+                  <text x="270" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">to workflow</text>
+                  <text x="410" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Task added to</text>
+                  <text x="410" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">agent-queue</text>
+                  <text x="550" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Workflow steps</text>
+                  <text x="550" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">executed</text>
+                  <text x="690" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Queue tracks</text>
+                  <text x="690" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">progress</text>
+                  <text x="830" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Real-time UI</text>
+                  <text x="830" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">updates</text>
+                  <text x="970" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Model selection</text>
+                  <text x="970" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">via router</text>
+                  <text x="1110" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">Final result</text>
+                  <text x="1110" y="538" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">returned to user</text>
+                  <rect x="50" y="580" width="1100" height="180" rx="10" fill="#24283b" stroke="#565f89" stroke-width="1"/>
+                  <text x="600" y="610" fill="#c0caf5" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" font-weight="bold">MVP Architecture Key Insights</text>
+                  <text x="80" y="650" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Process Isolation:</text>
+                  <text x="210" y="650" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">CLI tools run as separate subprocesses via Tauri's command system</text>
+                  <text x="80" y="680" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• JSON Communication:</text>
+                  <text x="210" y="680" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">All CLI interactions use stdin/stdout JSON protocol for structured data exchange</text>
+                  <text x="80" y="710" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Async State Sync:</text>
+                  <text x="210" y="710" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">Queue status polled periodically; future version will use WebSocket for real-time updates</text>
+                  <text x="80" y="740" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">• Error Handling:</text>
+                  <text x="210" y="740" fill="#c0caf5" font-family="Arial, sans-serif" font-size="11">Each subprocess returns structured JSON errors; Tauri layer aggregates for UI display</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>Data Flow</h3>
@@ -248,7 +394,94 @@
                 </div>
             </div>
             <div class="diagram-body" id="body-02">
-                <img src="02-comm-protocols.svg" alt="Communication Protocols" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect x="0" y="0" width="1200" height="800" fill="#1a1b26"/>
+                  <defs>
+                    <marker id="arrowhead02" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#c0caf5"/>
+                    </marker>
+                    <marker id="arrowhead02green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#9ece6a"/>
+                    </marker>
+                  </defs>
+                  <text x="1150" y="30" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="end">whitt architecture diagrams v1.0</text>
+                  <text x="600" y="60" fill="#c0caf5" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" font-weight="bold">Communication Protocols - CLI Subprocess JSON</text>
+                  <rect x="50" y="100" width="1100" height="140" rx="10" fill="#24283b" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="70" y="130" fill="#7aa2f7" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Protocol 1: Whitt → yaml-to-rust-agentsdk</text>
+                  <rect x="70" y="150" width="200" height="80" rx="5" fill="#1a1b26" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="170" y="175" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">compile</text>
+                  <text x="170" y="192" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {yaml: string}</text>
+                  <text x="170" y="207" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {steps: array}</text>
+                  <rect x="290" y="150" width="200" height="80" rx="5" fill="#1a1b26" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="390" y="175" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">execute</text>
+                  <text x="390" y="192" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {step: object}</text>
+                  <text x="390" y="207" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {result: any}</text>
+                  <rect x="510" y="150" width="200" height="80" rx="5" fill="#1a1b26" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="610" y="175" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">validate</text>
+                  <text x="610" y="192" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {yaml: string}</text>
+                  <text x="610" y="207" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {valid: bool}</text>
+                  <rect x="730" y="150" width="200" height="80" rx="5" fill="#1a1b26" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="830" y="175" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">backends list</text>
+                  <text x="830" y="192" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {}</text>
+                  <text x="830" y="207" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {backends: array}</text>
+                  <text x="1000" y="185" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Channel: STDIN/STDOUT</text>
+                  <text x="1000" y="205" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Format: JSON lines</text>
+                  <text x="1000" y="225" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Error handling: JSON error</text>
+                  <rect x="50" y="260" width="1100" height="140" rx="10" fill="#24283b" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="70" y="290" fill="#9ece6a" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Protocol 2: Whitt → agent-queue</text>
+                  <rect x="70" y="310" width="200" height="80" rx="5" fill="#1a1b26" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="170" y="335" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">enqueue</text>
+                  <text x="170" y="352" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {task: object}</text>
+                  <text x="170" y="367" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {id: string}</text>
+                  <rect x="290" y="310" width="200" height="80" rx="5" fill="#1a1b26" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="390" y="335" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">list</text>
+                  <text x="390" y="352" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {filter: object}</text>
+                  <text x="390" y="367" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {tasks: array}</text>
+                  <rect x="510" y="310" width="200" height="80" rx="5" fill="#1a1b26" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="610" y="335" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">inspect</text>
+                  <text x="610" y="352" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {id: string}</text>
+                  <text x="610" y="367" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {task: object}</text>
+                  <rect x="730" y="310" width="200" height="80" rx="5" fill="#1a1b26" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="830" y="335" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">cancel</text>
+                  <text x="830" y="352" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {id: string}</text>
+                  <text x="830" y="367" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {success: bool}</text>
+                  <text x="1000" y="345" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Channel: STDIN/STDOUT</text>
+                  <text x="1000" y="365" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Format: JSON lines</text>
+                  <text x="1000" y="385" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Async: task IDs returned</text>
+                  <rect x="50" y="420" width="1100" height="140" rx="10" fill="#24283b" stroke="#e0af68" stroke-width="2"/>
+                  <text x="70" y="450" fill="#e0af68" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Protocol 3: agent-queue → yaml-to-rust-agentsdk (Dispatch Execution)</text>
+                  <rect x="70" y="470" width="300" height="80" rx="5" fill="#1a1b26" stroke="#e0af68" stroke-width="1"/>
+                  <text x="220" y="495" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">dispatch</text>
+                  <text x="220" y="512" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {task_id: string, step: object}</text>
+                  <text x="220" y="527" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {step_id: string, status: string}</text>
+                  <text x="400" y="495" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Flow:</text>
+                  <text x="400" y="515" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">1. agent-queue leases task</text>
+                  <text x="400" y="532" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">2. dispatches to agentsdk</text>
+                  <text x="400" y="549" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">3. agentsdk executes step</text>
+                  <text x="600" y="515" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">4. returns step result</text>
+                  <text x="600" y="532" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">5. agent-queue updates state</text>
+                  <text x="600" y="549" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">6. schedules next step</text>
+                  <text x="830" y="505" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Channel: CLI subprocess</text>
+                  <text x="830" y="525" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Retry: Configurable per task</text>
+                  <text x="830" y="545" fill="#737aa2" font-family="Arial, sans-serif" font-size="10">Timeout: Per task limits</text>
+                  <rect x="50" y="580" width="1100" height="140" rx="10" fill="#24283b" stroke="#bb9af7" stroke-width="2" stroke-dasharray="5,5"/>
+                  <text x="70" y="610" fill="#bb9af7" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Protocol 4: Whitt → model-router (FUTURE)</text>
+                  <rect x="70" y="630" width="300" height="80" rx="5" fill="#1a1b26" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="220" y="655" fill="#c0caf5" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" font-weight="bold">route</text>
+                  <text x="220" y="672" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">input: {task_type, complexity, budget}</text>
+                  <text x="220" y="687" fill="#737aa2" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">output: {model, cost_estimate}</text>
+                  <text x="400" y="655" fill="#bb9af7" font-family="Arial, sans-serif" font-size="11" font-weight="bold">Planned Features:</text>
+                  <text x="400" y="675" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">• Multi-model routing (GPT-4, Claude, etc.)</text>
+                  <text x="400" y="692" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">• Cost optimization based on task type</text>
+                  <text x="400" y="709" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">• Budget tracking per user</text>
+                  <text x="400" y="726" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10">• Fallback chains for reliability</text>
+                  <text x="830" y="665" fill="#bb9af7" font-family="Arial, sans-serif" font-size="10">Status: PLANNED (v2.0)</text>
+                  <text x="830" y="685" fill="#bb9af7" font-family="Arial, sans-serif" font-size="10">MVP: Manual model selection</text>
+                  <text x="830" y="705" fill="#bb9af7" font-family="Arial, sans-serif" font-size="10">Future: AI-driven routing</text>
+                  <rect x="50" y="740" width="1100" height="50" rx="10" fill="#16161e" stroke="#565f89" stroke-width="1"/>
+                  <text x="600" y="765" fill="#737aa2" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" font-weight="bold">Protocol Design Notes</text>
+                  <text x="600" y="780" fill="#c0caf5" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">All protocols use structured JSON over stdin/stdout. Error responses include {error: string, code: string, details: object}. Async operations return task IDs for polling.</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>Protocol Details</h3>
@@ -272,7 +505,141 @@
                 </div>
             </div>
             <div class="diagram-body" id="body-03">
-                <img src="03-queue-integration.svg" alt="Queue Integration" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+                  <defs>
+                    <marker id="arrow03" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#565f89"/>
+                    </marker>
+                    <marker id="arrow03blue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#7aa2f7"/>
+                    </marker>
+                    <marker id="arrow03green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#9ece6a"/>
+                    </marker>
+                  </defs>
+                  <text x="600" y="40" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">03 - Queue Integration: State Machine & Data Flow</text>
+                  <text x="600" y="62" text-anchor="middle" fill="#565f89" font-size="12">MVP-A: Whitt internal queue → MVP-B: agent-queue integration</text>
+                  <rect x="30" y="85" width="340" height="680" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="2" stroke-dasharray="6,3"/>
+                  <text x="200" y="110" text-anchor="middle" fill="#bb9af7" font-size="16" font-weight="bold">Whitt (UI/TUI)</text>
+                  <text x="200" y="128" text-anchor="middle" fill="#565f89" font-size="11">DISPLAY LAYER - No execution logic</text>
+                  <rect x="50" y="145" width="300" height="80" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="200" y="170" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Chat UI (React)</text>
+                  <text x="200" y="190" text-anchor="middle" fill="#a9b1d6" font-size="11">User types prompt → Submit button</text>
+                  <text x="200" y="210" text-anchor="middle" fill="#565f89" font-size="10">MVP: Single chat, future: multi-chat tabs</text>
+                  <rect x="50" y="245" width="300" height="100" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="200" y="270" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Queue Panel (React)</text>
+                  <text x="200" y="290" text-anchor="middle" fill="#a9b1d6" font-size="11">VecDeque&lt;ChatTask&gt; visualization</text>
+                  <text x="200" y="308" text-anchor="middle" fill="#a9b1d6" font-size="11">Status: QUEUED | RUNNING | DONE</text>
+                  <text x="200" y="326" text-anchor="middle" fill="#565f89" font-size="10">Smart blocking: navigate away = queue</text>
+                  <text x="200" y="340" text-anchor="middle" fill="#565f89" font-size="10">Navigate back = resume active task</text>
+                  <rect x="50" y="365" width="300" height="80" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="200" y="390" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Results Panel</text>
+                  <text x="200" y="410" text-anchor="middle" fill="#a9b1d6" font-size="11">Workflow output, artifacts, logs</text>
+                  <text x="200" y="428" text-anchor="middle" fill="#565f89" font-size="10">Streamed via stderr JSON events</text>
+                  <rect x="50" y="465" width="300" height="130" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1" stroke-dasharray="4,2"/>
+                  <text x="200" y="488" text-anchor="middle" fill="#e0af68" font-size="13" font-weight="bold">Internal Queue (MVP-A)</text>
+                  <text x="200" y="508" text-anchor="middle" fill="#a9b1d6" font-size="11">VecDeque&lt;ChatTask&gt; in Tauri Rust</text>
+                  <text x="200" y="526" text-anchor="middle" fill="#a9b1d6" font-size="11">JSON persistence: ~/.whitt/queue.json</text>
+                  <text x="200" y="548" text-anchor="middle" fill="#565f89" font-size="10">Simple: FIFO + active task blocking</text>
+                  <text x="200" y="566" text-anchor="middle" fill="#565f89" font-size="10">No priority, no retry, no DLQ</text>
+                  <text x="200" y="584" text-anchor="middle" fill="#e0af68" font-size="10">⚠ REPLACED by agent-queue in MVP-B</text>
+                  <rect x="50" y="615" width="300" height="60" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="200" y="640" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Tauri IPC Bridge</text>
+                  <text x="200" y="658" text-anchor="middle" fill="#a9b1d6" font-size="11">invoke("submit_prompt") / events</text>
+                  <rect x="430" y="85" width="340" height="680" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="600" y="110" text-anchor="middle" fill="#9ece6a" font-size="16" font-weight="bold">agent-queue</text>
+                  <text x="600" y="128" text-anchor="middle" fill="#565f89" font-size="11">QUEUE ORCHESTRATION (MVP-B+)</text>
+                  <rect x="450" y="145" width="300" height="230" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="600" y="168" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Task State Machine</text>
+                  <rect x="470" y="180" width="70" height="24" rx="4" fill="#414868"/>
+                  <text x="505" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">NEW</text>
+                  <rect x="550" y="180" width="70" height="24" rx="4" fill="#414868"/>
+                  <text x="585" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">QUEUED</text>
+                  <rect x="630" y="180" width="70" height="24" rx="4" fill="#414868"/>
+                  <text x="665" y="196" text-anchor="middle" fill="#c0caf5" font-size="10">SCHEDULED</text>
+                  <rect x="470" y="215" width="70" height="24" rx="4" fill="#414868"/>
+                  <text x="505" y="231" text-anchor="middle" fill="#c0caf5" font-size="10">LEASED</text>
+                  <rect x="550" y="215" width="70" height="24" rx="4" fill="#e0af68" stroke="#e0af68" stroke-width="1"/>
+                  <text x="585" y="231" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">RUNNING</text>
+                  <rect x="630" y="215" width="70" height="24" rx="4" fill="#9ece6a"/>
+                  <text x="665" y="231" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">DONE</text>
+                  <rect x="470" y="250" width="70" height="24" rx="4" fill="#f7768e"/>
+                  <text x="505" y="266" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">FAILED</text>
+                  <rect x="550" y="250" width="70" height="24" rx="4" fill="#ff9e64"/>
+                  <text x="585" y="266" text-anchor="middle" fill="#1a1b26" font-size="10" font-weight="bold">DLQ</text>
+                  <rect x="630" y="250" width="70" height="24" rx="4" fill="#bb9af7"/>
+                  <text x="665" y="266" text-anchor="middle" fill="#1a1b26" font-size="10">CANCELED</text>
+                  <rect x="470" y="285" width="70" height="24" rx="4" fill="#565f89"/>
+                  <text x="505" y="301" text-anchor="middle" fill="#c0caf5" font-size="10">EXPIRED</text>
+                  <line x1="540" y1="192" x2="550" y2="192" stroke="#565f89" stroke-width="1" marker-end="url(#arrow03green)"/>
+                  <line x1="620" y1="192" x2="630" y2="192" stroke="#565f89" stroke-width="1" marker-end="url(#arrow03green)"/>
+                  <line x1="600" y1="204" x2="505" y2="215" stroke="#565f89" stroke-width="1" marker-end="url(#arrow03)"/>
+                  <line x1="540" y1="227" x2="550" y2="227" stroke="#565f89" stroke-width="1" marker-end="url(#arrow03green)"/>
+                  <line x1="620" y1="227" x2="630" y2="227" stroke="#565f89" stroke-width="1" marker-end="url(#arrow03green)"/>
+                  <line x1="585" y1="239" x2="505" y2="250" stroke="#f7768e" stroke-width="1" marker-end="url(#arrow03)"/>
+                  <line x1="585" y1="239" x2="585" y2="250" stroke="#ff9e64" stroke-width="1" marker-end="url(#arrow03)"/>
+                  <text x="600" y="330" text-anchor="middle" fill="#a9b1d6" font-size="10">Retry: 3 attempts, exp backoff (1s→2s→4s)</text>
+                  <text x="600" y="345" text-anchor="middle" fill="#a9b1d6" font-size="10">Lease: 60s TTL, 15s heartbeat</text>
+                  <text x="600" y="360" text-anchor="middle" fill="#a9b1d6" font-size="10">Failed 3x → DLQ (manual triage)</text>
+                  <rect x="450" y="395" width="300" height="90" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="600" y="418" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">25 Queue Categories</text>
+                  <text x="600" y="438" text-anchor="middle" fill="#a9b1d6" font-size="10">ASAP, Whenever, Scheduled-Once, Repeat-Cron</text>
+                  <text x="600" y="453" text-anchor="middle" fill="#a9b1d6" font-size="10">Deadline-Driven, Rate-Limited, Quota-Governed</text>
+                  <text x="600" y="468" text-anchor="middle" fill="#a9b1d6" font-size="10">Human-Gated, Sandbox, Experiment, DLQ...</text>
+                  <rect x="450" y="505" width="300" height="70" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="600" y="528" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Scheduler Engine</text>
+                  <text x="600" y="548" text-anchor="middle" fill="#a9b1d6" font-size="10">EDF, WRR, DRR, Fair Share, Work Stealing</text>
+                  <text x="600" y="563" text-anchor="middle" fill="#565f89" font-size="10">SQLite WAL mode persistence</text>
+                  <rect x="450" y="595" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="600" y="618" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Event Hooks (QL-026)</text>
+                  <text x="600" y="638" text-anchor="middle" fill="#a9b1d6" font-size="10">Webhook, file watcher, git hook, timer, email</text>
+                  <rect x="450" y="675" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="600" y="698" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">CLI (Clap 4.x)</text>
+                  <text x="600" y="718" text-anchor="middle" fill="#a9b1d6" font-size="10">enqueue, list, inspect, cancel, retry, drain</text>
+                  <rect x="830" y="85" width="340" height="340" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="1000" y="110" text-anchor="middle" fill="#7aa2f7" font-size="16" font-weight="bold">yaml-to-rust-agentsdk</text>
+                  <text x="1000" y="128" text-anchor="middle" fill="#565f89" font-size="11">EXECUTION ENGINE</text>
+                  <rect x="850" y="145" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="1000" y="168" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">CLI: compile + execute</text>
+                  <text x="1000" y="186" text-anchor="middle" fill="#a9b1d6" font-size="10">JSON stdout/stderr protocol</text>
+                  <rect x="850" y="215" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="1000" y="238" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Compiler Pipeline</text>
+                  <text x="1000" y="256" text-anchor="middle" fill="#a9b1d6" font-size="10">YAML → WorkflowSpec → WorkflowIR</text>
+                  <rect x="850" y="285" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="1000" y="308" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">LLM Backends</text>
+                  <text x="1000" y="326" text-anchor="middle" fill="#a9b1d6" font-size="10">LM Studio, Ollama, llama.cpp</text>
+                  <rect x="850" y="355" width="300" height="55" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="1000" y="378" text-anchor="middle" fill="#c0caf5" font-size="13" font-weight="bold">Tools & Artifacts</text>
+                  <text x="1000" y="396" text-anchor="middle" fill="#a9b1d6" font-size="10">File, Web, Shell, Sub-workflows</text>
+                  <path d="M350 400 L430 400" stroke="#bb9af7" stroke-width="2" marker-end="url(#arrow03)" stroke-dasharray="6,3"/>
+                  <text x="390" y="393" text-anchor="middle" fill="#bb9af7" font-size="10">CLI: enqueue</text>
+                  <path d="M750 320 L830 320" stroke="#9ece6a" stroke-width="2" marker-end="url(#arrow03blue)" stroke-dasharray="6,3"/>
+                  <text x="790" y="313" text-anchor="middle" fill="#9ece6a" font-size="10">CLI: execute</text>
+                  <path d="M750 400 L830 400" stroke="#7aa2f7" stroke-width="2" marker-end="url(#arrow03blue)" stroke-dasharray="6,3"/>
+                  <text x="790" y="393" text-anchor="middle" fill="#565f89" font-size="10">JSON result</text>
+                  <rect x="830" y="445" width="340" height="320" rx="8" fill="#24283b" stroke="#565f89" stroke-width="1" stroke-dasharray="4,2"/>
+                  <text x="1000" y="470" text-anchor="middle" fill="#c0caf5" font-size="14" font-weight="bold">Evolution Timeline</text>
+                  <rect x="850" y="490" width="300" height="60" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1"/>
+                  <text x="1000" y="510" text-anchor="middle" fill="#e0af68" font-size="12" font-weight="bold">MVP-A (Current)</text>
+                  <text x="1000" y="528" text-anchor="middle" fill="#a9b1d6" font-size="10">Whitt internal VecDeque queue</text>
+                  <text x="1000" y="542" text-anchor="middle" fill="#a9b1d6" font-size="10">Direct CLI calls to yaml-to-rust-agentsdk</text>
+                  <rect x="850" y="560" width="300" height="60" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="1000" y="580" text-anchor="middle" fill="#9ece6a" font-size="12" font-weight="bold">MVP-B (After agent-queue code)</text>
+                  <text x="1000" y="598" text-anchor="middle" fill="#a9b1d6" font-size="10">Replace internal queue with agent-queue CLI</text>
+                  <text x="1000" y="612" text-anchor="middle" fill="#a9b1d6" font-size="10">25 queue levels, retry, DLQ, scheduling</text>
+                  <rect x="850" y="630" width="300" height="60" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="1000" y="650" text-anchor="middle" fill="#bb9af7" font-size="12" font-weight="bold">MVP-C (Local network)</text>
+                  <text x="1000" y="668" text-anchor="middle" fill="#a9b1d6" font-size="10">Multi-machine queue orchestration</text>
+                  <text x="1000" y="682" text-anchor="middle" fill="#a9b1d6" font-size="10">Private LAN compute distribution</text>
+                  <rect x="850" y="700" width="300" height="45" rx="6" fill="#1f2335" stroke="#f7768e" stroke-width="1"/>
+                  <text x="1000" y="720" text-anchor="middle" fill="#f7768e" font-size="12" font-weight="bold">Phase D (P2P Future)</text>
+                  <text x="1000" y="735" text-anchor="middle" fill="#a9b1d6" font-size="10">Gamified compute sharing network</text>
+                  <rect x="30" y="695" width="340" height="70" rx="6" fill="#1f2335" stroke="#565f89" stroke-width="1"/>
+                  <text x="200" y="715" text-anchor="middle" fill="#c0caf5" font-size="12" font-weight="bold">Key Insight</text>
+                  <text x="200" y="733" text-anchor="middle" fill="#a9b1d6" font-size="10">Whitt NEVER manages queue state transitions.</text>
+                  <text x="200" y="748" text-anchor="middle" fill="#a9b1d6" font-size="10">It only DISPLAYS state from agent-queue.</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>State Machine</h3>
@@ -297,7 +664,132 @@
                 </div>
             </div>
             <div class="diagram-body" id="body-04">
-                <img src="04-future-p2p.svg" alt="Future P2P Vision" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+                  <defs>
+                    <marker id="arrow04" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#565f89"/>
+                    </marker>
+                    <marker id="arrow04p2p" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#bb9af7"/>
+                    </marker>
+                    <marker id="arrow04gold" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                      <polygon points="0 0, 10 3.5, 0 7" fill="#e0af68"/>
+                    </marker>
+                  </defs>
+                  <text x="600" y="35" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">04 - Future: P2P Gamified Compute Sharing</text>
+                  <text x="600" y="55" text-anchor="middle" fill="#565f89" font-size="12">Phase D Vision • Far Future • Build MVP First</text>
+                  <rect x="30" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="2"/>
+                  <text x="160" y="103" text-anchor="middle" fill="#9ece6a" font-size="14" font-weight="bold">Phase A: Local Machine</text>
+                  <text x="160" y="120" text-anchor="middle" fill="#565f89" font-size="10">CURRENT / MVP-A</text>
+                  <rect x="45" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="160" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">Whitt UI ← yaml-to-rust-agentsdk</text>
+                  <rect x="45" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="160" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">Internal VecDeque queue</text>
+                  <rect x="45" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="160" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Local LLM (Ollama/LM Studio)</text>
+                  <rect x="45" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="160" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">16GB RAM, CPU-only</text>
+                  <rect x="45" y="295" width="230" height="45" rx="4" fill="#9ece6a" opacity="0.15"/>
+                  <text x="160" y="315" text-anchor="middle" fill="#9ece6a" font-size="11" font-weight="bold">✓ Working Now</text>
+                  <text x="160" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Single user, single machine</text>
+                  <rect x="310" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#e0af68" stroke-width="2"/>
+                  <text x="440" y="103" text-anchor="middle" fill="#e0af68" font-size="14" font-weight="bold">Phase B: Queue Orchestration</text>
+                  <text x="440" y="120" text-anchor="middle" fill="#565f89" font-size="10">MVP-B (after agent-queue code)</text>
+                  <rect x="325" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="440" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">Whitt UI ← agent-queue CLI</text>
+                  <rect x="325" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="440" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">25 queue levels, retry, DLQ</text>
+                  <rect x="325" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="440" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">model-router integration</text>
+                  <rect x="325" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="440" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">Smart model scaling</text>
+                  <rect x="325" y="295" width="230" height="45" rx="4" fill="#e0af68" opacity="0.15"/>
+                  <text x="440" y="315" text-anchor="middle" fill="#e0af68" font-size="11" font-weight="bold">🔄 Next Step</text>
+                  <text x="440" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Still single machine</text>
+                  <rect x="590" y="80" width="260" height="280" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="2"/>
+                  <text x="720" y="103" text-anchor="middle" fill="#7aa2f7" font-size="14" font-weight="bold">Phase C: Private LAN</text>
+                  <text x="720" y="120" text-anchor="middle" fill="#565f89" font-size="10">Multi-machine orchestration</text>
+                  <rect x="605" y="135" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="720" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">agent-queue distributes work</text>
+                  <rect x="605" y="175" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="720" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">LAN discovery (mDNS/DHT)</text>
+                  <rect x="605" y="215" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="720" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Work stealing across nodes</text>
+                  <rect x="605" y="255" width="230" height="30" rx="4" fill="#1f2335"/>
+                  <text x="720" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">No cloud, no internet</text>
+                  <rect x="605" y="295" width="230" height="45" rx="4" fill="#7aa2f7" opacity="0.15"/>
+                  <text x="720" y="315" text-anchor="middle" fill="#7aa2f7" font-size="11" font-weight="bold">📋 Planned</text>
+                  <text x="720" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">On-prem private network only</text>
+                  <rect x="870" y="80" width="300" height="280" rx="8" fill="#24283b" stroke="#f7768e" stroke-width="2" stroke-dasharray="6,3"/>
+                  <text x="1020" y="103" text-anchor="middle" fill="#f7768e" font-size="14" font-weight="bold">Phase D: P2P Network</text>
+                  <text x="1020" y="120" text-anchor="middle" fill="#565f89" font-size="10">Gamified compute sharing</text>
+                  <rect x="885" y="135" width="270" height="30" rx="4" fill="#1f2335"/>
+                  <text x="1020" y="155" text-anchor="middle" fill="#c0caf5" font-size="11">DHT-based P2P overlay network</text>
+                  <rect x="885" y="175" width="270" height="30" rx="4" fill="#1f2335"/>
+                  <text x="1020" y="195" text-anchor="middle" fill="#c0caf5" font-size="11">Share workflows → earn credits</text>
+                  <rect x="885" y="215" width="270" height="30" rx="4" fill="#1f2335"/>
+                  <text x="1020" y="235" text-anchor="middle" fill="#c0caf5" font-size="11">Proof-of-satisfaction verification</text>
+                  <rect x="885" y="255" width="270" height="30" rx="4" fill="#1f2335"/>
+                  <text x="1020" y="275" text-anchor="middle" fill="#c0caf5" font-size="11">No idle-time compute required</text>
+                  <rect x="885" y="295" width="270" height="45" rx="4" fill="#f7768e" opacity="0.15"/>
+                  <text x="1020" y="315" text-anchor="middle" fill="#f7768e" font-size="11" font-weight="bold">🚀 Far Future Vision</text>
+                  <text x="1020" y="332" text-anchor="middle" fill="#a9b1d6" font-size="10">Speculative, build A-C first</text>
+                  <path d="M290 220 L310 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow04)"/>
+                  <path d="M570 220 L590 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow04)"/>
+                  <path d="M850 220 L870 220" stroke="#565f89" stroke-width="2" marker-end="url(#arrow04)" stroke-dasharray="4,2"/>
+                  <rect x="30" y="385" width="560" height="390" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="310" y="410" text-anchor="middle" fill="#bb9af7" font-size="16" font-weight="bold">P2P Gamification Mechanics</text>
+                  <rect x="50" y="425" width="250" height="150" rx="6" fill="#1f2335" stroke="#e0af68" stroke-width="1"/>
+                  <text x="175" y="448" text-anchor="middle" fill="#e0af68" font-size="13" font-weight="bold">Credit Economy</text>
+                  <text x="65" y="468" fill="#a9b1d6" font-size="10">• Share workflow → earn credits</text>
+                  <text x="65" y="483" fill="#a9b1d6" font-size="10">• Credits = compute on other nodes</text>
+                  <text x="65" y="498" fill="#a9b1d6" font-size="10">• High-quality = more credits</text>
+                  <text x="65" y="513" fill="#a9b1d6" font-size="10">• No mandatory idle-time sharing</text>
+                  <text x="65" y="528" fill="#a9b1d6" font-size="10">• Rate: very minimal per user</text>
+                  <text x="65" y="543" fill="#a9b1d6" font-size="10">• Popular workflows = free compute</text>
+                  <text x="65" y="558" fill="#a9b1d6" font-size="10">• Efficient workflows earn more</text>
+                  <rect x="320" y="425" width="250" height="150" rx="6" fill="#1f2335" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="445" y="448" text-anchor="middle" fill="#9ece6a" font-size="13" font-weight="bold">Proof of Satisfaction</text>
+                  <text x="335" y="468" fill="#a9b1d6" font-size="10">• Verify output before credits</text>
+                  <text x="335" y="483" fill="#a9b1d6" font-size="10">• Proof of objective achievement</text>
+                  <text x="335" y="498" fill="#a9b1d6" font-size="10">• Reputation scores per node</text>
+                  <text x="335" y="513" fill="#a9b1d6" font-size="10">• Stake-based anti-sybil</text>
+                  <text x="335" y="528" fill="#a9b1d6" font-size="10">• Byzantine fault tolerance</text>
+                  <text x="335" y="543" fill="#a9b1d6" font-size="10">• Audit trail on-chain (optional)</text>
+                  <text x="335" y="558" fill="#a9b1d6" font-size="10">• Automatic quality scoring</text>
+                  <rect x="50" y="590" width="520" height="80" rx="6" fill="#1f2335" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="310" y="613" text-anchor="middle" fill="#7aa2f7" font-size="13" font-weight="bold">Workflow Sharing Model</text>
+                  <text x="65" y="633" fill="#a9b1d6" font-size="10">1. User publishes workflow to DHT network (YAML + metadata)</text>
+                  <text x="65" y="648" fill="#a9b1d6" font-size="10">2. Other users execute workflow on their hardware, verify satisfaction</text>
+                  <text x="65" y="663" fill="#a9b1d6" font-size="10">3. Publisher earns compute credits proportional to verified satisfaction</text>
+                  <rect x="50" y="685" width="520" height="75" rx="6" fill="#1f2335" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="310" y="708" text-anchor="middle" fill="#bb9af7" font-size="13" font-weight="bold">Incentive Alignment</text>
+                  <text x="65" y="728" fill="#a9b1d6" font-size="10">• Efficient workflows = more users = more credits (positive feedback loop)</text>
+                  <text x="65" y="743" fill="#a9b1d6" font-size="10">• Bloated/slow workflows = fewer users = fewer credits (natural selection)</text>
+                  <rect x="610" y="385" width="560" height="390" rx="8" fill="#24283b" stroke="#f7768e" stroke-width="1"/>
+                  <text x="890" y="410" text-anchor="middle" fill="#f7768e" font-size="16" font-weight="bold">Non-Goals & Constraints</text>
+                  <rect x="630" y="425" width="520" height="180" rx="6" fill="#1f2335"/>
+                  <text x="890" y="448" text-anchor="middle" fill="#f7768e" font-size="13" font-weight="bold">❌ Will NOT Support</text>
+                  <text x="645" y="468" fill="#f7768e" font-size="10">• General HTTP/cloud LLM providers (OpenAI, Anthropic, etc.)</text>
+                  <text x="645" y="483" fill="#f7768e" font-size="10">• Internet-routable API endpoints</text>
+                  <text x="645" y="498" fill="#f7768e" font-size="10">• Cloud-hosted model serving</text>
+                  <text x="645" y="513" fill="#f7768e" font-size="10">• Centralized servers or brokers</text>
+                  <text x="645" y="528" fill="#f7768e" font-size="10">• Cryptocurrency/token economics (no crypto)</text>
+                  <text x="645" y="543" fill="#f7768e" font-size="10">• Mandatory compute contribution during idle</text>
+                  <text x="645" y="558" fill="#f7768e" font-size="10">• User data monetization</text>
+                  <text x="645" y="573" fill="#f7768e" font-size="10">• Vendor lock-in to any model provider</text>
+                  <text x="645" y="588" fill="#f7768e" font-size="10">• Remote execution without explicit user consent</text>
+                  <rect x="630" y="620" width="520" height="140" rx="6" fill="#1f2335"/>
+                  <text x="890" y="643" text-anchor="middle" fill="#9ece6a" font-size="13" font-weight="bold">✅ Design Principles</text>
+                  <text x="645" y="663" fill="#a9b1d6" font-size="10">• Local-first: everything works offline on a single machine</text>
+                  <text x="645" y="678" fill="#a9b1d6" font-size="10">• Privacy-first: no data leaves local network</text>
+                  <text x="645" y="693" fill="#a9b1d6" font-size="10">• On-prem only: private LAN, no public internet</text>
+                  <text x="645" y="708" fill="#a9b1d6" font-size="10">• User consent: explicit approval for any network activity</text>
+                  <text x="645" y="723" fill="#a9b1d6" font-size="10">• Efficiency incentive: better workflows = more compute</text>
+                  <text x="645" y="738" fill="#a9b1d6" font-size="10">• Graceful degradation: works at every phase independently</text>
+                  <text x="645" y="753" fill="#a9b1d6" font-size="10">• 16GB DDR4 MVP target: optimize later, not now</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>P2P Vision</h3>
@@ -322,7 +814,170 @@
                 </div>
             </div>
             <div class="diagram-body" id="body-05">
-                <img src="05-scope-boundaries.svg" alt="Scope Boundaries" style="max-width:100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                  <rect width="1200" height="800" fill="#1a1b26" rx="8"/>
+                  <text x="600" y="35" text-anchor="middle" fill="#bb9af7" font-size="20" font-weight="bold">05 - Feature Ownership / Scope Boundaries</text>
+                  <text x="600" y="55" text-anchor="middle" fill="#565f89" font-size="12">Each feature has exactly ONE owner • Zero ambiguity • Clear boundaries</text>
+                  <rect x="30" y="75" width="270" height="35" rx="6" fill="#7aa2f7"/>
+                  <text x="165" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">yaml-to-rust-agentsdk</text>
+                  <rect x="315" y="75" width="270" height="35" rx="6" fill="#9ece6a"/>
+                  <text x="450" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">agent-queue</text>
+                  <rect x="600" y="75" width="270" height="35" rx="6" fill="#bb9af7"/>
+                  <text x="735" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">Whitt (UI/TUI)</text>
+                  <rect x="885" y="75" width="285" height="35" rx="6" fill="#e0af68"/>
+                  <text x="1027" y="97" text-anchor="middle" fill="#1a1b26" font-size="13" font-weight="bold">model-router</text>
+                  <rect x="30" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#7aa2f7" stroke-width="1"/>
+                  <text x="45" y="142" fill="#7aa2f7" font-size="11" font-weight="bold">IN SCOPE:</text>
+                  <text x="45" y="160" fill="#c0caf5" font-size="10">✓ YAML schema parsing</text>
+                  <text x="45" y="176" fill="#c0caf5" font-size="10">✓ Variable interpolation (${{ }})</text>
+                  <text x="45" y="192" fill="#c0caf5" font-size="10">✓ WorkflowIR compiler</text>
+                  <text x="45" y="208" fill="#c0caf5" font-size="10">✓ DAG validation</text>
+                  <text x="45" y="224" fill="#c0caf5" font-size="10">✓ Step executor (seq/par/hybrid)</text>
+                  <text x="45" y="240" fill="#c0caf5" font-size="10">✓ LLM backend trait</text>
+                  <text x="45" y="256" fill="#c0caf5" font-size="10">✓ LM Studio / Ollama / llama.cpp</text>
+                  <text x="45" y="272" fill="#c0caf5" font-size="10">✓ Tool framework (file/web/shell)</text>
+                  <text x="45" y="288" fill="#c0caf5" font-size="10">✓ Sub-workflow execution</text>
+                  <text x="45" y="304" fill="#c0caf5" font-size="10">✓ Code generation mode</text>
+                  <text x="45" y="320" fill="#c0caf5" font-size="10">✓ Docker packaging</text>
+                  <text x="45" y="336" fill="#c0caf5" font-size="10">✓ RAG integration</text>
+                  <text x="45" y="352" fill="#c0caf5" font-size="10">✓ Checkpointing / resume</text>
+                  <text x="45" y="368" fill="#c0caf5" font-size="10">✓ Local file access (sandboxed)</text>
+                  <text x="45" y="384" fill="#c0caf5" font-size="10">✓ CLI: compile, execute, validate</text>
+                  <text x="45" y="400" fill="#c0caf5" font-size="10">✓ JSON stdout/stderr protocol</text>
+                  <text x="45" y="416" fill="#c0caf5" font-size="10">✓ Quality loops (verify-repair)</text>
+                  <text x="45" y="432" fill="#c0caf5" font-size="10">✓ Memory & search (local)</text>
+                  <text x="45" y="448" fill="#c0caf5" font-size="10">✓ Metrics collection</text>
+                  <text x="45" y="464" fill="#c0caf5" font-size="10">✓ Self-improvement loop</text>
+                  <text x="45" y="490" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+                  <text x="45" y="508" fill="#f7768e" font-size="10">✗ UI / TUI / frontend</text>
+                  <text x="45" y="524" fill="#f7768e" font-size="10">✗ Queue scheduling</text>
+                  <text x="45" y="540" fill="#f7768e" font-size="10">✗ Task state management</text>
+                  <text x="45" y="556" fill="#f7768e" font-size="10">✗ Retry / DLQ logic</text>
+                  <text x="45" y="572" fill="#f7768e" font-size="10">✗ Automation / cron</text>
+                  <text x="45" y="588" fill="#f7768e" font-size="10">✗ Autonomy / human override</text>
+                  <text x="45" y="604" fill="#f7768e" font-size="10">✗ P2P / networking</text>
+                  <text x="45" y="620" fill="#f7768e" font-size="10">✗ Model selection/routing</text>
+                  <text x="45" y="636" fill="#f7768e" font-size="10">✗ HTTP REST/WebSocket server</text>
+                  <text x="45" y="652" fill="#f7768e" font-size="10">✗ Cloud provider integrations</text>
+                  <rect x="40" y="665" width="250" height="95" rx="4" fill="#7aa2f7" opacity="0.1"/>
+                  <text x="165" y="685" text-anchor="middle" fill="#7aa2f7" font-size="11" font-weight="bold">Communication:</text>
+                  <text x="45" y="703" fill="#a9b1d6" font-size="10">CLI subprocess (stdin/stdout JSON)</text>
+                  <text x="45" y="719" fill="#a9b1d6" font-size="10">Post-MVP: Rust library API</text>
+                  <text x="45" y="735" fill="#a9b1d6" font-size="10">(Cargo.toml dependency)</text>
+                  <text x="45" y="751" fill="#a9b1d6" font-size="10">NO HTTP, NO gRPC</text>
+                  <rect x="315" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#9ece6a" stroke-width="1"/>
+                  <text x="330" y="142" fill="#9ece6a" font-size="11" font-weight="bold">IN SCOPE:</text>
+                  <text x="330" y="160" fill="#c0caf5" font-size="10">✓ 25 queue categories</text>
+                  <text x="330" y="176" fill="#c0caf5" font-size="10">✓ 10-state task machine</text>
+                  <text x="330" y="192" fill="#c0caf5" font-size="10">✓ Lease protocol (60s TTL)</text>
+                  <text x="330" y="208" fill="#c0caf5" font-size="10">✓ Retry: exp backoff, max 3</text>
+                  <text x="330" y="224" fill="#c0caf5" font-size="10">✓ Dead Letter Queue (DLQ)</text>
+                  <text x="330" y="240" fill="#c0caf5" font-size="10">✓ EDF / WRR / DRR scheduling</text>
+                  <text x="330" y="256" fill="#c0caf5" font-size="10">✓ Fair share + work stealing</text>
+                  <text x="330" y="272" fill="#c0caf5" font-size="10">✓ Event hooks (QL-026)</text>
+                  <text x="330" y="288" fill="#c0caf5" font-size="10">✓ Audit logging</text>
+                  <text x="330" y="304" fill="#c0caf5" font-size="10">✓ Backpressure management</text>
+                  <text x="330" y="320" fill="#c0caf5" font-size="10">✓ Multi-tenancy / quotas</text>
+                  <text x="330" y="336" fill="#c0caf5" font-size="10">✓ CLI: enqueue/list/inspect/cancel</text>
+                  <text x="330" y="352" fill="#c0caf5" font-size="10">✓ SQLite WAL persistence</text>
+                  <text x="330" y="368" fill="#c0caf5" font-size="10">✓ Delegates execution to SDK</text>
+                  <text x="330" y="384" fill="#c0caf5" font-size="10">✓ Future: LAN distribution</text>
+                  <text x="330" y="400" fill="#c0caf5" font-size="10">✓ Future: P2P orchestration</text>
+                  <text x="330" y="426" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+                  <text x="330" y="444" fill="#f7768e" font-size="10">✗ Workflow execution</text>
+                  <text x="330" y="460" fill="#f7768e" font-size="10">✗ LLM calls / tool invocation</text>
+                  <text x="330" y="476" fill="#f7768e" font-size="10">✗ UI / TUI / frontend</text>
+                  <text x="330" y="492" fill="#f7768e" font-size="10">✗ Model selection</text>
+                  <text x="330" y="508" fill="#f7768e" font-size="10">✗ Prompt rendering</text>
+                  <text x="330" y="524" fill="#f7768e" font-size="10">✗ YAML schema handling</text>
+                  <text x="330" y="540" fill="#f7768e" font-size="10">✗ Code generation</text>
+                  <rect x="325" y="555" width="250" height="205" rx="4" fill="#9ece6a" opacity="0.1"/>
+                  <text x="450" y="575" text-anchor="middle" fill="#9ece6a" font-size="11" font-weight="bold">Current Status:</text>
+                  <text x="330" y="593" fill="#e0af68" font-size="10">⚠ PLANNING ONLY - NO CODE</text>
+                  <text x="330" y="611" fill="#a9b1d6" font-size="10">10,292+ lines of documentation</text>
+                  <text x="330" y="629" fill="#a9b1d6" font-size="10">48 P0 requirements defined</text>
+                  <text x="330" y="647" fill="#a9b1d6" font-size="10">178 hours estimated</text>
+                  <text x="330" y="665" fill="#a9b1d6" font-size="10">156 tests planned</text>
+                  <text x="330" y="683" fill="#a9b1d6" font-size="10">Single-process Tokio runtime</text>
+                  <text x="330" y="701" fill="#a9b1d6" font-size="10">SQLite WAL mode</text>
+                  <text x="330" y="719" fill="#a9b1d6" font-size="10">Whitt uses internal queue until</text>
+                  <text x="330" y="737" fill="#a9b1d6" font-size="10">agent-queue has working code</text>
+                  <text x="330" y="751" fill="#a9b1d6" font-size="10">(MVP-A → MVP-B transition)</text>
+                  <rect x="600" y="120" width="270" height="650" rx="8" fill="#24283b" stroke="#bb9af7" stroke-width="1"/>
+                  <text x="615" y="142" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (MVP-A):</text>
+                  <text x="615" y="160" fill="#c0caf5" font-size="10">✓ Tauri desktop shell</text>
+                  <text x="615" y="176" fill="#c0caf5" font-size="10">✓ React chat UI</text>
+                  <text x="615" y="192" fill="#c0caf5" font-size="10">✓ Internal VecDeque queue</text>
+                  <text x="615" y="208" fill="#c0caf5" font-size="10">✓ Smart blocking (active task)</text>
+                  <text x="615" y="224" fill="#c0caf5" font-size="10">✓ Queue panel (sent order list)</text>
+                  <text x="615" y="240" fill="#c0caf5" font-size="10">✓ Results display panel</text>
+                  <text x="615" y="256" fill="#c0caf5" font-size="10">✓ Calls SDK CLI (compile+execute)</text>
+                  <text x="615" y="272" fill="#c0caf5" font-size="10">✓ 16GB DDR4 target</text>
+                  <text x="615" y="288" fill="#c0caf5" font-size="10">✓ CPU-only support</text>
+                  <text x="615" y="314" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (MVP-B+):</text>
+                  <text x="615" y="332" fill="#c0caf5" font-size="10">✓ agent-queue CLI integration</text>
+                  <text x="615" y="348" fill="#c0caf5" font-size="10">✓ Queue state visualization</text>
+                  <text x="615" y="364" fill="#c0caf5" font-size="10">✓ Settings panel (model config)</text>
+                  <text x="615" y="380" fill="#c0caf5" font-size="10">✓ First-run wizard</text>
+                  <text x="615" y="396" fill="#c0caf5" font-size="10">✓ Multi-chat tabs</text>
+                  <text x="615" y="412" fill="#c0caf5" font-size="10">✓ Ratatui TUI mode</text>
+                  <text x="615" y="428" fill="#c0caf5" font-size="10">✓ Artifact browser</text>
+                  <text x="615" y="454" fill="#bb9af7" font-size="11" font-weight="bold">IN SCOPE (Phase C/D):</text>
+                  <text x="615" y="472" fill="#c0caf5" font-size="10">✓ LAN node management UI</text>
+                  <text x="615" y="488" fill="#c0caf5" font-size="10">✓ P2P workflow marketplace</text>
+                  <text x="615" y="504" fill="#c0caf5" font-size="10">✓ Credit dashboard</text>
+                  <text x="615" y="520" fill="#c0caf5" font-size="10">✓ Reputation display</text>
+                  <text x="615" y="546" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+                  <text x="615" y="564" fill="#f7768e" font-size="10">✗ Workflow execution logic</text>
+                  <text x="615" y="580" fill="#f7768e" font-size="10">✗ Queue state transitions</text>
+                  <text x="615" y="596" fill="#f7768e" font-size="10">✗ LLM backend management</text>
+                  <text x="615" y="612" fill="#f7768e" font-size="10">✗ Model routing decisions</text>
+                  <text x="615" y="628" fill="#f7768e" font-size="10">✗ YAML compilation</text>
+                  <rect x="610" y="645" width="250" height="115" rx="4" fill="#bb9af7" opacity="0.1"/>
+                  <text x="735" y="665" text-anchor="middle" fill="#bb9af7" font-size="11" font-weight="bold">Communication:</text>
+                  <text x="615" y="683" fill="#a9b1d6" font-size="10">Tauri IPC (invoke + events)</text>
+                  <text x="615" y="699" fill="#a9b1d6" font-size="10">CLI subprocess to SDK + queue</text>
+                  <text x="615" y="715" fill="#a9b1d6" font-size="10">JSON event stream (stderr)</text>
+                  <text x="615" y="731" fill="#a9b1d6" font-size="10">NO HTTP server in Whitt</text>
+                  <text x="615" y="747" fill="#a9b1d6" font-size="10">Whitt DISPLAYS, never EXECUTES</text>
+                  <rect x="885" y="120" width="285" height="650" rx="8" fill="#24283b" stroke="#e0af68" stroke-width="1"/>
+                  <text x="900" y="142" fill="#e0af68" font-size="11" font-weight="bold">IN SCOPE:</text>
+                  <text x="900" y="160" fill="#c0caf5" font-size="10">✓ Two-layer routing</text>
+                  <text x="900" y="176" fill="#c0caf5" font-size="10">  (task classification + ranking)</text>
+                  <text x="900" y="192" fill="#c0caf5" font-size="10">✓ Hybrid retrieval (dense+sparse)</text>
+                  <text x="900" y="208" fill="#c0caf5" font-size="10">✓ Similarity-aware statistics</text>
+                  <text x="900" y="224" fill="#c0caf5" font-size="10">✓ Adaptive ranking (3 phases)</text>
+                  <text x="900" y="240" fill="#c0caf5" font-size="10">✓ Specialization-based retry</text>
+                  <text x="900" y="256" fill="#c0caf5" font-size="10">✓ Multi-stage verification</text>
+                  <text x="900" y="272" fill="#c0caf5" font-size="10">✓ Model catalog (HW tiers)</text>
+                  <text x="900" y="288" fill="#c0caf5" font-size="10">✓ Workflow compensation snippets</text>
+                  <text x="900" y="304" fill="#c0caf5" font-size="10">✓ Auto scale up/down by resources</text>
+                  <text x="900" y="330" fill="#f7768e" font-size="11" font-weight="bold">OUT OF SCOPE:</text>
+                  <text x="900" y="348" fill="#f7768e" font-size="10">✗ Workflow execution</text>
+                  <text x="900" y="364" fill="#f7768e" font-size="10">✗ UI / TUI</text>
+                  <text x="900" y="380" fill="#f7768e" font-size="10">✗ Queue management</text>
+                  <text x="900" y="396" fill="#f7768e" font-size="10">✗ LLM inference (delegates to</text>
+                  <text x="900" y="412" fill="#f7768e" font-size="10">   Ollama/LM Studio/llama.cpp)</text>
+                  <text x="900" y="428" fill="#f7768e" font-size="10">✗ Distributed routing</text>
+                  <text x="900" y="444" fill="#f7768e" font-size="10">✗ GPU acceleration</text>
+                  <rect x="895" y="460" width="265" height="300" rx="4" fill="#e0af68" opacity="0.1"/>
+                  <text x="1027" y="480" text-anchor="middle" fill="#e0af68" font-size="11" font-weight="bold">Current Status:</text>
+                  <text x="900" y="498" fill="#e0af68" font-size="10">⚠ DESIGN DOCS ONLY - NO CODE</text>
+                  <text x="900" y="516" fill="#a9b1d6" font-size="10">3,900+ lines of documentation</text>
+                  <text x="900" y="534" fill="#a9b1d6" font-size="10">Moved to ~/code/model-router/</text>
+                  <text x="900" y="552" fill="#a9b1d6" font-size="10">Tech: Python 3.11+</text>
+                  <text x="900" y="570" fill="#a9b1d6" font-size="10">FastEmbed (ONNX, 384-dim)</text>
+                  <text x="900" y="588" fill="#a9b1d6" font-size="10">SQLite + sqlite-vec + FTS5</text>
+                  <text x="900" y="606" fill="#a9b1d6" font-size="10">~380-400MB memory budget</text>
+                  <text x="900" y="624" fill="#a9b1d6" font-size="10">Phase 1: TinyRouter (wk 1-4)</text>
+                  <text x="900" y="642" fill="#a9b1d6" font-size="10">Phase 2: LearnedRouter (wk 5-12)</text>
+                  <text x="900" y="660" fill="#a9b1d6" font-size="10">Phase 3: AdaptiveRouter (wk 13-24)</text>
+                  <text x="900" y="684" fill="#a9b1d6" font-size="10">SDK calls model-router CLI to</text>
+                  <text x="900" y="702" fill="#a9b1d6" font-size="10">select optimal model before</text>
+                  <text x="900" y="720" fill="#a9b1d6" font-size="10">execution. Compensates with</text>
+                  <text x="900" y="738" fill="#a9b1d6" font-size="10">smaller-model sub-workflow</text>
+                  <text x="900" y="756" fill="#a9b1d6" font-size="10">snippets when needed.</text>
+                </svg>
             </div>
             <div class="notes">
                 <h3>Ownership Rules</h3>
@@ -348,21 +1003,21 @@
         }
 
         function zoom(id, delta) {
-            const img = document.querySelector('#body-' + id + ' img');
-            if (!img) return;
+            const svg = document.querySelector('#body-' + id + ' svg');
+            if (!svg) return;
             const current = zoomLevels[id] || 1;
             const next = Math.max(0.3, Math.min(3, current + delta));
             zoomLevels[id] = next;
-            img.style.transform = `scale(${next})`;
-            img.style.transformOrigin = 'top center';
+            svg.style.transform = 'scale(' + next + ')';
+            svg.style.transformOrigin = 'top center';
             document.getElementById('zoom-' + id).textContent = Math.round(next * 100) + '%';
         }
 
         function resetZoom(id) {
-            const img = document.querySelector('#body-' + id + ' img');
-            if (!img) return;
+            const svg = document.querySelector('#body-' + id + ' svg');
+            if (!svg) return;
             zoomLevels[id] = 1;
-            img.style.transform = 'scale(1)';
+            svg.style.transform = 'scale(1)';
             document.getElementById('zoom-' + id).textContent = '100%';
         }
 
