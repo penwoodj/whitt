@@ -3,7 +3,8 @@
 > The **model routing design repo**. Documentation-only (no code). Defines a two-layer routing system (row selection + model ranking) with hybrid retrieval, designed to fit in ~380-400 MB on a 4 GB system. Targets a 3-phase rollout: TinyRouter → LearnedRouter → AdaptiveRouter. Phase C of the umbrella roadmap integrates this.
 
 - **Repository:** `/home/jon/code/whitt-model-router`
-- **Synthesized from:** `STATUS.md` (232 lines), `DECISIONS.md` (1,412 lines — TOC + first decisions), `inspiration-reports/` file listing, `final-decisions/` (empty), git log.
+- **Synthesized from:** `STATUS.md` (232 lines, root directory), `DECISIONS.md` (1,412 lines, complete with TOC), `inspiration-reports/` file listing, `final-decisions/` (empty), git log.
+- **Last reviewed:** 2026-08-08
 
 ---
 
@@ -64,7 +65,7 @@
 3. **Cold-start UX.** Before LearnedRouter has data, recommendations are heuristic. How does the UI communicate "low confidence"?
 4. **Penalty visibility.** "Active hardware penalty" is a real-time concept — needs live data feed.
 5. **Multi-model parallel execution.** If two models run in parallel for verification, how are both shown? Side-by-side diff?
-6. **Cost ledger integration** with Phase D P2P credit system. Not designed.
+6. **Cost ledger integration** with Phase D P2P credit system — out of scope for this repo.
 7. **Model discovery.** Where does the UI get the model catalog (local GGUFs + HuggingFace + swarm peers)? Not in scope here; needs integration spec.
 
 ## Implications for the Graph UI Vision

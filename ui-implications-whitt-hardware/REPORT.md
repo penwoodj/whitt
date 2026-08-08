@@ -3,7 +3,7 @@
 > A **single-file documentation repo** specifying how to port `whitt-execution-engine` to an ARM64 CPU-only Orange Pi Zero 3W SBC. No code, no scripts. The UI implications are all **constraints** (headless, low RAM, no GPU, cross-compiled) and **role** (Tier A/B micro-orchestrator in a future swarm).
 
 - **Repository:** `/home/jon/code/whitt-hardware`
-- **Synthesized from:** `opi-zero3w-build-prompt.md` (595 lines, ~24 KB), git log (none — no commits yet).
+- **Synthesized from:** `opi-zero3w-build-prompt.md` (595 lines, ~24 KB), git log (none — no commits yet as of 2026-08-08).
 
 ---
 
@@ -30,7 +30,7 @@
 
 The board is **headless**. UI must therefore be **remote**:
 
-1. **No local UI on the SBC.** Tauri desktop app cannot run here. The TUI (Ratatui) twin mentioned in `whitt/README.md` cannot run here either — no display server.
+1. **No local UI on the SBC.** Tauri desktop app cannot run here. A future TUI (Ratatui) twin — referenced in umbrella vision docs (`opencode/plans/*.md`), not the README — also cannot run here; no display server.
 2. **The SBC is a managed node**, not a UI host. UI surfaces needed:
    - **Discovery / pairing** — find SBCs on LAN.
    - **Deploy** — push cross-compiled binary (`scp target/aarch64-unknown-linux-gnu/release/whitt user@opi-zero3w:~/`).
@@ -56,7 +56,7 @@ The board is **headless**. UI must therefore be **remote**:
 ## Current State (code vs docs)
 
 - **Code:** None. Documentation-only.
-- **Repo has no commits yet.** `"fatal: your current branch 'main' does not have any commits yet."`
+- **Repo has no commits yet** (as of 2026-08-08). `"fatal: your current branch 'main' does not have any commits yet."`
 - **Single file:** `opi-zero3w-build-prompt.md` (595 lines).
 - **Implementation:** Not started. The prompt is a spec for changes that would land in `~/code/whitt-execution-engine/`, not in this repo.
 

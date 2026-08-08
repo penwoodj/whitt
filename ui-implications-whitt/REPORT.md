@@ -68,7 +68,8 @@
 - **Code:** No Tauri scaffold, no React source, no Cargo workspace. Repo is **documentation-only**.
 - **Docs:** Heavy. `opencode/plans/` has 13 plan docs, `inspiration-reports/yaml-to-rust-agentsdk/` has a 9-task implementation plan, `opencode/docs/SHARED-DOCS.md` indexes canonical source-of-truth in the renamed `whitt-execution-engine`.
 - **Branch:** `initial-creation`, pushed to `origin=https://github.com/penwoodj/whitt.git`.
-- **Phase:** Phase 0 prereqs (8-12 wk) on the execution engine have not started. MVP-A (6-8 wk) blocked on that.
+- **Phase:** Phase 0 prereqs (8-12 wk) on the execution engine are **in progress** (active meta-workflow generator development; see `whitt-execution-engine/AGENTS.md`). MVP-A (6-8 wk) follows once contracts stabilize.
+- **Last reviewed:** 2026-08-08
 
 ## Gaps & Open Questions for UI
 
@@ -81,4 +82,4 @@
 
 ## Implications for the Graph UI Vision
 
-The umbrella repo is *where* the proposed **voice + mouse infinite-canvas fish-eye graph UI** would live. The current MVP scope (chat + queue panel + settings) is a strict subset of that vision. The graph UI is best treated as **Phase E+** — it requires all four sibling repos to ship their MVP contracts first, then reframes the chat/queue/breadcrumbs surfaces as nodes on a single zoomable canvas. See `../vision-graph-ui/README.md`.
+The umbrella repo is *where* the proposed **voice + mouse infinite-canvas fish-eye graph UI** would live. The current MVP scope (chat + queue panel + settings) is a strict subset of that vision. The graph UI would be **Phase E+** (PHASE-TIMELINE.md currently ends at Phase D; Phase E is not yet documented there) — it requires all four sibling repos to ship their MVP contracts first, then reframes the chat/queue/breadcrumbs surfaces as nodes on a single zoomable canvas. See [`../vision-graph-ui/README.md`](../vision-graph-ui/README.md).

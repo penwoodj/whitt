@@ -4,24 +4,25 @@
 
 - **Repository:** `/home/jon/code/whitt-execution-engine`
 - **Synthesized from:** `README.md`, `Cargo.toml`, `config.yml`, `docs/contributing/hooks-reference.md`, `docs/schema/hooks-semantics.md`, `docs/schema/unified-workflow-schema.yml`, `docs/requirements/index.md`, `src/bin/whitt.rs`, `src/workflow/hooks/` module map, `configs/models/`, git log (last 30 commits).
+- **Last reviewed:** 2026-08-08
 
 ---
 
 ## What This Project IS (in 3 lines)
 
 1. **YAML-driven workflow orchestration** with LLM agents, lifecycle hooks, and parallel execution (`tokio::spawn` + `Arc<Mutex<HookEngine>>`).
-2. **The actual "engine"** behind every whitt workflow — the only repo with working Rust code today (637 passing tests, 0 failures).
+2. **The actual "engine"** behind every whitt workflow — the only repo with working Rust code today (758 passing tests, 0 failures; verified `cargo test --all-targets` 2026-08-08).
 3. **Schema-driven** — every workflow validated against `docs/schema/unified-workflow-schema.yml`. Backend: llama.cpp + Vulkan in Docker (NOT LM Studio, NOT Ollama).
 
 ## What the UI Must Consume / Display
 
 | Capability | Source | UI Surface |
 |---|---|---|
-| **13 CLI commands:** chat, model {list,load,unload,swap}, server {start,stop,status,gpu,logs}, agent, benchmark, workflow, download | `README.md` L30-48 | Command surface / hotkeys |
+| **14 CLI commands:** chat, model {list,load,unload,swap}, server {start,stop,status,gpu,logs}, agent, benchmark, workflow, download | `README.md` L30-48 | Command surface / hotkeys |
 | **YAML workflow validation** against unified schema | `docs/schema/unified-workflow-schema.yml` | Inline linting in workflow editor |
 | **10 lifecycle hook triggers:** before_step_starts, during_step_streaming*, after_step_succeeds, after_step_fails, after_all_retries_exhausted, after_step_starts, before_gwt_evaluates*, after_gwt_evaluates*, on_requires_failed, after_loop_iteration_fails (* = partial) | `hooks-reference.md` L20-189 | Event timeline / activity feed |
 | **12 hook actions:** log, save_to, append_to, route_to, bookmark, notify, fail, shell, skip_step, skip_remaining, gwt, iterate_values | `hooks-reference.md` L192-405 | Hook editor / debug view |
-| **50+ template variables** across 11 scopes (workflow, model, provider, step, error, retry, loop, checkpoint, sub-workflow, tool, file, generative) | `hooks-semantics.md` L834-920 | Variable picker / autocomplete |
+| **51 template variables** across 12 scopes (workflow, model, provider, step, error, retry, loop, checkpoint, sub-workflow, tool, file operation, generative) | `docs/schema/hooks-semantics.md` L834-920 | Variable picker / autocomplete |
 | **8 config sections:** model, context, hardware, sampling, server, cache, features, vulkan | `config.yml` L1-48 | Settings form |
 | **Model lifecycle:** GGUF format, list/load/unload/swap/download (HuggingFace) | `configs/models/*.yml`, README | Model manager panel |
 | **ReAct agent** implementation | `src/agent/` | Agent inspector |
@@ -48,14 +49,14 @@ YAML Workflow → Validation → Step Execution → Hooks → Output
 - JSONL for notifications
 - Structured context JSON for all hook triggers
 
-**Implementation status** (`hooks-reference.md` L449-480):
-- Triggers: 8/10 fully wired; 2/10 partial (GWT logging only); 1/10 not wired (`during_step_streaming`).
+**Implementation status** (`docs/contributing/hooks-reference.md` L449-480):
+- Triggers: source enumerates 8 fully wired + 2 partial (GWT logging only) + 1 not wired (`during_step_streaming`) = 11, vs the stated 10 total — the source doc's own tally is internally inconsistent. Treat the *list* as authoritative, not the count.
 - Actions: 12/12 unit + integration verified; 6/12 live-verified (log, save_to, bookmark, shell, skip_step, skip_remaining, gwt).
 - NOT live-verified: append_to, route_to, notify, fail, iterate_values.
 
 ## Current State (code vs docs)
 
-- **Code:** Working Rust. 3 binaries (`whitt`, `poc_client`, `model_chain`). Library crate with features `client`, `sqlite`, `clipboard`. 637 passing tests.
+- **Code:** Working Rust. 3 binaries (`whitt`, `poc_client`, `model_chain`). Library crate with features `client`, `sqlite`, `clipboard`. **758 passing tests** (verified `cargo test --all-targets` 2026-08-08; README claims 637 — README is stale).
 - **Recent activity:** Active development on meta-v6 (workflow generator), model benchmarking, stress testing, safety rules.
 - **Planned (not built):** Code generation / compilation mode, OpenAI + Anthropic backends, advanced scheduling, distributed execution.
 - **This is the most mature repo in the ecosystem.** Phase 0 prereqs (8-12 wk) for the umbrella whitt MVP block on this.

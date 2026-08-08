@@ -76,7 +76,7 @@ Whitt's UI becomes a single **infinite zoomable canvas** where every workflow is
 
 ## Relationship to Current Plans
 
-This vision is **Phase E+** in the umbrella roadmap (`whitt/opencode/plans/PHASE-TIMELINE.md`). It depends on:
+This vision would be **Phase E+** in the umbrella roadmap (`whitt/opencode/plans/PHASE-TIMELINE.md` currently ends at Phase D; Phase E is not yet documented there). It depends on:
 
 - ✅ Documented: ADR-0004 multi-zoom + projection-layer principles.
 - ⏳ Phase 0 (8-12 wk): execution-engine prereqs.
@@ -84,28 +84,28 @@ This vision is **Phase E+** in the umbrella roadmap (`whitt/opencode/plans/PHASE
 - ⏳ Phase B (4-6 wk): multi-machine + TUI.
 - ⏳ Phase C (4-6 wk): model-router integration.
 - ⏳ Phase D (8-12 wk): swarm + marketplace.
-- 🎯 **Phase E (this vision): graph UI unification.** Estimated 12-16 wk after Phase D, runnable in parallel with Phase D once contracts stabilize.
+- 🎯 **Phase E (this vision): graph UI unification.** Rough estimate: 12-16 wk after Phase D (not formally planned; runnable in parallel with Phase D once contracts stabilize).
 
 The graph UI is **not a replacement** for MVP-A. It is the **destination** that MVP-A's surfaces evolve toward. Every MVP-A surface (chat panel, queue panel, editor, monitor, metrics, settings) should be designed so it can later become a node inspector in the graph.
 
 ## Open Design Questions (To Resolve Later)
 
 1. **Voice stack.** Local Whisper (CPU-only, fits the ecosystem) vs cloud speech-to-text (violates local-first). Local preferred.
-2. **Canvas rendering.** React Flow (per ADR-0004) handles ~10k nodes; the infinite-canvas vision may need WebGL (e.g., `pixi.js`, `regl`) for 100k+ nodes. Performance ceiling unknown.
+2. **Canvas rendering.** React Flow (per ADR-0004) scales to thousands of nodes; the infinite-canvas vision may need WebGL (e.g., `pixi.js`, `regl`) for 100k+ nodes. Performance ceiling unknown — needs benchmarking against a representative workload.
 3. **Fish-eye math.** Continuous function vs discrete zoom levels. Continuous is the goal; discrete is the fallback.
 4. **Multi-focus.** How many simultaneous expanded regions? Performance vs expressiveness.
 5. **Agentic generation trust.** How prominently to label generated content vs authored content. Default: visual distinction until user promotes.
 6. **Accessibility.** Voice-first does not replace keyboard navigation. Full keyboard map required.
 7. **Mobile / Android.** Touch + voice on phone — pinch replaces scroll-zoom. Needs separate spec.
-8. **Offline / local-only constraint.** Voice recognition and graph layout must both run locally. Verify RAM ceiling.
+8. **Offline / local-only constraint.** Voice recognition and graph layout RAM requirements are unknown; both must run locally per the ecosystem's local-first principle. Needs verification.
 
 ## Folder Contents (Future)
 
-- `README.md` (this file) — vision statement.
-- *(planned)* `principles.md` — non-negotiable design principles derived from ADR-0004 + this vision.
-- *(planned)* `mvp-slice.md` — what subset of the graph UI is buildable on top of MVP-A contracts.
-- *(planned)* `tech-survey.md` — React Flow vs WebGL canvas libraries, voice stacks, fish-eye implementations.
-- *(planned)* `migration-path.md` — how each MVP-A surface evolves into a graph node inspector.
+- `README.md` (this file) — vision statement. **Status: complete.**
+- *(planned)* `principles.md` — non-negotiable design principles derived from ADR-0004 + this vision. **Status: not started.**
+- *(planned)* `mvp-slice.md` — what subset of the graph UI is buildable on top of MVP-A contracts. **Status: not started.**
+- *(planned)* `tech-survey.md` — React Flow vs WebGL canvas libraries, voice stacks, fish-eye implementations. **Status: not started.**
+- *(planned)* `migration-path.md` — how each MVP-A surface evolves into a graph node inspector. **Status: not started.**
 
 ## Source Material
 

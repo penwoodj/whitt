@@ -3,7 +3,8 @@
 > The **Layer 2 queue orchestration** repo. It owns task lifecycle, scheduling, retries, dead-letter, and parallel execution semantics for YAML-defined agent workflows. It does **not** execute workflows itself — it delegates to `whitt-execution-engine`. The UI is a *projection* of queue state.
 
 - **Repository:** `/home/jon/code/whitt-agent-queue-engine`
-- **Synthesized from:** `README.md`, `docs/MVP_DEFINITION.md`, `docs/REQUIREMENTS_ROADMAP_SUMMARY.md`, `docs/TRANSPILER_INTEGRATION_SPEC.md`, `docs/AGENT_QUEUE_VS_TRANSPILER_COMPARISON.md`, `docs/PARALLEL_EXECUTION_DESIGN.md`, `docs/GAP_CONSISTENCY_REPORT.md`, `plans/mvp-implementation/README.md`, git log (20 commits).
+- **Synthesized from:** `README.md`, `docs/MVP_DEFINITION.md`, `docs/REQUIREMENTS_ROADMAP_SUMMARY.md`, `docs/TRANSPILER_INTEGRATION_SPEC.md`, `docs/AGENT_QUEUE_VS_TRANSPILER_COMPARISON.md`, `docs/PARALLEL_EXECUTION_DESIGN.md`, `docs/GAP_CONSISTENCY_REPORT.md`, `plans/mvp-implementation/README.md`, git log (23 commits).
+- **Last reviewed:** 2026-08-08
 
 ---
 
@@ -11,21 +12,21 @@
 
 1. **Multi-dimensional queue workflow engine** coordinating YAML-driven agent workflows.
 2. **Delegates execution** to `whitt-execution-engine` ("the transpiler") via CLI (MVP) → Rust library API (production).
-3. **Pre-implementation.** 6,162 lines of docs/plans; no `Cargo.toml`, no source, no tests. 5-phase 178-hour plan, 156 planned tests, not started.
+3. **Pre-implementation.** 16,592 lines of docs/plans (verified via `find docs plans -name "*.md" | wc -l`); no `Cargo.toml`, no source, no tests. 5-phase 178-hour plan, 156 planned tests, not started.
 
 ## What the UI Must Consume / Display
 
 | Capability | Source | UI Surface |
 |---|---|---|
 | 10-state task lifecycle: NEW / QUEUED / SCHEDULED / LEASED / RUNNING / DONE / FAILED / DLQ / CANCELED / EXPIRED | `MVP_DEFINITION.md` | Status badge per task |
-| 25 queue categories (incl. Hook-Triggered, metasystem flows) | requirements docs | Category tabs / filter |
+| 25 queue categories (incl. Hook-Triggered, metasystem flows) | `docs/REQUIREMENTS_ROADMAP_SUMMARY.md` | Category tabs / filter |
 | Priority algorithms: EDF, WRR, DRR, Fair Share | `PARALLEL_EXECUTION_DESIGN.md` | Algorithm selector in settings |
 | Work stealing, backpressure, fair share, rate limiting | parallel design doc | Advanced config + live monitor |
 | SQLite WAL persistence | `MVP_DEFINITION.md` | Hidden; exposes durability guarantee |
 | Dead-letter queue (DLQ) | `MVP_DEFINITION.md` | DLQ browser panel |
 | Retry with exponential backoff (max 3) | `MVP_DEFINITION.md` | Retry indicator + countdown |
 | Scheduling: ASAP / Repeat-Cron / Whenever queues | requirements roadmap | Schedule picker |
-| Idempotency keys (passed via CLI flag, NOT in YAML) | transpiler spec | Optional "dedupe key" field |
+| Idempotency keys (passed via CLI flag only; YAML support not planned) | `TRANSPILER_INTEGRATION_SPEC.md` | Optional "dedupe key" field |
 | Artifacts: 30-day retention, downloadable | transpiler spec | Artifact browser |
 | Structured JSON logs with correlation IDs (trace_id, run_id, task_id, step_id) | transpiler spec | Log viewer with ID filter |
 | 8 CLI commands: enqueue, list, inspect, cancel, retry, schedule, drain, validate | MVP definition | Command surface UI must call |
@@ -52,7 +53,7 @@
 
 - **Code:** None. No `Cargo.toml`. Planned deps: tokio, serde, serde_yaml, chrono, rusqlite, clap, tracing, thiserror, uuid.
 - **Docs:** Exhaustive. All 4 prior gaps closed (`GAP_CONSISTENCY_REPORT.md`): YAML schema, mock transpiler, transpiler CLI interface, project scaffold. 20+ stale references fixed across 7 files.
-- **Commits:** All 20 recent commits are `docs:` — requirements, roadmap, MVP, integration spec, gap fixes.
+- **Commits:** All 23 commits are `docs:` — requirements, roadmap, MVP, integration spec, gap fixes.
 - **Plan:** 5-phase, 178 hours, 156 tests, 100% requirement coverage. Not started.
 
 ## Gaps & Open Questions for UI

@@ -17,12 +17,14 @@
 | Repo | Layer | Maturity | UI Role |
 |---|---|---|---|
 | `whitt` | 1 — UI shell | Docs only (no Tauri/React scaffold) | **Hosts the UI** |
-| `whitt-agent-queue-engine` | 2 — Queue | Docs only (6,162 lines, no Cargo) | **State the UI projects** |
-| `whitt-execution-engine` | 3 — Execution | **Working code** (637 tests, 3 binaries, 13 CLI commands) | **Content engine the UI consumes** |
+| `whitt-agent-queue-engine` | 2 — Queue | Docs only (16,592 lines, no Cargo) | **State the UI projects** |
+| `whitt-execution-engine` | 3 — Execution | **Working code** (758 tests, 3 binaries, 14 CLI commands) | **Content engine the UI consumes** |
 | `whitt-hardware` | Edge — SBC | 1 spec file, no commits | **Constraint on remote UI** |
 | `whitt-model-router` | Routing | Docs only (1,412-line DECISIONS, no code) | **Invisible hand that picks models** |
 
 **One-line summary:** Only one repo (`whitt-execution-engine`) has working code. Everything else is documented design. The UI today can only wrap that one engine's CLI.
+
+*All counts verified 2026-08-08. See per-repo reports for evidence.*
 
 ## 2. Unified Surface Map (What the UI Must Display)
 
@@ -89,7 +91,7 @@ UI (whitt)                  Queue (agent-queue)           Engine (execution)
 
 | UI capability | Blocked by | Status |
 |---|---|---|
-| Chat panel | execution-engine Phase 0 prereqs (8-12 wk) | Not started |
+| Chat panel | execution-engine Phase 0 prereqs (8-12 wk) | In progress (meta-workflow generator active) |
 | Queue panel | agent-queue-engine implementation (178 hr plan) | Not started |
 | Workflow editor | execution-engine schema exists ✅ | **Unblocked** |
 | Model manager | execution-engine CLI exists ✅ | **Unblocked** |
@@ -145,4 +147,4 @@ The aggregate picture **strongly supports** the proposed graph UI (see `../visio
 - **Swarm topology** becomes another graph layer (Phase D).
 - **Projection-layer principle** means the graph is *rendered from* sibling state, never owned by the UI.
 
-The graph UI is best understood as **Phase E+** — a unification of the MVP-A surfaces (chat, queue, editor, monitor, metrics) into a single zoomable canvas. It does not replace the per-repo contracts; it consumes them.
+The graph UI is best understood as **Phase E+** (PHASE-TIMELINE.md currently ends at Phase D; Phase E is not yet documented there) — a unification of the MVP-A surfaces (chat, queue, editor, monitor, metrics) into a single zoomable canvas. It does not replace the per-repo contracts; it consumes them. See [`../vision-graph-ui/README.md`](../vision-graph-ui/README.md).
