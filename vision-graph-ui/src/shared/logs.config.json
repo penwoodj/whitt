@@ -1,0 +1,6 @@
+{
+  "rootLevel": "warn",
+  "modules": {},
+  "transports": ["console"],
+  "filePath": "./logs/app.log"
+}
