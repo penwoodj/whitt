@@ -113,8 +113,8 @@ The graph UI is **not a replacement** for MVP-A. It is the **destination** that 
 - `whitt/opencode/plans/PHASE-TIMELINE.md` — phase roadmap.
 - `whitt/opencode/plans/AGENT-QUEUE-ANALYSIS.md` — UI ownership boundary.
 - `whitt/opencode/plans/P2P-GAMIFICATION-VISION.md` — swarm + marketplace layer.
-- `ui-implications-aggregate/REPORT.md` — synthesis of what each repo contributes to the UI.
-- Per-repo `ui-implications-*/REPORT.md` — evidence and exact quotes.
+- `ui-implications/aggregate/REPORT.md` — synthesis of what each repo contributes to the UI.
+- Per-repo `ui-implications/*/REPORT.md` — evidence and exact quotes.
 
 ---
 

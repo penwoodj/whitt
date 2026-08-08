@@ -4,11 +4,11 @@
 
 - **Scope:** `/home/jon/code/whitt` + 4 sibling repos in `~/code/`.
 - **Per-repo reports (commit afe624c):**
-  - [`../ui-implications-whitt/REPORT.md`](../ui-implications-whitt/REPORT.md) — umbrella UI shell (Tauri + React)
-  - [`../ui-implications-whitt-agent-queue-engine/REPORT.md`](../ui-implications-whitt-agent-queue-engine/REPORT.md) — Layer 2 queue
-  - [`../ui-implications-whitt-execution-engine/REPORT.md`](../ui-implications-whitt-execution-engine/REPORT.md) — Layer 3 engine (most mature)
-  - [`../ui-implications-whitt-hardware/REPORT.md`](../ui-implications-whitt-hardware/REPORT.md) — ARM64 SBC port spec
-  - [`../ui-implications-whitt-model-router/REPORT.md`](../ui-implications-whitt-model-router/REPORT.md) — Model routing design
+- [`../whitt/REPORT.md`](../whitt/REPORT.md) — umbrella UI shell (Tauri + React)
+- [`../whitt-agent-queue-engine/REPORT.md`](../whitt-agent-queue-engine/REPORT.md) — Layer 2 queue
+- [`../whitt-execution-engine/REPORT.md`](../whitt-execution-engine/REPORT.md) — Layer 3 engine (most mature)
+- [`../whitt-hardware/REPORT.md`](../whitt-hardware/REPORT.md) — ARM64 SBC port spec
+- [`../whitt-model-router/REPORT.md`](../whitt-model-router/REPORT.md) — Model routing design
 
 ---
 
