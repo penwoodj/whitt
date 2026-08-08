@@ -284,4 +284,195 @@ Agents MUST load the relevant skill before working in that domain. Loading is ch
 
 Bump `Revision:` below. Any change to this file requires a commit message starting `chore(agents):` and a one-line summary in the commit body of what rule changed and why.
 
-Revision: 1 (2026-08-08)
+---
+
+## 10. Skill Usage + Improvement Loop
+
+### Skill loading is MANDATORY
+
+Before ANY edit in a skill's domain, the agent MUST `skill(name="...")` load it. Loading is cheap; not loading = violation.
+
+| Domain | Skill to load |
+|---|---|
+| `.stories.tsx` files, CSF3, story coverage | `storybook` |
+| React component code (any `.tsx`) | `modern-react` |
+| Cypher queries, Neo4j Docker, graph schema | `neo4j` |
+| `<ReactFlow>` canvas, nodes, edges | `react-flow` |
+| Force layouts, d3 scales, axes | `d3-graphics` |
+| WebGL canvas, 100k+ nodes, fish-eye perf | `pixi-graphics` |
+| Graph algorithms (shortest path, centrality) | `cytoscape` |
+| `.d2` diagram files in `docs/` | `d2` |
+
+### Improvement loop (skills are LIVING)
+
+When agent learns a lesson (gotcha, better pattern, new edge case) while working in this project:
+
+1. Update the relevant skill's `SKILL.md` or `helper.py`.
+2. Commit with `chore(skill-<name>): <one-line lesson>` (e.g., `chore(skill-react-flow): Edge label rotation gotcha`).
+3. Next agent in that domain auto-benefits.
+
+Do NOT let lessons die in chat. They go in the skill.
+
+---
+
+## 11. File Organization (Hard Limits)
+
+### File size caps
+
+| File type | Soft cap | Hard cap (split mandatory) |
+|---|---|---|
+| Component `.tsx` | 100 LOC | 200 LOC |
+| Hook `.ts` | 80 LOC | 150 LOC |
+| Test `.test.tsx` | 150 LOC | 300 LOC |
+| Story `.stories.tsx` | 100 LOC | 200 LOC |
+| Skill `SKILL.md` | 400 LOC | 600 LOC |
+| `helper.py` | 300 LOC | 500 LOC |
+
+Past hard cap = split. Split criterion = single responsibility. Component splits by sub-component. Hook splits by concern. Test splits by feature scenario group.
+
+### Folder rules
+
+- One concept per file. `Node.tsx` only renders `Node`. `Node.stories.tsx` only stories for `Node`.
+- Sub-components live in same slice folder, never nested deeper: `features/node/NodeTitle.tsx`, NOT `features/node/title/NodeTitle.tsx`.
+- `index.ts` per slice barrel-exports its public surface. Internal files are NOT re-exported.
+- Max 12 files per slice folder. More = sub-slice or extract to `shared/`.
+- No file >500 LOC anywhere (excluding generated/lockfiles).
+
+### Forbidden
+
+- God components (`GraphCanvas.tsx` doing 10 things).
+- Barrels that re-export whole slices (defeats tree-shaking).
+- Files named `utils.ts`, `helpers.ts`, `misc.ts`, `constants.ts` (vague). Name by content: `nodePredicates.ts`, `graphTokens.ts`.
+- Dead files (zero imports). If unused for 3+ commits, delete.
+
+---
+
+## 12. Caveman Everywhere (Terse)
+
+Caveman = terse output style. Active in ALL artifacts under this subfolder: docs, code, tests, Gherkin, commit messages (except ADR body which can be fuller prose).
+
+### Doc files (`*.md`)
+
+Drop articles, filler, hedging. Fragments OK. `[thing] [action] [reason]`. NO "the/and/just/really".
+
+BAD: `The Node component renders the microphone button which the user toggles to record audio.`
+GOOD: `Node renders mic btn. Usr toggles to rec audio.`
+
+### Code identifiers
+
+Terse caveman + naming rules from Section 4 still apply (predicates, verbs, nouns). Compress common words:
+
+| Full | Caveman |
+|---|---|
+| configuration | cfg |
+| event | evt |
+| properties | props |
+| request/response | req/res |
+| context | ctx |
+| initialize | init |
+| message | msg |
+| text | txt |
+| record(ing) | rec |
+| button | btn |
+| user | usr |
+| fetch | fetch (unchanged) |
+| toggle | toggle (unchanged) |
+| is recording | isRec |
+| send message | sendMsg |
+| stream text | streamTxt |
+
+Examples (caveman + Section 4):
+- `isRec` (predicate), `streamTxt` (verb), `nodeList` (noun), `cfg` (noun), `useRec` (hook), `MicBtn` (PascalCase component)
+- AVOID: `isCurrentlyRecordingAudioStream` (too verbose), `r` (too short, forbidden by Section 4)
+
+### Gherkin `.feature` files
+
+Terse caveman in all Gherkin text. Feature names, scenarios, step prose, examples — all caveman.
+
+```gherkin
+Feature: Node mic btn rec toggle
+  As usr on graph
+  I want mic btn toggle rec
+  So I talk to graph
+
+  Scenario: Rec start on click
+    Given Node w/ mic btn off
+    When usr clicks mic btn
+    Then mic btn shows stop
+    And txt streams to prompt area
+
+  Scenario: Rec stop on second click
+    Given mic btn on
+    When usr clicks mic btn
+    Then mic btn shows rec
+    And stream saved to prompt area
+```
+
+### Test names
+
+`describe`/`it`/`test` blocks in caveman. Match Gherkin scenario name.
+
+```typescript
+describe('MicBtn', () => {
+  it('toggles to stop on click', () => { ... })
+  it('stops stream on second click', () => { ... })
+})
+```
+
+### Commit messages
+
+Subject ≤50 chars. Body terse. Conventional commit prefix required.
+
+BAD: `feat(node): Add microphone button component with recording toggle`
+GOOD: `feat(node): MicBtn w/ rec toggle`
+
+---
+
+## 13. Sub-Agent Routing (Caveman)
+
+When delegating work in this subfolder, route by domain. Caveman prompts to sub-agents too.
+
+| Task domain | subagent_type OR category | Skill to load |
+|---|---|---|
+| New `.stories.tsx`, story coverage | `category="quick"` | `storybook`, `modern-react` |
+| Component `.tsx` + hooks + tests | `category="deep"` | `modern-react`, `storybook` |
+| Cypher / Neo4j Docker | `subagent_type="librarian"` then `category="deep"` | `neo4j` |
+| Hard logic (graph algos, layout math) | `subagent_type="oracle"` (read-only) | relevant gfx skill |
+| Visual / styling / animation | `category="visual-engineering"` | `modern-react`, gfx skill |
+| ADR / docs / Gherkin | `category="writing"` | none |
+| Bug after 2+ failed fix attempts | `subagent_type="oracle"` (read-only) | `modern-react`, relevant |
+| Find pattern in this repo | `subagent_type="explore"` | none |
+| Find pattern in OSS / docs | `subagent_type="librarian"` | none |
+
+### Routing rules (caveman)
+
+- ALL impl tasks → DELEGATE. Orchestrator writes prompts, not code.
+- Prompts to sub-agents MUST have 6 sections: TASK, EXPECTED OUTCOME, REQUIRED TOOLS, MUST DO, MUST NOT DO, CONTEXT.
+- Parallel independent work → fire 2-5 agents at once.
+- Same agent follow-up → use `session_id` to preserve ctx.
+- Verify each delegation result by reading actual files + running actual cmds.
+
+---
+
+## 14. Question Protocol (Going Forward)
+
+Per-user directive (2026-08-08): from now on, ask at most **2-3 multiple-choice questions per turn** in this subfolder.
+
+- Use the `question` tool.
+- Each question: clear decision, 2-5 options.
+- After answers: execute agentically. Don't re-ask same question.
+- Documentation in `docs/` (ADRs especially) MUST stay synced to the latest answered intent. Drift = bug.
+- Incremental commits lock progress. Easy undo via git.
+
+Override: user explicitly invokes "build now" or "don't stop" → skip questions for that turn, use reasonable defaults documented in the relevant ADR.
+
+---
+
+Revision: 2 (2026-08-08)
+
+Changes in Rev 2:
+- Added Section 10: Skill loading mandatory + improvement loop.
+- Added Section 11: File size caps + folder rules.
+- Added Section 12: Caveman terse everywhere (docs, code, Gherkin, tests, commits).
+- Added Section 13: Sub-agent routing table.
+- Added Section 14: Question protocol (2-3 MCQs max per turn going forward).
