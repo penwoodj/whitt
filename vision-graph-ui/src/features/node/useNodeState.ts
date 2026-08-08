@@ -1,0 +1,64 @@
+import { useState, useCallback, useEffect, useRef } from 'react'
+
+export const useNodeState = () => {
+  const [isRec, setIsRec] = useState(false)
+  const [promptTxt, setPromptTxt] = useState('')
+  const [todosExpanded, setTodosExpanded] = useState(false)
+  const [detailExpanded, setDetailExpanded] = useState(false)
+  const [streamedTxt, setStreamedTxt] = useState('')
+  const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const toggleRec = useCallback(() => {
+    setIsRec((prev) => {
+      const next = !prev
+      if (next) {
+        streamIntervalRef.current = setInterval(() => {
+          const chars = 'abcdefghijklmnopqrstuvwxyz '
+          const randomChar = chars[Math.floor(Math.random() * chars.length)]
+          setStreamedTxt((prev) => prev + randomChar)
+        }, 100)
+      } else {
+        if (streamIntervalRef.current) {
+          clearInterval(streamIntervalRef.current)
+          streamIntervalRef.current = null
+        }
+      }
+      return next
+    })
+  }, [])
+
+  const sendPrompt = useCallback(
+    (onSend?: (txt: string) => void) => {
+      if (promptTxt.trim() && onSend) {
+        onSend(promptTxt.trim())
+        setPromptTxt('')
+      }
+    },
+    [promptTxt]
+  )
+
+  const toggleTodos = useCallback(() => setTodosExpanded((prev) => !prev), [])
+
+  const toggleDetail = useCallback(() => setDetailExpanded((prev) => !prev), [])
+
+  useEffect(() => {
+    return () => {
+      if (streamIntervalRef.current) {
+        clearInterval(streamIntervalRef.current)
+      }
+    }
+  }, [])
+
+  return {
+    isRec,
+    promptTxt,
+    setPromptTxt,
+    todosExpanded,
+    detailExpanded,
+    streamedTxt,
+    toggleRec,
+    sendPrompt,
+    toggleTodos,
+    toggleDetail,
+  }
+}
