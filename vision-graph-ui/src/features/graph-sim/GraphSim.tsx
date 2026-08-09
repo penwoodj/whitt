@@ -49,12 +49,9 @@ export default function GraphSim() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
 
-  const [isCycleRunning, setIsCycleRunning] = useState(false)
-
-  const { todos, isCycleDone, startCycle: startTodoCycle } = useAgenticTodoCycle({
+  const { todos, startCycle: startTodoCycle } = useAgenticTodoCycle({
     onCycleDone: () => {
       simLog.info('Agentic todo cycle done')
-      setIsCycleRunning(false)
       setNodes((prev) =>
         prev.map((node) =>
           node.id === activeNodeId
@@ -62,6 +59,7 @@ export default function GraphSim() {
                 ...node,
                 data: {
                   ...node.data,
+                  lifecycle: 'done',
                   detailExpanded: true,
                   isCycleRun: false,
                 } as NodeData,
@@ -122,6 +120,7 @@ export default function GraphSim() {
           title: 'Voice Node',
           status: 'idle',
           type: 'task',
+          lifecycle: 'initial',
           promptTxt: '',
           todos: [],
           lastUpdate: null,
@@ -170,6 +169,7 @@ export default function GraphSim() {
           title: 'Voice Node',
           status: 'idle',
           type: 'task',
+          lifecycle: 'initial',
           promptTxt: '',
           todos: [],
           lastUpdate: null,
@@ -258,6 +258,7 @@ export default function GraphSim() {
           title: `Expand: ${text.slice(0, 20)}...`,
           status: 'idle',
           type: 'task',
+          lifecycle: 'initial',
           promptTxt: text,
           todos: [],
           lastUpdate: new Date(),
@@ -306,6 +307,7 @@ export default function GraphSim() {
         title: `Refine: ${text.slice(0, 20)}...`,
         status: 'running',
         type: 'task',
+        lifecycle: 'initial',
         promptTxt: text,
         todos: [],
         lastUpdate: new Date(),
@@ -344,7 +346,6 @@ export default function GraphSim() {
   const handleNodeSend = useCallback((txt: string) => {
     if (!activeNodeId) return
 
-    setIsCycleRunning(true)
     setNodes((prev) =>
       prev.map((node) =>
         node.id === activeNodeId
@@ -352,6 +353,7 @@ export default function GraphSim() {
               ...node,
               data: {
                 ...node.data,
+                lifecycle: 'agentic-running',
                 isCycleRun: true,
                 promptTxt: txt,
               } as NodeData,
@@ -442,9 +444,12 @@ export default function GraphSim() {
           onNodesChange={(changes) => setNodes((nds) => applyNodeChanges(changes, nds))}
           onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
           nodeTypes={nodeTypes}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
+          minZoom={0.2}
+          maxZoom={4}
           fitView
         >
-          <Background />
+          <Background color="#A6A6A6" gap={20} />
           <Controls />
         </ReactFlow>
         <MarkdownHighlightMenu

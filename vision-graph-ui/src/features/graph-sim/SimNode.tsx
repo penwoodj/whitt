@@ -58,10 +58,6 @@ export default function SimNode({ data }: SimNodeProps) {
     simNodeLog.debug('Prompt changed', { txt: newTxt })
   }, [simNodeLog])
 
-  const handleSend = useMemo(() => () => {
-    simNodeLog.info('Prompt sent', { txt: nodeData.promptTxt })
-  }, [simNodeLog, nodeData.promptTxt])
-
   const handleDetailToggle = useMemo(() => () => {
     simNodeLog.info('Detail panel toggled')
   }, [simNodeLog])
@@ -83,8 +79,8 @@ export default function SimNode({ data }: SimNodeProps) {
           <NodePromptArea
             value={nodeData.promptTxt}
             onChange={handlePromptChange}
-            onSend={handleSend}
             streamedTxt={nodeData.promptTxt}
+            isStream={false}
           />
         </PromptWrap>
       </NodeBody>

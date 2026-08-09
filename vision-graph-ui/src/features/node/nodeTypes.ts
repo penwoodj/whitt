@@ -2,6 +2,8 @@ export type NodeStatus = 'idle' | 'recording' | 'running' | 'done'
 
 export type NodeType = 'task' | 'workflow' | 'artifact' | 'peer'
 
+export type NodeLifecycle = 'initial' | 'prompting' | 'agentic-running' | 'done'
+
 export type TodoStatus = 'queued' | 'running' | 'done' | 'failed'
 
 export type Todo = {
@@ -14,6 +16,7 @@ export type NodeData = {
   title: string
   status: NodeStatus
   type: NodeType
+  lifecycle: NodeLifecycle
   promptTxt: string
   todos: Todo[]
   lastUpdate: Date | null

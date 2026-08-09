@@ -9,52 +9,23 @@ const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProv
 describe('NodePromptArea', () => {
   it('renders textarea placeholder', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(<NodePromptArea value="" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />)
+    renderWithTheme(<NodePromptArea value="" onChange={onChange} isStream={false} />)
     const textarea = screen.getByPlaceholderText('Enter prompt...')
     expect(textarea).toBeInTheDocument()
   })
 
-  it('calls onSend on Enter key', () => {
+  it('calls onChange when txt changes', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(<NodePromptArea value="hello" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />)
+    renderWithTheme(<NodePromptArea value="" onChange={onChange} isStream={false} />)
     const textarea = screen.getByRole('textbox')
-    fireEvent.keyDown(textarea, { key: 'Enter' })
-    expect(onSend).toHaveBeenCalled()
-  })
-
-  it('does not send on Shift+Enter', () => {
-    const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(<NodePromptArea value="hello" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />)
-    const textarea = screen.getByRole('textbox')
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true })
-    expect(onSend).not.toHaveBeenCalled()
-  })
-
-  it('calls onSend on btn click', () => {
-    const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(<NodePromptArea value="hello" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />)
-    const btn = screen.getByText('Send')
-    fireEvent.click(btn)
-    expect(onSend).toHaveBeenCalled()
-  })
-
-  it('disables send btn when empty', () => {
-    const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(<NodePromptArea value="" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />)
-    const btn = screen.getByText('Send')
-    expect(btn).toBeDisabled()
+    fireEvent.change(textarea, { target: { value: 'hello' } })
+    expect(onChange).toHaveBeenCalledWith('hello')
   })
 
   it('shows streamed txt when streaming', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
     renderWithTheme(
-      <NodePromptArea value="original" onChange={onChange} onSend={onSend} streamedTxt="streamed" isStream={true} isCycleRun={false} />
+      <NodePromptArea value="original" onChange={onChange} streamedTxt="streamed" isStream={true} />
     )
     const textarea = screen.getByRole('textbox')
     expect(textarea).toHaveValue('streamed')
@@ -62,9 +33,8 @@ describe('NodePromptArea', () => {
 
   it('disables textarea when streaming', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
     renderWithTheme(
-      <NodePromptArea value="original" onChange={onChange} onSend={onSend} isStream={true} isCycleRun={false} />
+      <NodePromptArea value="original" onChange={onChange} isStream={true} />
     )
     const textarea = screen.getByRole('textbox')
     expect(textarea).toBeDisabled()
@@ -72,31 +42,17 @@ describe('NodePromptArea', () => {
 
   it('enables textarea when not streaming', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
     renderWithTheme(
-      <NodePromptArea value="original" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={false} />
+      <NodePromptArea value="original" onChange={onChange} isStream={false} />
     )
     const textarea = screen.getByRole('textbox')
     expect(textarea).not.toBeDisabled()
   })
 
-  it('disables send btn when cycle running', () => {
+  it('has placeholder text', () => {
     const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(
-      <NodePromptArea value="hello" onChange={onChange} onSend={onSend} isStream={false} isCycleRun={true} />
-    )
-    const btn = screen.getByText('Send')
-    expect(btn).toBeDisabled()
-  })
-
-  it('disables send btn when streaming', () => {
-    const onChange = vi.fn()
-    const onSend = vi.fn()
-    renderWithTheme(
-      <NodePromptArea value="hello" onChange={onChange} onSend={onSend} isStream={true} isCycleRun={false} />
-    )
-    const btn = screen.getByText('Streaming...')
-    expect(btn).toBeDisabled()
+    renderWithTheme(<NodePromptArea value="" onChange={onChange} isStream={false} />)
+    const textarea = screen.getByPlaceholderText('Enter prompt...')
+    expect(textarea).toBeInTheDocument()
   })
 })

@@ -6,6 +6,7 @@ type NodeAgenticTodosProps = {
   todos: Todo[]
   expanded: boolean
   onToggle: () => void
+  showAgentic: boolean
 }
 
 const getStatusColor = (status: Todo['status']): 'idle' | 'recording' | 'running' | 'done' => {
@@ -18,21 +19,40 @@ const getStatusColor = (status: Todo['status']): 'idle' | 'recording' | 'running
   return colorKeyMap[status]
 }
 
-const TodosWrap = styled.div`
-  padding: 4px 8px;
+const TodosWrap = styled.div<{ $show: boolean }>`
+  display: ${({ $show }) => ($show ? 'block' : 'none')};
+  padding: 8px 0;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  margin-bottom: 8px;
 `
 
-const ToggleBtn = styled.button`
+const CompactStrip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  border-radius: ${({ theme }) => theme.radius.sm};
+`
+
+const ExpandedHeader = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  color: ${({ theme }) => theme.colors.text};
+`
+
+const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
-  border-radius: ${({ theme }) => theme.radius.sm};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background-color: ${({ theme }) => theme.colors.bgElevated};
-  font-size: 11px;
-  font-weight: ${({ theme }) => theme.font.weightBold};
-  cursor: pointer;
 `
 
 const Arrow = styled.span<{ $expanded: boolean }>`
@@ -41,8 +61,8 @@ const Arrow = styled.span<{ $expanded: boolean }>`
 `
 
 const Spinner = styled.span`
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 2px solid ${({ theme }) => theme.colors.primary};
   border-top-color: transparent;
@@ -70,15 +90,15 @@ const TodoItem = styled.li`
 `
 
 const StatusDot = styled.span<{ $colorKey: 'idle' | 'recording' | 'running' | 'done' }>`
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: ${({ $colorKey, theme }) => theme.colors[$colorKey]};
 `
 
 const SmallSpinner = styled.span`
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   border: 2px solid ${({ theme }) => theme.colors.primary};
   border-top-color: transparent;
@@ -91,20 +111,44 @@ const SmallSpinner = styled.span`
   }
 `
 
-export default function NodeAgenticTodos({ todos, expanded, onToggle }: NodeAgenticTodosProps) {
+export default function NodeAgenticTodos({
+  todos,
+  expanded,
+  onToggle,
+  showAgentic,
+}: NodeAgenticTodosProps) {
   const handleClick = useCallback(() => {
     onToggle()
   }, [onToggle])
 
-  const hasRunning = todos.some((todo) => todo.status === 'running')
+  const runningTodo = todos.find((todo) => todo.status === 'running')
+  const hasRunning = !!runningTodo
+
+  if (!showAgentic) {
+    return null
+  }
+
+  if (!expanded && hasRunning) {
+    return (
+      <TodosWrap $show={showAgentic}>
+        <CompactStrip>
+          <StatusDot $colorKey={getStatusColor(runningTodo.status)} />
+          <span>{runningTodo.label}</span>
+          <SmallSpinner />
+        </CompactStrip>
+      </TodosWrap>
+    )
+  }
 
   return (
-    <TodosWrap>
-      <ToggleBtn onClick={handleClick}>
-        <Arrow $expanded={expanded}>▶</Arrow>
-        <span>Agentic Tasks ({todos.length})</span>
+    <TodosWrap $show={showAgentic}>
+      <ExpandedHeader onClick={handleClick}>
+        <HeaderLeft>
+          <Arrow $expanded={expanded}>▶</Arrow>
+          <span>Agentic Tasks ({todos.length})</span>
+        </HeaderLeft>
         {hasRunning && <Spinner />}
-      </ToggleBtn>
+      </ExpandedHeader>
       {expanded && (
         <TodoList>
           {todos.map((todo, idx) => (

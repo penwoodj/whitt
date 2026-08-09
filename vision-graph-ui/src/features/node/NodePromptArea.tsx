@@ -4,45 +4,43 @@ import styled from 'styled-components'
 type NodePromptAreaProps = {
   value: string
   onChange: (txt: string) => void
-  onSend: () => void
   streamedTxt?: string
   isStream: boolean
-  isCycleRun: boolean
 }
-
-const PromptWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: ${({ theme }) => theme.spacing.sm};
-`
 
 const PromptInput = styled.textarea<{ $isStream: boolean }>`
   width: 100%;
-  min-height: 60px;
+  min-height: 28px;
+  max-height: 144px;
   padding: ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.radius.sm};
   border: 1px solid ${({ theme }) => theme.colors.border};
   font-size: ${({ theme }) => theme.font.sizeSm};
   font-family: ${({ theme }) => theme.font.sans};
-  resize: vertical;
-  background-color: ${({ $isStream, theme }) => $isStream ? theme.colors.bgHover : 'transparent'};
+  line-height: 1.4;
+  resize: both;
+  overflow-y: auto;
+  background-color: ${({ $isStream, theme }) =>
+    $isStream ? theme.colors.bgHover : 'transparent'};
+  field-sizing: content;
+  transition: border-color ${({ theme }) => theme.transition.fast};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderActive};
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textMuted};
+  }
 `
 
-const SendBtn = styled.button<{ $disabled: boolean }>`
-  padding: 6px 12px;
-  border-radius: ${({ theme }) => theme.radius.sm};
-  border: none;
-  background-color: ${({ $disabled, theme }) =>
-    $disabled ? theme.colors.textMuted : theme.colors.primary};
-  color: ${({ theme }) => theme.colors.textInverse};
-  font-size: 12px;
-  font-weight: ${({ theme }) => theme.font.weightBold};
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-  align-self: flex-end;
-`
-
-export default function NodePromptArea({ value, onChange, onSend, streamedTxt, isStream, isCycleRun }: NodePromptAreaProps) {
+export default function NodePromptArea({
+  value,
+  onChange,
+  streamedTxt,
+  isStream,
+}: NodePromptAreaProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
@@ -58,37 +56,16 @@ export default function NodePromptArea({ value, onChange, onSend, streamedTxt, i
     [onChange]
   )
 
-  const handleKeyDown = useCallback(
-    (evt: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (evt.key === 'Enter' && !evt.shiftKey) {
-        evt.preventDefault()
-        onSend()
-      }
-    },
-    [onSend]
-  )
-
-  const handleSendClick = useCallback(() => {
-    onSend()
-  }, [onSend])
-
   const displayTxt = isStream && streamedTxt ? streamedTxt : value
-  const canSend = !isStream && !isCycleRun && displayTxt.trim().length > 0
 
   return (
-    <PromptWrap>
-      <PromptInput
-        ref={inputRef}
-        value={displayTxt}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter prompt..."
-        disabled={isStream}
-        $isStream={isStream}
-      />
-      <SendBtn $disabled={!canSend} onClick={handleSendClick} disabled={!canSend}>
-        {isStream ? 'Streaming...' : 'Send'}
-      </SendBtn>
-    </PromptWrap>
+    <PromptInput
+      ref={inputRef}
+      value={displayTxt}
+      onChange={handleChange}
+      placeholder="Enter prompt..."
+      disabled={isStream}
+      $isStream={isStream}
+    />
   )
 }

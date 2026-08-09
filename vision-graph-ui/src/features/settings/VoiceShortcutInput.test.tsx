@@ -19,7 +19,7 @@ describe('VoiceShortcutInput', () => {
     const input = screen.getByRole('textbox')
     fireEvent.blur(input)
     const styles = window.getComputedStyle(input)
-    expect(styles.borderColor).toContain('249')
+    expect(styles.borderColor).toContain('244')
   })
 
   it('shows err msg on invalid shortcut', () => {

@@ -20,20 +20,41 @@ describe('Node', () => {
     expect(screen.getByText('Running')).toBeInTheDocument()
   })
 
-  it('renders node with todos', () => {
+  it('renders agentic todos when lifecycle is agentic-running', () => {
     const node = busyNode('1')
     renderWithTheme(<Node data={node} />)
     expect(screen.getByText('Agentic Tasks (2)')).toBeInTheDocument()
   })
 
-  it('calls onSend when prompt sent', () => {
+  it('does not render agentic todos when lifecycle is initial', () => {
+    const node = emptyNode('1')
+    renderWithTheme(<Node data={node} />)
+    expect(screen.queryByText('Agentic Tasks (0)')).not.toBeInTheDocument()
+  })
+
+  it('renders footer with send button', () => {
+    const node = emptyNode('1')
+    renderWithTheme(<Node data={node} />)
+    expect(screen.getByText('Send')).toBeInTheDocument()
+  })
+
+  it('renders footer with mic button', () => {
+    const node = emptyNode('1')
+    renderWithTheme(<Node data={node} />)
+    const micBtn = document.querySelector('button[title*="recording"]')
+    expect(micBtn).toBeInTheDocument()
+  })
+
+  it('calls onSend when send button clicked with text', () => {
     const onSend = vi.fn()
     const node = emptyNode('1')
     renderWithTheme(<Node data={node} onSend={onSend} />)
 
     const textarea = screen.getByPlaceholderText('Enter prompt...')
     fireEvent.change(textarea, { target: { value: 'test prompt' } })
-    fireEvent.keyDown(textarea, { key: 'Enter' })
+
+    const sendBtn = screen.getByText('Send')
+    fireEvent.click(sendBtn)
 
     expect(onSend).toHaveBeenCalledWith('test prompt')
   })
@@ -53,7 +74,7 @@ describe('Node', () => {
     expect(onTitleChange).toHaveBeenCalledWith('New Title')
   })
 
-  it('toggles todos on click', () => {
+  it('toggles todos on click when agentic todos visible', () => {
     const node = busyNode('1')
     renderWithTheme(<Node data={node} />)
 

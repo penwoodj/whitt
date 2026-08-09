@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import NodeTitle from './NodeTitle'
-import NodeMicBtn from './NodeMicBtn'
 import NodeStatus from './NodeStatus'
 import NodePromptArea from './NodePromptArea'
 import NodeAgenticTodos from './NodeAgenticTodos'
+import NodeFooter from './NodeFooter'
 import NodeTooltip from './NodeTooltip'
 import NodeDetailPanel from './NodeDetailPanel'
 import type { NodeProps } from './nodeTypes'
@@ -31,17 +31,6 @@ const NodeHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
-`
-
-const MicWrap = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`
-
-const PromptWrap = styled.div`
-  flex: 1;
 `
 
 export default function Node({ data, isActive, onSend, onTitleChange }: NodeProps) {
@@ -78,6 +67,8 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
     [onTitleChange, nodeLog]
   )
 
+  const showAgentic = data.lifecycle === 'agentic-running' || data.lifecycle === 'done'
+
   const nodeContent = useMemo(
     () => (
       <NodeWrap $isActive={isActive}>
@@ -86,28 +77,28 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
           <NodeStatus status={data.status} />
         </NodeHeader>
 
-        <MicWrap>
-          <NodeMicBtn
-            isRec={isRec}
-            onToggleRec={toggleRec}
-            onStreamTxt={(txt) => setPromptTxt(txt)}
-          />
-          <PromptWrap>
-            <NodePromptArea
-              value={promptTxt}
-              onChange={setPromptTxt}
-              onSend={handleSend}
-              streamedTxt={streamedTxt}
-              isStream={isStream}
-              isCycleRun={data.isCycleRun || false}
-            />
-          </PromptWrap>
-        </MicWrap>
-
         <NodeAgenticTodos
           todos={data.todos}
           expanded={todosExpanded}
           onToggle={toggleTodos}
+          showAgentic={showAgentic}
+        />
+
+        <NodePromptArea
+          value={promptTxt}
+          onChange={setPromptTxt}
+          streamedTxt={streamedTxt}
+          isStream={isStream}
+        />
+
+        <NodeFooter
+          isRec={isRec}
+          isStream={isStream}
+          isCycleRun={data.isCycleRun || false}
+          promptTxt={promptTxt}
+          onToggleRec={toggleRec}
+          onStreamTxt={(txt) => setPromptTxt(txt)}
+          onSend={handleSend}
         />
 
         <NodeDetailPanel
@@ -125,6 +116,7 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
       streamedTxt,
       todosExpanded,
       detailExpanded,
+      showAgentic,
       toggleRec,
       toggleTodos,
       toggleDetail,
