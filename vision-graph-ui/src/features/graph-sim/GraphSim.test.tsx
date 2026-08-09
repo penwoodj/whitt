@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import GraphSim from './GraphSim'
@@ -6,39 +6,49 @@ import GraphSim from './GraphSim'
 const renderWithTheme = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('GraphSim', () => {
-  it('renders Voice Node + idle status', () => {
-    renderWithTheme(<GraphSim />)
-    expect(screen.getByText('Voice Node')).toBeInTheDocument()
-    expect(screen.getByText('Idle')).toBeInTheDocument()
+  beforeEach(() => {
+    vi.useFakeTimers()
   })
 
-  it('renders mic btn + Details btn on mount', () => {
-    renderWithTheme(<GraphSim />)
-    expect(screen.getByTitle('Start recording')).toBeInTheDocument()
-    expect(screen.getByText('Details')).toBeInTheDocument()
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
-  it('mic click toggles to Stop recording title', () => {
+  it('shows project picker initially w/ placeholder', () => {
     renderWithTheme(<GraphSim />)
-    const micBtn = screen.getByTitle('Start recording')
-    fireEvent.click(micBtn)
-    expect(screen.getByTitle('Stop recording')).toBeInTheDocument()
+    expect(screen.getByText(/select or create project/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument()
   })
 
-  it('mic btn reverts to Start after second click', () => {
+  it('click project reveals graph page w/ top bar + node', () => {
     renderWithTheme(<GraphSim />)
-    const micBtn = screen.getByTitle('Start recording')
-    fireEvent.click(micBtn)
-    fireEvent.click(screen.getByTitle('Stop recording'))
-    expect(screen.getByTitle('Start recording')).toBeInTheDocument()
+    const projectIcons = screen.getAllByRole('button').filter(b => b.textContent && b.textContent.length === 1)
+    fireEvent.click(projectIcons[0])
+    expect(screen.getByText('New Research')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sync/i })).toBeInTheDocument()
   })
 
-  it('Details btn exists throughout (markdown expands separately)', () => {
+  it('sync btn present in graph state', () => {
     renderWithTheme(<GraphSim />)
-    expect(screen.getByText('Details')).toBeInTheDocument()
-    fireEvent.click(screen.getByTitle('Start recording'))
-    expect(screen.getByText('Details')).toBeInTheDocument()
-    fireEvent.click(screen.getByTitle('Stop recording'))
-    expect(screen.getByText('Details')).toBeInTheDocument()
+    const projectIcons = screen.getAllByRole('button').filter(b => b.textContent && b.textContent.length === 1)
+    fireEvent.click(projectIcons[0])
+    const syncBtn = screen.getByRole('button', { name: /sync/i })
+    expect(syncBtn).toBeInTheDocument()
+    expect(syncBtn).not.toBeDisabled()
+  })
+
+  it('settings gear btn present', () => {
+    renderWithTheme(<GraphSim />)
+    const projectIcons = screen.getAllByRole('button').filter(b => b.textContent && b.textContent.length === 1)
+    fireEvent.click(projectIcons[0])
+    expect(screen.getByRole('button', { name: /settings/i })).toBeInTheDocument()
+  })
+
+  it('time travel disabled initially', () => {
+    renderWithTheme(<GraphSim />)
+    const projectIcons = screen.getAllByRole('button').filter(b => b.textContent && b.textContent.length === 1)
+    fireEvent.click(projectIcons[0])
+    expect(screen.getByRole('button', { name: /travel back/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /travel forward/i })).toBeDisabled()
   })
 })

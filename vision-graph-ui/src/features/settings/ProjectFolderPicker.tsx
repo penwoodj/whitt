@@ -45,7 +45,7 @@ const CfgBtn = styled.button`
   }
 `
 
-export const ProjectFolderPicker = ({ folderPath, onChange }: ProjectFolderPickerProps): JSX.Element => {
+export const ProjectFolderPicker = ({ folderPath, onChange }: ProjectFolderPickerProps): React.JSX.Element => {
   const [value, setValue] = useState(folderPath)
 
   const handleChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>): void => {

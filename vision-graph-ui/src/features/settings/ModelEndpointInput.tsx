@@ -24,7 +24,7 @@ const CfgInput = styled.input<{ $hasErr: boolean }>`
   }
 `
 
-export const ModelEndpointInput = ({ eptTxt, onChange }: ModelEndpointInputProps): JSX.Element => {
+export const ModelEndpointInput = ({ eptTxt, onChange }: ModelEndpointInputProps): React.JSX.Element => {
   const [isTouched, setIsTouched] = useState(false)
   const [value, setValue] = useState(eptTxt)
 

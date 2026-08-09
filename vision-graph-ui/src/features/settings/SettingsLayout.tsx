@@ -20,7 +20,7 @@ const CfgLegend = styled.legend`
   font-weight: ${({ theme }) => theme.font.weightBold};
 `
 
-export const SettingsLayout = ({ children }: SettingsLayoutProps): JSX.Element => {
+export const SettingsLayout = ({ children }: SettingsLayoutProps): React.JSX.Element => {
   return <CfgLayout>{children}</CfgLayout>
 }
 
@@ -29,7 +29,7 @@ type SectionProps = {
   children: ReactNode
 }
 
-export const SettingsSection = ({ legend, children }: SectionProps): JSX.Element => {
+export const SettingsSection = ({ legend, children }: SectionProps): React.JSX.Element => {
   return (
     <CfgFieldset>
       <CfgLegend>{legend}</CfgLegend>

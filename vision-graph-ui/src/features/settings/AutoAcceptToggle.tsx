@@ -11,7 +11,7 @@ const CfgText = styled.span`
   color: ${({ theme }) => theme.colors.text};
 `
 
-export const AutoAcceptToggle = ({ isAuto, onChange }: AutoAcceptToggleProps): JSX.Element => {
+export const AutoAcceptToggle = ({ isAuto, onChange }: AutoAcceptToggleProps): React.JSX.Element => {
   const handleClick = (): void => {
     onChange(!isAuto)
   }

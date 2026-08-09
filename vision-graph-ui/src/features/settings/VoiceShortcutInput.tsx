@@ -29,7 +29,7 @@ const CfgError = styled.span`
   font-size: ${({ theme }) => theme.font.sizeXs};
 `
 
-export const VoiceShortcutInput = ({ scTxt, onChange }: VoiceShortcutInputProps): JSX.Element => {
+export const VoiceShortcutInput = ({ scTxt, onChange }: VoiceShortcutInputProps): React.JSX.Element => {
   const [isTouched, setIsTouched] = useState(false)
   const [value, setValue] = useState(scTxt)
 

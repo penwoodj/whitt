@@ -7,7 +7,7 @@ import { ModelEndpointInput } from './ModelEndpointInput'
 import { ProjectFolderPicker } from './ProjectFolderPicker'
 import merge from 'lodash/fp/merge'
 
-export const Settings = ({ state, updateState }: SettingsProps): JSX.Element => {
+export const Settings = ({ state, updateState }: SettingsProps): React.JSX.Element => {
   const handleAutoChange = (isAuto: boolean): void => {
     const newState = merge(state, { isAuto })
     updateState(newState)
@@ -46,7 +46,7 @@ export const Settings = ({ state, updateState }: SettingsProps): JSX.Element => 
   )
 }
 
-export const ConnectedSettings = (): JSX.Element => {
+export const ConnectedSettings = (): React.JSX.Element => {
   const [state, updateState] = useSettingsState()
   return <Settings state={state} updateState={updateState} />
 }
