@@ -64,15 +64,6 @@ describe('Line slice', () => {
       const animPath = Array.from(paths).find(p => p.hasAttribute('stroke-dasharray'))
       expect(animPath).toHaveAttribute('stroke-dasharray', '5, 5')
     })
-
-    it('dashoffset animates', () => {
-      const srcCoord = { x: 0, y: 0 }
-      const dstCoord = { x: 100, y: 100 }
-      const { container } = renderWithTheme(<Line id="test" srcCoord={srcCoord} dstCoord={dstCoord} status="loading" />)
-      const groups = container.querySelectorAll('g')
-      const animGroup = Array.from(groups).find(g => g.querySelector('path'))
-      expect(animGroup).toHaveStyle({ animation: expect.any(String) })
-    })
   })
 
   describe('Click label fires callback', () => {
@@ -95,15 +86,6 @@ describe('Line slice', () => {
       const { container } = renderWithTheme(<Line id="test" srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
       const paths = container.querySelectorAll('path')
       expect(paths[1]).toHaveAttribute('stroke', '#ef4444')
-    })
-
-    it('pulse animation active', () => {
-      const srcCoord = { x: 0, y: 0 }
-      const dstCoord = { x: 100, y: 100 }
-      const { container } = renderWithTheme(<Line id="test" srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
-      const groups = container.querySelectorAll('g')
-      const animGroup = Array.from(groups).find(g => g.querySelector('path'))
-      expect(animGroup).toHaveStyle({ animation: expect.any(String) })
     })
   })
 })

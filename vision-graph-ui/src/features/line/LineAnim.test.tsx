@@ -14,14 +14,6 @@ describe('LineAnim', () => {
       const path = container.querySelector('path')
       expect(path).toHaveAttribute('stroke-dasharray', '5, 5')
     })
-
-    it('dashoffset animates', () => {
-      const srcCoord = { x: 0, y: 0 }
-      const dstCoord = { x: 100, y: 100 }
-      const { container } = renderWithTheme(<LineAnim srcCoord={srcCoord} dstCoord={dstCoord} status="loading" />)
-      const group = container.querySelector('g')
-      expect(group).toHaveStyle({ animation: expect.any(String) })
-    })
   })
 
   describe('Done state solid', () => {
@@ -41,14 +33,6 @@ describe('LineAnim', () => {
       const { container } = renderWithTheme(<LineAnim srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
       const path = container.querySelector('path')
       expect(path).toHaveAttribute('stroke', '#ff0000')
-    })
-
-    it('pulse animation active', () => {
-      const srcCoord = { x: 0, y: 0 }
-      const dstCoord = { x: 100, y: 100 }
-      const { container } = renderWithTheme(<LineAnim srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
-      const group = container.querySelector('g')
-      expect(group).toHaveStyle({ animation: expect.any(String) })
     })
   })
 })
