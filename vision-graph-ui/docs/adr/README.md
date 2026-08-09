@@ -16,6 +16,7 @@ Architecture Decision Records for voice-driven agentic graph UI.
 | ADR-0008 | Web Research Slice | Proposed |
 | ADR-0009 | Git GitHub OAuth Slice | Proposed |
 | ADR-0010 | Time Travel Slice | Proposed |
+| ADR-0011 | Graph to Filesystem Mapping | Proposed |
 
 ## Reading Order
 
@@ -44,3 +45,4 @@ Architecture Decision Records for voice-driven agentic graph UI.
 | Web research | ADR-0008 |
 | Git integration | ADR-0009 |
 | Time travel | ADR-0010 |
+| Node ↔ FS mapping | ADR-0011 |

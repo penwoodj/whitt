@@ -345,6 +345,22 @@ Past hard cap = split. Split criterion = single responsibility. Component splits
 - Files named `utils.ts`, `helpers.ts`, `misc.ts`, `constants.ts` (vague). Name by content: `nodePredicates.ts`, `graphTokens.ts`.
 - Dead files (zero imports). If unused for 3+ commits, delete.
 
+### Project root boundary (HARD)
+
+`vision-graph-ui/` is the ONLY place where these files may live:
+
+- `package.json`, `package-lock.json`
+- `node_modules/`
+- `.storybook/`, `storybook-static/`
+- `vite.config.ts`, `vitest.config.ts`, `tsconfig*.json`
+- `src/` (React app source)
+
+The whitt repo ROOT (`/home/jon/code/whitt/`) must NEVER contain any of these. If an agent runs `npm install` / `npm create` / `npx storybook init` from the wrong directory, it pollutes the root.
+
+**Recovery**: if found at root, delete + add to root `.gitignore`. Root `.gitignore` (already in place) blocks: `node_modules/`, `package-lock.json`, `.storybook/`, `storybook-static/`, `dist/`.
+
+**Agent guard**: before running any `npm`/`npx`/`yarn`/`pnpm` command, verify `pwd` is inside `vision-graph-ui/`. Run `cd /home/jon/code/whitt/vision-graph-ui && pwd` first if unsure.
+
 ---
 
 ## 12. Caveman Everywhere (Terse)
@@ -468,10 +484,81 @@ Override: user explicitly invokes "build now" or "don't stop" → skip questions
 
 ---
 
-Revision: 3 (2026-08-08)
+Revision: 4 (2026-08-09)
 
-Changes in Rev 3:
-- Added Section 15: styled-components mandate + theme tokens.
+Changes in Rev 4:
+- Section 11: Added "Project root boundary" rule (no package.json/node_modules/.storybook at whitt repo root — must live in vision-graph-ui/ only).
+
+---
+
+## 16. Graph ↔ Filesystem Mapping (HARD)
+
+Per ADR-0011. Every graph node has a filesystem artifact.
+
+### Lifecycle
+
+```
+NODE CREATED        →  <slug>.md                          (leaf, no children yet)
+NODE EXPANDED       →  <slug>/ folder + <slug>/index.md   (now has children)
+CHILD SPAWNED       →  <slug>/<child-slug>.md             (sibling inside parent folder)
+TITLE RENAMED       →  git mv old-slug new-slug           (lazy, debounced 2s)
+```
+
+### File layout per project
+
+```
+<project-root>/
+├── .whitt/
+│   ├── config.yml              (project uuid, name, created_at, neo4j_path)
+│   ├── cache/                  (gitignored, transient artifacts)
+│   └── logs/                   (gitignored, app logs)
+├── index.md                    (root node)
+├── topic-a/                    (expanded node w/ children)
+│   ├── index.md                (this node's content)
+│   ├── sub-1.md                (child node)
+│   └── sub-2.md                (child node)
+└── topic-b/                    (another expanded node)
+    ├── index.md
+    └── child.md
+```
+
+### Markdown format
+
+Every `.md` file starts with YAML frontmatter:
+
+```yaml
+---
+id: <uuid>
+title: <current title>
+parent: <path-to-parent-index.md | null>
+children: [<path-to-child>, ...]
+created_at: <iso>
+updated_at: <iso>
+status: <leaf | expanded | done | error>
+focus_jump: <node-id | null>
+---
+
+<markdown body — agentic-generated or user-edited>
+```
+
+### Memory layer (for UI speed)
+
+- **FS = source of truth.** Git tracks every change.
+- **Memory layer** = in-mem cache + Neo4j for graph edges. UI reads from memory (sub-ms).
+- **Mutations**: write memory immediately (UI snappy), queue FS write (debounced 2s), git commit on flush.
+- **Conflict**: if FS edited externally, FS wins. Memory reloads. Warn user.
+
+### Naming rules
+
+- Filenames = slug of title (`Hello World!` → `hello-world.md`).
+- Slug collisions → append `-2`, `-3`, etc. (`hello-world-2.md`).
+- Title preserved in YAML `title` field (human-readable, can have any chars).
+- Renames = `git mv` (preserve history). Lazy batched.
+
+### References
+
+- Full spec: `docs/adr/0011-graph-to-filesystem-mapping.md`
+- Related: ADR-0006 (.whitt/ markdown + YAML), ADR-0007 (Neo4j + FS sync)
 
 ---
 
