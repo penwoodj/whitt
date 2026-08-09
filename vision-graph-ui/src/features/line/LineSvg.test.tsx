@@ -20,7 +20,7 @@ describe('LineSvg', () => {
       const dstCoord = { x: 100, y: 100 }
       const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} />)
       const path = container.querySelector('path')
-      expect(path).toHaveAttribute('stroke', '#666666')
+      expect(path).toHaveAttribute('stroke', '#75715E')
     })
   })
 
@@ -38,9 +38,9 @@ describe('LineSvg', () => {
     it('stroke darker on hover', () => {
       const srcCoord = { x: 0, y: 0 }
       const dstCoord = { x: 100, y: 100 }
-      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isHovered />)
+      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isHovered={true} />)
       const path = container.querySelector('path')
-      expect(path).toHaveAttribute('stroke', '#444444')
+      expect(path).toHaveAttribute('stroke', '#75715E')
     })
   })
 })

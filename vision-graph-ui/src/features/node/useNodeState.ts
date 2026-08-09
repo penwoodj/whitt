@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 
 export const useNodeState = () => {
   const [isRec, setIsRec] = useState(false)
+  const [isStream, setIsStream] = useState(false)
   const [promptTxt, setPromptTxt] = useState('')
   const [todosExpanded, setTodosExpanded] = useState(false)
   const [detailExpanded, setDetailExpanded] = useState(false)
@@ -12,20 +13,25 @@ export const useNodeState = () => {
     setIsRec((prev) => {
       const next = !prev
       if (next) {
+        setIsStream(true)
+        setStreamedTxt('')
         streamIntervalRef.current = setInterval(() => {
           const chars = 'abcdefghijklmnopqrstuvwxyz '
           const randomChar = chars[Math.floor(Math.random() * chars.length)]
           setStreamedTxt((prev) => prev + randomChar)
         }, 100)
       } else {
+        setIsStream(false)
         if (streamIntervalRef.current) {
           clearInterval(streamIntervalRef.current)
           streamIntervalRef.current = null
         }
+        setPromptTxt((prev) => prev + streamedTxt)
+        setStreamedTxt('')
       }
       return next
     })
-  }, [])
+  }, [streamedTxt])
 
   const sendPrompt = useCallback(
     (onSend?: (txt: string) => void) => {
@@ -51,6 +57,7 @@ export const useNodeState = () => {
 
   return {
     isRec,
+    isStream,
     promptTxt,
     setPromptTxt,
     todosExpanded,

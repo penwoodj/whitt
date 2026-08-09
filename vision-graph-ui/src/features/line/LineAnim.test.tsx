@@ -32,7 +32,7 @@ describe('LineAnim', () => {
       const dstCoord = { x: 100, y: 100 }
       const { container } = renderWithTheme(<LineAnim srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
       const path = container.querySelector('path')
-      expect(path).toHaveAttribute('stroke', '#ff0000')
+      expect(path).toHaveAttribute('stroke', '#F92672')
     })
   })
 })

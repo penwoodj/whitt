@@ -52,7 +52,7 @@ export const useAgenticTodoCycle = (opts?: UseAgenticTodoCycleOpts): UseAgenticT
         )
         cycleLog.debug(`Todo done: ${DEFAULT_TODOS[index].label}`)
         runTodoAtIndex(index + 1)
-      }, 1000)
+      }, 1500)
 
       timeoutRefs.current.push(timeoutId)
     }

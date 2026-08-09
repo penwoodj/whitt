@@ -20,6 +20,7 @@ export type NodeData = {
   detailExpanded: boolean
   todosExpanded: boolean
   isRec: boolean
+  isCycleRun: boolean
 }
 
 export type NodeProps = {

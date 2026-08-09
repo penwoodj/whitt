@@ -12,7 +12,7 @@ type EdgeLabelProps = {
 const EdgeLabel = styled.text<EdgeLabelProps>`
   text-anchor: middle;
   font-size: 12px;
-  fill: #666666;
+  fill: ${({ theme }) => theme.colors.textMuted};
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   user-select: none;
 `

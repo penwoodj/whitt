@@ -49,9 +49,12 @@ export default function GraphSim() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
 
+  const [isCycleRunning, setIsCycleRunning] = useState(false)
+
   const { todos, isCycleDone, startCycle: startTodoCycle } = useAgenticTodoCycle({
     onCycleDone: () => {
       simLog.info('Agentic todo cycle done')
+      setIsCycleRunning(false)
       setNodes((prev) =>
         prev.map((node) =>
           node.id === activeNodeId
@@ -60,6 +63,7 @@ export default function GraphSim() {
                 data: {
                   ...node.data,
                   detailExpanded: true,
+                  isCycleRun: false,
                 } as NodeData,
               }
             : node
@@ -124,6 +128,7 @@ export default function GraphSim() {
           detailExpanded: false,
           todosExpanded: false,
           isRec: false,
+          isCycleRun: false,
         } as NodeData,
       } as FlowNode,
     ])
@@ -160,18 +165,19 @@ export default function GraphSim() {
           id: 'root',
           type: 'custom',
           position: { x: 0, y: 0 },
-          data: {
-            id: 'root',
-            title: 'Voice Node',
-            status: 'idle',
-            type: 'task',
-            promptTxt: '',
-            todos: [],
-            lastUpdate: null,
-            detailExpanded: false,
-            todosExpanded: false,
-            isRec: false,
-          } as NodeData,
+        data: {
+          id: 'root',
+          title: 'Voice Node',
+          status: 'idle',
+          type: 'task',
+          promptTxt: '',
+          todos: [],
+          lastUpdate: null,
+          detailExpanded: false,
+          todosExpanded: false,
+          isRec: false,
+          isCycleRun: false,
+        } as NodeData,
         } as FlowNode,
       ])
       setEdges([])
@@ -247,18 +253,19 @@ export default function GraphSim() {
       id: childId,
       type: 'custom',
       position: { x: 300, y: 400 },
-      data: {
-        id: childId,
-        title: `Expand: ${text.slice(0, 20)}...`,
-        status: 'idle',
-        type: 'task',
-        promptTxt: text,
-        todos: [],
-        lastUpdate: new Date(),
-        detailExpanded: false,
-        todosExpanded: false,
-        isRec: false,
-      } as NodeData,
+        data: {
+          id: childId,
+          title: `Expand: ${text.slice(0, 20)}...`,
+          status: 'idle',
+          type: 'task',
+          promptTxt: text,
+          todos: [],
+          lastUpdate: new Date(),
+          detailExpanded: false,
+          todosExpanded: false,
+          isRec: false,
+          isCycleRun: false,
+        } as NodeData,
     }
 
     const edge: Edge = {
@@ -305,6 +312,7 @@ export default function GraphSim() {
         detailExpanded: false,
         todosExpanded: false,
         isRec: false,
+        isCycleRun: false,
       } as NodeData,
     }
 
@@ -333,6 +341,29 @@ export default function GraphSim() {
     simLog.info('Refine child spawned', { parentId: activeNodeId, childId, text })
   }, [activeNodeId, nodes, edges, graphTitle, currentSnapshotIndex, simLog])
 
+  const handleNodeSend = useCallback((txt: string) => {
+    if (!activeNodeId) return
+
+    setIsCycleRunning(true)
+    setNodes((prev) =>
+      prev.map((node) =>
+        node.id === activeNodeId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                isCycleRun: true,
+                promptTxt: txt,
+              } as NodeData,
+            }
+          : node
+      )
+    )
+
+    startTodoCycle()
+    simLog.info('Node prompt sent, cycle started', { nodeId: activeNodeId, txt })
+  }, [activeNodeId, startTodoCycle, simLog])
+
   const handleCloseMenu = useCallback(() => {
     setSelectedText('')
     setHighlightPosition(null)
@@ -357,7 +388,7 @@ export default function GraphSim() {
   }, [])
 
   const nodeTypes = {
-    custom: Node,
+    custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
   }
 
   if (simState === 'picker') {

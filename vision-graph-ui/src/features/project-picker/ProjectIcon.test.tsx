@@ -33,7 +33,7 @@ describe('ProjectIcon', () => {
     const { container } = renderWithTheme(<ProjectIcon {...props} />)
 
     const button = container.querySelector('button')
-    expect(button).toHaveStyle({ border: '2px solid #4a9eff' })
+    expect(button).toHaveStyle({ border: '2px solid #F92672' })
   })
 
   it('calls onClick on click', () => {

@@ -6,8 +6,8 @@ export const calcMid = (srcCoord: Coord, dstCoord: Coord): Coord => ({
 })
 
 export const statusColor = (status?: string): string => {
-  if (status === 'error') return '#ff0000'
-  if (status === 'loading') return '#0066ff'
-  if (status === 'done') return '#00cc00'
-  return '#666666'
+  if (status === 'error') return '#F92672'
+  if (status === 'loading') return '#66D9EF'
+  if (status === 'done') return '#A6E22E'
+  return '#75715E'
 }

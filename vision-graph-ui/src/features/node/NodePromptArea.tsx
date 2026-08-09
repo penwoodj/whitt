@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 type NodePromptAreaProps = {
@@ -6,6 +6,8 @@ type NodePromptAreaProps = {
   onChange: (txt: string) => void
   onSend: () => void
   streamedTxt?: string
+  isStream: boolean
+  isCycleRun: boolean
 }
 
 const PromptWrap = styled.div`
@@ -15,7 +17,7 @@ const PromptWrap = styled.div`
   padding: ${({ theme }) => theme.spacing.sm};
 `
 
-const PromptInput = styled.textarea`
+const PromptInput = styled.textarea<{ $isStream: boolean }>`
   width: 100%;
   min-height: 60px;
   padding: ${({ theme }) => theme.spacing.sm};
@@ -24,6 +26,7 @@ const PromptInput = styled.textarea`
   font-size: ${({ theme }) => theme.font.sizeSm};
   font-family: ${({ theme }) => theme.font.sans};
   resize: vertical;
+  background-color: ${({ $isStream, theme }) => $isStream ? theme.colors.bgHover : 'transparent'};
 `
 
 const SendBtn = styled.button<{ $disabled: boolean }>`
@@ -39,8 +42,14 @@ const SendBtn = styled.button<{ $disabled: boolean }>`
   align-self: flex-end;
 `
 
-export default function NodePromptArea({ value, onChange, onSend, streamedTxt }: NodePromptAreaProps) {
-  const [isStreaming] = useState(false)
+export default function NodePromptArea({ value, onChange, onSend, streamedTxt, isStream, isCycleRun }: NodePromptAreaProps) {
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (isStream && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isStream])
 
   const handleChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -63,20 +72,22 @@ export default function NodePromptArea({ value, onChange, onSend, streamedTxt }:
     onSend()
   }, [onSend])
 
-  const displayTxt = isStreaming && streamedTxt ? streamedTxt : value
-  const isDisabled = isStreaming || !displayTxt.trim()
+  const displayTxt = isStream && streamedTxt ? streamedTxt : value
+  const canSend = !isStream && !isCycleRun && displayTxt.trim().length > 0
 
   return (
     <PromptWrap>
       <PromptInput
+        ref={inputRef}
         value={displayTxt}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="Enter prompt..."
-        disabled={isStreaming}
+        disabled={isStream}
+        $isStream={isStream}
       />
-      <SendBtn $disabled={isDisabled} onClick={handleSendClick} disabled={isDisabled}>
-        {isStreaming ? 'Streaming...' : 'Send'}
+      <SendBtn $disabled={!canSend} onClick={handleSendClick} disabled={!canSend}>
+        {isStream ? 'Streaming...' : 'Send'}
       </SendBtn>
     </PromptWrap>
   )

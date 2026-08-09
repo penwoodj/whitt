@@ -48,6 +48,7 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
   const nodeLog = useNodeLogging()
   const {
     isRec,
+    isStream,
     promptTxt,
     setPromptTxt,
     todosExpanded,
@@ -97,6 +98,8 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
               onChange={setPromptTxt}
               onSend={handleSend}
               streamedTxt={streamedTxt}
+              isStream={isStream}
+              isCycleRun={data.isCycleRun || false}
             />
           </PromptWrap>
         </MicWrap>
@@ -117,6 +120,7 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
       data,
       isActive,
       isRec,
+      isStream,
       promptTxt,
       streamedTxt,
       todosExpanded,

@@ -31,7 +31,7 @@ const renderPath = (srcX: number, srcY: number, dstX: number, dstY: number): str
 export default function LineSvg({ srcCoord, dstCoord, isActive, isHovered, statusColor: customColor, onMouseEnter, onMouseLeave }: LineSvgPropsInternal) {
   const strokeWidth = isAct(isActive) ? 4 : 2
   const stroke = customColor || statusColor('idle')
-  const darkerStroke = isHovered ? '#444444' : stroke
+  const darkerStroke = isHovered ? '#75715E' : stroke
 
   const pathD = renderPath(srcCoord.x, srcCoord.y, dstCoord.x, dstCoord.y)
   const viewBox = `0 0 ${Math.max(srcCoord.x, dstCoord.x) + 10} ${Math.max(srcCoord.y, dstCoord.y) + 10}`

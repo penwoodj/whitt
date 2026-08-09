@@ -21,7 +21,7 @@ describe('Line slice', () => {
       const dstCoord = { x: 100, y: 100 }
       const { container } = renderWithTheme(<Line id="test" srcCoord={srcCoord} dstCoord={dstCoord} />)
       const paths = container.querySelectorAll('path')
-      expect(paths[0]).toHaveAttribute('stroke', '#666666')
+      expect(paths[0]).toHaveAttribute('stroke', '#75715E')
     })
   })
 
@@ -85,7 +85,7 @@ describe('Line slice', () => {
       const dstCoord = { x: 100, y: 100 }
       const { container } = renderWithTheme(<Line id="test" srcCoord={srcCoord} dstCoord={dstCoord} status="error" />)
       const paths = container.querySelectorAll('path')
-      expect(paths[1]).toHaveAttribute('stroke', '#ef4444')
+      expect(paths[1]).toHaveAttribute('stroke', '#F92672')
     })
   })
 })
