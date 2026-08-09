@@ -59,6 +59,26 @@ export type Theme = {
     modal: number
     tooltip: number
   }
+  glow: {
+    primary: string
+    primaryStrong: string
+    recording: string
+    recordingPulse: string
+    done: string
+    idle: string
+  }
+  fishEye: {
+    transitionDuration: string
+    scaleActive: number
+    scaleHover: number
+    blurDistant: string
+    opacityDistant: number
+  }
+  cinematic: {
+    bgGradient: string
+    noiseOpacity: number
+    vignetteStrength: number
+  }
 }
 
 export const darkTheme = {
@@ -121,6 +141,26 @@ export const darkTheme = {
     overlay: 100,
     modal: 1000,
     tooltip: 10000,
+  },
+  glow: {
+    primary: '0 0 12px rgba(74, 158, 255, 0.4)',
+    primaryStrong: '0 0 20px rgba(74, 158, 255, 0.6)',
+    recording: '0 0 16px rgba(239, 68, 68, 0.5)',
+    recordingPulse: '0 0 24px rgba(239, 68, 68, 0.8)',
+    done: '0 0 12px rgba(74, 222, 128, 0.4)',
+    idle: '0 0 8px rgba(102, 102, 102, 0.2)',
+  },
+  fishEye: {
+    transitionDuration: '400ms',
+    scaleActive: 1.05,
+    scaleHover: 1.02,
+    blurDistant: '2px',
+    opacityDistant: 0.6,
+  },
+  cinematic: {
+    bgGradient: 'radial-gradient(circle at 50% 0%, #1a1a1a 0%, #0a0a0a 70%)',
+    noiseOpacity: 0.02,
+    vignetteStrength: 0.4,
   },
 } satisfies Theme
 

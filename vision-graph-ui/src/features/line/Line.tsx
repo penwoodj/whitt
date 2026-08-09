@@ -11,7 +11,10 @@ import LineAnim from './LineAnim'
 
 const lineLog = log('Line')
 
-const EdgeWrap = styled.g``
+const EdgeWrap = styled.g<{ $isActive?: boolean }>`
+  filter: ${({ $isActive, theme }) => ($isActive ? `drop-shadow(${theme.glow.primary})` : 'none')};
+  transition: filter ${({ theme }) => theme.transition.base};
+`
 
 export default function Line({ srcCoord, dstCoord, lineKind, status = 'idle', isActive, onLabelClick }: LineProps) {
   const [isHovered, setIsHovered] = useState(false)
@@ -37,7 +40,7 @@ export default function Line({ srcCoord, dstCoord, lineKind, status = 'idle', is
   }, [])
 
   return (
-    <EdgeWrap>
+    <EdgeWrap $isActive={isActive}>
       <LineSvg
         srcCoord={srcCoord}
         dstCoord={dstCoord}

@@ -7,6 +7,9 @@ import TopBar from '../top-bar'
 import MarkdownHighlightMenu from '../markdown-highlight-menu'
 import AppShell from '../app-shell'
 import { Node } from '../node'
+import SettingsPanel from '../settings-panel'
+import NewProjectModal from '../new-project-modal'
+import { useAgenticTodoCycle } from '../agentic-todo-cycle'
 import { useGraphSimLogging } from './useGraphSimLogging'
 import type { NodeData } from '../node/nodeTypes'
 import { buildSampleProjects } from '../project-picker/projectPickerData'
@@ -41,7 +44,29 @@ export default function GraphSim() {
 
   const [simState, setSimState] = useState<SimState>('picker')
   const [activeProjectId, setActiveProjectId] = useState<string>('')
-  const [projects] = useState<Project[]>(buildSampleProjects())
+  const [projects, setProjects] = useState<Project[]>(buildSampleProjects())
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
+
+  const { todos, isCycleDone, startCycle: startTodoCycle } = useAgenticTodoCycle({
+    onCycleDone: () => {
+      simLog.info('Agentic todo cycle done')
+      setNodes((prev) =>
+        prev.map((node) =>
+          node.id === activeNodeId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  detailExpanded: true,
+                } as NodeData,
+              }
+            : node
+        )
+      )
+    },
+  })
 
   const [nodes, setNodes] = useState<FlowNode[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
@@ -59,6 +84,25 @@ export default function GraphSim() {
 
   const [selectedText, setSelectedText] = useState('')
   const [highlightPosition, setHighlightPosition] = useState<{ x: number; y: number } | null>(null)
+
+  useEffect(() => {
+    if (activeNodeId) {
+      setNodes((prev) =>
+        prev.map((node) =>
+          node.id === activeNodeId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  todos,
+                  todosExpanded: todos.length > 0,
+                } as NodeData,
+              }
+            : node
+        )
+      )
+    }
+  }, [activeNodeId, todos])
 
   const handleProjectSelect = useCallback((id: string) => {
     setActiveProjectId(id)
@@ -94,7 +138,57 @@ export default function GraphSim() {
   }, [simLog])
 
   const handleNewProject = useCallback(() => {
+    setIsNewProjectModalOpen(true)
     simLog.debug('New project clicked')
+  }, [simLog])
+
+  const handleCreateProject = useCallback(
+    ({ name, folder }: { name: string; folder: string }) => {
+      const newProject: Project = {
+        id: `proj-${Date.now()}`,
+        label: name,
+        iconLetter: name[0].toUpperCase(),
+        lastOpened: new Date(),
+      }
+      setProjects((prev) => [...prev, newProject])
+      setActiveProjectId(newProject.id)
+      setIsNewProjectModalOpen(false)
+      setSimState('graph')
+      setGraphTitle(name)
+      setNodes([
+        {
+          id: 'root',
+          type: 'custom',
+          position: { x: 0, y: 0 },
+          data: {
+            id: 'root',
+            title: 'Voice Node',
+            status: 'idle',
+            type: 'task',
+            promptTxt: '',
+            todos: [],
+            lastUpdate: null,
+            detailExpanded: false,
+            todosExpanded: false,
+            isRec: false,
+          } as NodeData,
+        } as FlowNode,
+      ])
+      setEdges([])
+      setActiveNodeId('root')
+      simLog.info('Project created', { name, folder })
+    },
+    [simLog]
+  )
+
+  const handleCancelNewProject = useCallback(() => {
+    setIsNewProjectModalOpen(false)
+    simLog.debug('New project cancelled')
+  }, [simLog])
+
+  const handleCloseSettings = useCallback(() => {
+    setIsSettingsOpen(false)
+    simLog.debug('Settings closed')
   }, [simLog])
 
   const handleSync = useCallback(() => {
@@ -141,6 +235,7 @@ export default function GraphSim() {
   }, [currentSnapshotIndex, snapshots, simLog])
 
   const handleOpenSettings = useCallback(() => {
+    setIsSettingsOpen(true)
     simLog.debug('Settings opened')
   }, [simLog])
 
@@ -157,7 +252,7 @@ export default function GraphSim() {
         title: `Expand: ${text.slice(0, 20)}...`,
         status: 'idle',
         type: 'task',
-        promptTxt: '',
+        promptTxt: text,
         todos: [],
         lastUpdate: new Date(),
         detailExpanded: false,
@@ -170,17 +265,73 @@ export default function GraphSim() {
       id: `${activeNodeId}-${childId}`,
       source: activeNodeId,
       target: childId,
+      type: 'smoothstep',
+      data: { kind: 'PRODUCED' },
     }
 
     setNodes((prev) => [...prev, childNode])
     setEdges((prev) => [...prev, edge])
 
+    const newSnapshot: Snapshot = {
+      nodes: [...nodes, childNode],
+      edges: [...edges, edge],
+      graphTitle,
+    }
+    setSnapshots((prev) => [...prev.slice(0, currentSnapshotIndex + 1), newSnapshot])
+    setCurrentSnapshotIndex((prev) => prev + 1)
+    setCanTravelBack(true)
+    setCanTravelForward(false)
+    setCommitLabel(`Expand: ${text.slice(0, 20)}...`)
+
     simLog.info('Expand child spawned', { parentId: activeNodeId, childId, text })
-  }, [activeNodeId, simLog])
+  }, [activeNodeId, nodes, edges, graphTitle, currentSnapshotIndex, simLog])
 
   const handleRefine = useCallback((text: string) => {
-    simLog.debug('Refine clicked (stub)', { text })
-  }, [simLog])
+    if (!activeNodeId) return
+
+    const childId = `refine-${Date.now()}`
+    const childNode: FlowNode = {
+      id: childId,
+      type: 'custom',
+      position: { x: 300, y: 400 },
+      data: {
+        id: childId,
+        title: `Refine: ${text.slice(0, 20)}...`,
+        status: 'running',
+        type: 'task',
+        promptTxt: text,
+        todos: [],
+        lastUpdate: new Date(),
+        detailExpanded: false,
+        todosExpanded: false,
+        isRec: false,
+      } as NodeData,
+    }
+
+    const edge: Edge = {
+      id: `${activeNodeId}-${childId}`,
+      source: activeNodeId,
+      target: childId,
+      type: 'smoothstep',
+      data: { kind: 'PRODUCED' },
+    }
+
+    setNodes((prev) => [...prev, childNode])
+    setEdges((prev) => [...prev, edge])
+
+    const newSnapshot: Snapshot = {
+      nodes: [...nodes, childNode],
+      edges: [...edges, edge],
+      graphTitle,
+    }
+    setSnapshots((prev) => [...prev.slice(0, currentSnapshotIndex + 1), newSnapshot])
+    setCurrentSnapshotIndex((prev) => prev + 1)
+    setCanTravelBack(true)
+    setCanTravelForward(false)
+    setCommitLabel(`Refine: ${text.slice(0, 20)}...`)
+
+    simLog.info('Refine child spawned', { parentId: activeNodeId, childId, text })
+  }, [activeNodeId, nodes, edges, graphTitle, currentSnapshotIndex, simLog])
 
   const handleCloseMenu = useCallback(() => {
     setSelectedText('')
@@ -219,6 +370,11 @@ export default function GraphSim() {
           onNew={handleNewProject}
         />
         <Placeholder>Select or create project</Placeholder>
+        <NewProjectModal
+          isOpen={isNewProjectModalOpen}
+          onCreate={handleCreateProject}
+          onCancel={handleCancelNewProject}
+        />
       </div>
     )
   }
@@ -268,6 +424,12 @@ export default function GraphSim() {
           onClose={handleCloseMenu}
         />
       </GraphContainer>
+      <SettingsPanel isOpen={isSettingsOpen} onClose={handleCloseSettings} />
+      <NewProjectModal
+        isOpen={isNewProjectModalOpen}
+        onCreate={handleCreateProject}
+        onCancel={handleCancelNewProject}
+      />
     </AppShell>
   )
 }

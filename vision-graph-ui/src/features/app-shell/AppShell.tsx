@@ -9,6 +9,19 @@ const Shell = styled.div`
   grid-template-columns: 60px 1fr;
   grid-template-rows: 48px 1fr;
   background-color: ${({ theme }) => theme.colors.bg};
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, ${({ theme }) => theme.cinematic.vignetteStrength}) 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
 `
 
 const SidebarArea = styled.aside`

@@ -12,7 +12,7 @@ const Menu = styled.div<{ $x: number; $y: number }>`
   background-color: ${({ theme }) => theme.colors.bgElevated};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
-  box-shadow: ${({ theme }) => theme.shadow.lg};
+  box-shadow: ${({ theme }) => `${theme.glow.primaryStrong}, ${theme.shadow.lg}`};
   padding: ${({ theme }) => theme.spacing.sm};
   display: flex;
   gap: ${({ theme }) => theme.spacing.xs};

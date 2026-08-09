@@ -11,14 +11,19 @@ import type { NodeProps } from './nodeTypes'
 import { useNodeState } from './useNodeState'
 import { useNodeLogging } from './useNodeLogging'
 
-const NodeWrap = styled.div`
+const NodeWrap = styled.div<{ $isActive?: boolean }>`
   padding: ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.radius.md};
   background-color: ${({ theme }) => theme.colors.bgElevated};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: ${({ theme }) => theme.shadow.sm};
+  box-shadow: ${({ $isActive, theme }) => ($isActive ? theme.glow.primary : theme.shadow.sm)};
   min-width: 200px;
   max-width: 300px;
+  transition: transform ${({ theme }) => theme.transition.base}, box-shadow ${({ theme }) => theme.transition.base};
+
+  &:hover {
+    transform: scale(${({ theme }) => theme.fishEye.scaleHover});
+  }
 `
 
 const NodeHeader = styled.div`
@@ -39,7 +44,7 @@ const PromptWrap = styled.div`
   flex: 1;
 `
 
-export default function Node({ data, onSend, onTitleChange }: NodeProps) {
+export default function Node({ data, isActive, onSend, onTitleChange }: NodeProps) {
   const nodeLog = useNodeLogging()
   const {
     isRec,
@@ -74,7 +79,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
 
   const nodeContent = useMemo(
     () => (
-      <NodeWrap>
+      <NodeWrap $isActive={isActive}>
         <NodeHeader>
           <NodeTitle title={data.title} onTitleChange={handleTitleChange} />
           <NodeStatus status={data.status} />
@@ -110,6 +115,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     ),
     [
       data,
+      isActive,
       isRec,
       promptTxt,
       streamedTxt,

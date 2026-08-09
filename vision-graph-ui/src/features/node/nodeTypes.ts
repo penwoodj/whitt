@@ -24,6 +24,7 @@ export type NodeData = {
 
 export type NodeProps = {
   data: NodeData
+  isActive?: boolean
   onSend?: (txt: string) => void
   onTitleChange?: (title: string) => void
 }

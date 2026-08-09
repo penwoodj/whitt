@@ -7,7 +7,7 @@ import NewProjectBtn from './NewProjectBtn'
 const Sidebar = styled.div`
   width: 60px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.bg};
+  background: ${({ theme }) => theme.cinematic.bgGradient};
   display: flex;
   flex-direction: column;
   align-items: center;

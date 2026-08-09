@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import { recordingPulse } from '../../shared/keyframes'
 
 type NodeMicBtnProps = {
   isRec: boolean
@@ -18,7 +19,9 @@ const MicBtn = styled.button<{ $isRec: boolean }>`
   justify-content: center;
   background-color: ${({ $isRec, theme }) =>
     $isRec ? theme.colors.recording : theme.colors.primary};
-  transition: background-color ${({ theme }) => theme.transition.base};
+  transition: background-color ${({ theme }) => theme.transition.base}, box-shadow ${({ theme }) => theme.transition.base};
+  box-shadow: ${({ $isRec, theme }) => ($isRec ? theme.glow.recording : 'none')};
+  animation: ${({ $isRec }) => ($isRec ? css`${recordingPulse} 1.5s ease-in-out infinite` : 'none')};
 `
 
 export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicBtnProps) {
