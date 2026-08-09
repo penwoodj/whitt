@@ -1,6 +1,31 @@
+import styled, { css, keyframes } from 'styled-components'
 import type { LineAnimProps } from './lineTypes'
 import { statusColor } from './lineTransforms'
 import { isPend, hasErr } from './linePredicates'
+
+const dashoffset = keyframes`
+  to { stroke-dashoffset: -10; }
+`
+
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+`
+
+type EdgeAnimWrapProps = {
+  $isLoading: boolean
+  $isError: boolean
+}
+
+const getAnimationStyle = ($isLoading: boolean, $isError: boolean) => {
+  if ($isLoading) return css`animation: ${dashoffset} 1s linear infinite`
+  if ($isError) return css`animation: ${pulse} 1s ease-in-out infinite`
+  return css``
+}
+
+const EdgeAnimWrap = styled.g<EdgeAnimWrapProps>`
+  ${({ $isLoading, $isError }) => getAnimationStyle($isLoading, $isError)}
+`
 
 const renderPath = (srcX: number, srcY: number, dstX: number, dstY: number): string => {
   const midX = (srcX + dstX) / 2
@@ -17,27 +42,10 @@ export default function LineAnim({ srcCoord, dstCoord, status = 'idle', statusCo
   const isError = hasErr(status)
 
   const pathD = renderPath(srcCoord.x, srcCoord.y, dstCoord.x, dstCoord.y)
-
   const strokeDasharray = isLoading ? '5, 5' : 'none'
-  const animationStyle = isLoading
-    ? { animation: 'dashoffset 1s linear infinite' }
-    : isError
-    ? { animation: 'pulse 1s ease-in-out infinite' }
-    : {}
 
   return (
-    <g>
-      <style>
-        {`
-          @keyframes dashoffset {
-            to { stroke-dashoffset: -10; }
-          }
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-          }
-        `}
-      </style>
+    <EdgeAnimWrap $isLoading={isLoading} $isError={isError}>
       <path
         d={pathD}
         stroke={stroke}
@@ -45,8 +53,7 @@ export default function LineAnim({ srcCoord, dstCoord, status = 'idle', statusCo
         fill="none"
         strokeLinecap="round"
         strokeDasharray={strokeDasharray}
-        style={animationStyle}
       />
-    </g>
+    </EdgeAnimWrap>
   )
 }

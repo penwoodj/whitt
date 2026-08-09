@@ -1,10 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { SettingsLayout, SettingsSection } from './SettingsLayout'
+import { ThemeProvider } from '../../shared/ThemeProvider'
+
+const renderWithTheme = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('SettingsLayout', () => {
   it('renders AutoAccept section', () => {
-    render(
+    renderWithTheme(
       <SettingsLayout>
         <SettingsSection legend="Auto-Accept">
           <span>Content</span>
@@ -25,7 +28,7 @@ describe('SettingsLayout', () => {
   })
 
   it('renders VoiceShortcut section', () => {
-    render(
+    renderWithTheme(
       <SettingsLayout>
         <SettingsSection legend="Auto-Accept">
           <span>Content</span>
@@ -46,7 +49,7 @@ describe('SettingsLayout', () => {
   })
 
   it('renders ModelEndpoint section', () => {
-    render(
+    renderWithTheme(
       <SettingsLayout>
         <SettingsSection legend="Auto-Accept">
           <span>Content</span>
@@ -67,7 +70,7 @@ describe('SettingsLayout', () => {
   })
 
   it('renders ProjectFolder section', () => {
-    render(
+    renderWithTheme(
       <SettingsLayout>
         <SettingsSection legend="Auto-Accept">
           <span>Content</span>

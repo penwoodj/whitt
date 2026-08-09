@@ -1,10 +1,25 @@
 import { useCallback } from 'react'
+import styled from 'styled-components'
 
 type NodeMicBtnProps = {
   isRec: boolean
   onToggleRec: () => void
   onStreamTxt?: (txt: string) => void
 }
+
+const MicBtn = styled.button<{ $isRec: boolean }>`
+  width: 32px;
+  height: 32px;
+  border-radius: ${({ theme }) => theme.radius.pill};
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ $isRec, theme }) =>
+    $isRec ? theme.colors.recording : theme.colors.primary};
+  transition: background-color ${({ theme }) => theme.transition.base};
+`
 
 export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicBtnProps) {
   const handleClick = useCallback(() => {
@@ -24,20 +39,9 @@ export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicB
   }, [isRec, onToggleRec, onStreamTxt])
 
   return (
-    <button
+    <MicBtn
+      $isRec={isRec}
       onClick={handleClick}
-      style={{
-        width: '32px',
-        height: '32px',
-        borderRadius: '50%',
-        border: 'none',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: isRec ? '#ef4444' : '#3b82f6',
-        transition: 'background-color 0.2s',
-      }}
       title={isRec ? 'Stop recording' : 'Start recording'}
     >
       {isRec ? (
@@ -70,6 +74,6 @@ export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicB
           <line x1="8" y1="23" x2="16" y2="23" />
         </svg>
       )}
-    </button>
+    </MicBtn>
   )
 }

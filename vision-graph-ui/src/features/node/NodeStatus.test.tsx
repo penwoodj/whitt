@@ -1,39 +1,43 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import NodeStatus from './NodeStatus'
+import { ThemeProvider } from '../../shared/ThemeProvider'
+
+const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('NodeStatus', () => {
   it('renders idle status', () => {
-    render(<NodeStatus status="idle" />)
+    renderWithTheme(<NodeStatus status="idle" />)
     expect(screen.getByText('Idle')).toBeInTheDocument()
   })
 
   it('renders recording status', () => {
-    render(<NodeStatus status="recording" />)
+    renderWithTheme(<NodeStatus status="recording" />)
     expect(screen.getByText('Recording')).toBeInTheDocument()
   })
 
   it('renders running status', () => {
-    render(<NodeStatus status="running" />)
+    renderWithTheme(<NodeStatus status="running" />)
     expect(screen.getByText('Running')).toBeInTheDocument()
   })
 
   it('renders done status', () => {
-    render(<NodeStatus status="done" />)
+    renderWithTheme(<NodeStatus status="done" />)
     expect(screen.getByText('Done')).toBeInTheDocument()
   })
 
   it('shows labels with uppercase transform', () => {
-    const { rerender } = render(<NodeStatus status="idle" />)
+    const { rerender } = renderWithTheme(<NodeStatus status="idle" />)
     expect(screen.getByText('Idle')).toBeInTheDocument()
 
-    rerender(<NodeStatus status="recording" />)
+    rerender(<ThemeProvider><NodeStatus status="recording" /></ThemeProvider>)
     expect(screen.getByText('Recording')).toBeInTheDocument()
 
-    rerender(<NodeStatus status="running" />)
+    rerender(<ThemeProvider><NodeStatus status="running" /></ThemeProvider>)
     expect(screen.getByText('Running')).toBeInTheDocument()
 
-    rerender(<NodeStatus status="done" />)
+    rerender(<ThemeProvider><NodeStatus status="done" /></ThemeProvider>)
     expect(screen.getByText('Done')).toBeInTheDocument()
   })
 })

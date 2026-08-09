@@ -1,5 +1,49 @@
 import { useState, useCallback } from 'react'
+import styled from 'styled-components'
 import type { ProjectFolderPickerProps } from './settingsTypes'
+
+const CfgWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  align-items: center;
+`
+
+const CfgInput = styled.input`
+  flex: 1;
+  padding: ${({ theme }) => theme.spacing.sm};
+  background: ${({ theme }) => theme.colors.bg};
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  font-family: ${({ theme }) => theme.font.sans};
+  font-size: ${({ theme }) => theme.font.sizeMd};
+  outline: none;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.borderActive};
+  }
+`
+
+const CfgBtn = styled.button`
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  background: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.textInverse};
+  border: none;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  font-family: ${({ theme }) => theme.font.sans};
+  font-size: ${({ theme }) => theme.font.sizeMd};
+  font-weight: ${({ theme }) => theme.font.weightMedium};
+  cursor: pointer;
+  transition: background ${({ theme }) => theme.transition.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primaryHover};
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`
 
 export const ProjectFolderPicker = ({ folderPath, onChange }: ProjectFolderPickerProps): JSX.Element => {
   const [value, setValue] = useState(folderPath)
@@ -13,17 +57,16 @@ export const ProjectFolderPicker = ({ folderPath, onChange }: ProjectFolderPicke
   }, [])
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-      <input
+    <CfgWrapper>
+      <CfgInput
         type="text"
         value={value}
         onChange={handleChange}
         placeholder="/path/to/folder"
-        style={{ flex: 1 }}
       />
-      <button type="button" onClick={handleBrowse}>
+      <CfgBtn type="button" onClick={handleBrowse}>
         Browse
-      </button>
-    </div>
+      </CfgBtn>
+    </CfgWrapper>
   )
 }

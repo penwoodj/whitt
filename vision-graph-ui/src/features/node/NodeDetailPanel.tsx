@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import styled from 'styled-components'
 
 type NodeDetailPanelProps = {
   expanded: boolean
@@ -20,6 +21,36 @@ This is a placeholder for the markdown content that will be rendered in the deta
 The node is currently processing your request.
 `
 
+const DetailWrap = styled.div`
+  padding: 4px 8px;
+`
+
+const DetailBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.bgElevated};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  cursor: pointer;
+  width: 100%;
+`
+
+const DetailArrow = styled.span<{ $expanded: boolean }>`
+  transform: rotate(${({ $expanded }) => ($expanded ? '90deg' : '0deg')});
+  transition: transform 0.2s;
+`
+
+const DetailContent = styled.div`
+  padding: 8px 0 0 16px;
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  line-height: 1.5;
+  color: ${({ theme }) => theme.colors.text};
+`
+
 export default function NodeDetailPanel({ expanded, onToggle, markdown = defaultMarkdown }: NodeDetailPanelProps) {
   const handleClick = useCallback(() => {
     onToggle()
@@ -35,39 +66,14 @@ export default function NodeDetailPanel({ expanded, onToggle, markdown = default
   }
 
   return (
-    <div style={{ padding: '4px 8px' }}>
-      <button
-        onClick={handleClick}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          border: '1px solid #e5e7eb',
-          backgroundColor: '#fff',
-          fontSize: '11px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          width: '100%',
-        }}
-      >
-        <span style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-          ▶
-        </span>
+    <DetailWrap>
+      <DetailBtn onClick={handleClick}>
+        <DetailArrow $expanded={expanded}>▶</DetailArrow>
         <span>Details</span>
-      </button>
+      </DetailBtn>
       {expanded && (
-        <div
-          style={{
-            padding: '8px 0 0 16px',
-            fontSize: '11px',
-            lineHeight: '1.5',
-            color: '#374151',
-          }}
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(markdown) }}
-        />
+        <DetailContent dangerouslySetInnerHTML={{ __html: renderMarkdown(markdown) }} />
       )}
-    </div>
+    </DetailWrap>
   )
 }

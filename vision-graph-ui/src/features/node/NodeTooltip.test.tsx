@@ -1,12 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import NodeTooltip from './NodeTooltip'
 import { emptyNode } from './nodeData'
+import { ThemeProvider } from '../../shared/ThemeProvider'
+
+const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('NodeTooltip', () => {
   it('renders children', () => {
     const node = emptyNode('1')
-    render(
+    renderWithTheme(
       <NodeTooltip node={node}>
         <div>Child content</div>
       </NodeTooltip>
@@ -17,7 +21,7 @@ describe('NodeTooltip', () => {
   it('shows tooltip with title', () => {
     const node = emptyNode('1')
     node.title = 'Test Node'
-    render(
+    renderWithTheme(
       <NodeTooltip node={node}>
         <div>Content</div>
       </NodeTooltip>
@@ -30,7 +34,7 @@ describe('NodeTooltip', () => {
   it('shows tooltip with status', () => {
     const node = emptyNode('1')
     node.status = 'running'
-    render(
+    renderWithTheme(
       <NodeTooltip node={node}>
         <div>Content</div>
       </NodeTooltip>
@@ -42,7 +46,7 @@ describe('NodeTooltip', () => {
   it('shows last update time', () => {
     const node = emptyNode('1')
     node.lastUpdate = new Date('2024-01-01T12:00:00')
-    render(
+    renderWithTheme(
       <NodeTooltip node={node}>
         <div>Content</div>
       </NodeTooltip>
@@ -53,7 +57,7 @@ describe('NodeTooltip', () => {
 
   it('shows never when no last update', () => {
     const node = emptyNode('1')
-    render(
+    renderWithTheme(
       <NodeTooltip node={node}>
         <div>Content</div>
       </NodeTooltip>

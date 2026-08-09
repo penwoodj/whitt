@@ -1,8 +1,21 @@
+import styled from 'styled-components'
 import type { LineLabelProps } from './lineTypes'
 import { calcMid } from './lineTransforms'
 import { log } from '../../shared/logger'
 
 const lineLog = log('LineLabel')
+
+type EdgeLabelProps = {
+  $clickable: boolean
+}
+
+const EdgeLabel = styled.text<EdgeLabelProps>`
+  text-anchor: middle;
+  font-size: 12px;
+  fill: #666666;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  user-select: none;
+`
 
 const fireClick = (kind: string, onLabelClick?: (kind: string) => void) => {
   return () => {
@@ -18,16 +31,13 @@ export default function LineLabel({ srcCoord, dstCoord, lineKind, onLabelClick }
   const handleClick = fireClick(lineKind, onLabelClick as (kind: string) => void)
 
   return (
-    <text
+    <EdgeLabel
       x={midPt.x}
       y={midPt.y - 5}
-      textAnchor="middle"
-      fontSize="12"
-      fill="#666666"
-      style={{ cursor: onLabelClick ? 'pointer' : 'default', userSelect: 'none' }}
+      $clickable={!!onLabelClick}
       onClick={handleClick}
     >
       {lineKind}
-    </text>
+    </EdgeLabel>
   )
 }

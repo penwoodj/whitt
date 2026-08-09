@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import styled from 'styled-components'
 import type { Todo } from './nodeTypes'
 
 type NodeAgenticTodosProps = {
@@ -7,15 +8,88 @@ type NodeAgenticTodosProps = {
   onToggle: () => void
 }
 
-const getStatusColor = (status: Todo['status']): string => {
-  const colorMap = {
-    queued: '#9ca3af',
-    running: '#3b82f6',
-    done: '#22c55e',
-    failed: '#ef4444',
+const getStatusColor = (status: Todo['status']): 'idle' | 'recording' | 'running' | 'done' => {
+  const colorKeyMap: Record<Todo['status'], 'idle' | 'recording' | 'running' | 'done'> = {
+    queued: 'idle',
+    running: 'running',
+    done: 'done',
+    failed: 'recording',
   }
-  return colorMap[status]
+  return colorKeyMap[status]
 }
+
+const TodosWrap = styled.div`
+  padding: 4px 8px;
+`
+
+const ToggleBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.bgElevated};
+  font-size: 11px;
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  cursor: pointer;
+`
+
+const Arrow = styled.span<{ $expanded: boolean }>`
+  transform: rotate(${({ $expanded }) => ($expanded ? '90deg' : '0deg')});
+  transition: transform 0.2s;
+`
+
+const Spinner = styled.span`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
+const TodoList = styled.ul`
+  list-style: none;
+  padding: 8px 0 0 16px;
+  margin: 0;
+`
+
+const TodoItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  font-size: 11px;
+`
+
+const StatusDot = styled.span<{ $colorKey: 'idle' | 'recording' | 'running' | 'done' }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${({ $colorKey, theme }) => theme.colors[$colorKey]};
+`
+
+const SmallSpinner = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
 
 export default function NodeAgenticTodos({ todos, expanded, onToggle }: NodeAgenticTodosProps) {
   const handleClick = useCallback(() => {
@@ -25,88 +99,23 @@ export default function NodeAgenticTodos({ todos, expanded, onToggle }: NodeAgen
   const hasRunning = todos.some((todo) => todo.status === 'running')
 
   return (
-    <div style={{ padding: '4px 8px' }}>
-      <button
-        onClick={handleClick}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          border: '1px solid #e5e7eb',
-          backgroundColor: '#fff',
-          fontSize: '11px',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-        }}
-      >
-        <span style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-          ▶
-        </span>
+    <TodosWrap>
+      <ToggleBtn onClick={handleClick}>
+        <Arrow $expanded={expanded}>▶</Arrow>
         <span>Agentic Tasks ({todos.length})</span>
-        {hasRunning && (
-          <span
-            style={{
-              width: '12px',
-              height: '12px',
-              borderRadius: '50%',
-              border: '2px solid #3b82f6',
-              borderTopColor: 'transparent',
-              animation: 'spin 1s linear infinite',
-            }}
-          />
-        )}
-      </button>
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+        {hasRunning && <Spinner />}
+      </ToggleBtn>
       {expanded && (
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: '8px 0 0 16px',
-            margin: 0,
-          }}
-        >
+        <TodoList>
           {todos.map((todo, idx) => (
-            <li
-              key={idx}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '4px 0',
-                fontSize: '11px',
-              }}
-            >
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: getStatusColor(todo.status),
-                }}
-              />
+            <TodoItem key={idx}>
+              <StatusDot $colorKey={getStatusColor(todo.status)} />
               <span>{todo.label}</span>
-              {todo.status === 'running' && (
-                <span
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    border: '2px solid #3b82f6',
-                    borderTopColor: 'transparent',
-                    animation: 'spin 1s linear infinite',
-                  }}
-                />
-              )}
-            </li>
+              {todo.status === 'running' && <SmallSpinner />}
+            </TodoItem>
           ))}
-        </ul>
+        </TodoList>
       )}
-    </div>
+    </TodosWrap>
   )
 }

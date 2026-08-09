@@ -1,12 +1,27 @@
+import styled from 'styled-components'
 import type { SettingsLayoutProps } from './settingsTypes'
 import type { ReactNode } from 'react'
 
+const CfgLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.lg};
+`
+
+const CfgFieldset = styled.fieldset`
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  padding: ${({ theme }) => theme.spacing.md};
+`
+
+const CfgLegend = styled.legend`
+  padding: 0 ${({ theme }) => theme.spacing.sm};
+  font-weight: ${({ theme }) => theme.font.weightBold};
+`
+
 export const SettingsLayout = ({ children }: SettingsLayoutProps): JSX.Element => {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24 }}>
-      {children}
-    </div>
-  )
+  return <CfgLayout>{children}</CfgLayout>
 }
 
 type SectionProps = {
@@ -16,9 +31,9 @@ type SectionProps = {
 
 export const SettingsSection = ({ legend, children }: SectionProps): JSX.Element => {
   return (
-    <fieldset style={{ border: '1px solid #ccc', borderRadius: 8, padding: 16 }}>
-      <legend style={{ padding: '0 8px', fontWeight: 'bold' }}>{legend}</legend>
+    <CfgFieldset>
+      <CfgLegend>{legend}</CfgLegend>
       {children}
-    </fieldset>
+    </CfgFieldset>
   )
 }

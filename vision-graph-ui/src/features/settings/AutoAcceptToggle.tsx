@@ -1,4 +1,15 @@
+import styled from 'styled-components'
 import type { AutoAcceptToggleProps } from './settingsTypes'
+
+const CfgLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+`
+
+const CfgText = styled.span`
+  color: ${({ theme }) => theme.colors.text};
+`
 
 export const AutoAcceptToggle = ({ isAuto, onChange }: AutoAcceptToggleProps): JSX.Element => {
   const handleClick = (): void => {
@@ -6,9 +17,9 @@ export const AutoAcceptToggle = ({ isAuto, onChange }: AutoAcceptToggleProps): J
   }
 
   return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <CfgLabel>
       <input type="checkbox" checked={isAuto} onChange={handleClick} />
-      <span>Auto-accept</span>
-    </label>
+      <CfgText>Auto-accept</CfgText>
+    </CfgLabel>
   )
 }

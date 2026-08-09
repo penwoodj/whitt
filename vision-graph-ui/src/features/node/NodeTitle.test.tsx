@@ -1,15 +1,19 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import NodeTitle from './NodeTitle'
+import { ThemeProvider } from '../../shared/ThemeProvider'
+
+const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('NodeTitle', () => {
   it('renders title txt', () => {
-    render(<NodeTitle title="Test Node" />)
+    renderWithTheme(<NodeTitle title="Test Node" />)
     expect(screen.getByText('Test Node')).toBeInTheDocument()
   })
 
   it('shows input on dblclick', () => {
-    render(<NodeTitle title="Test Node" />)
+    renderWithTheme(<NodeTitle title="Test Node" />)
     const title = screen.getByText('Test Node')
     fireEvent.doubleClick(title)
     const input = screen.getByRole('textbox')
@@ -19,7 +23,7 @@ describe('NodeTitle', () => {
 
   it('saves title on blur', () => {
     const onTitleChange = vi.fn()
-    render(<NodeTitle title="Test Node" onTitleChange={onTitleChange} />)
+    renderWithTheme(<NodeTitle title="Test Node" onTitleChange={onTitleChange} />)
     const title = screen.getByText('Test Node')
     fireEvent.doubleClick(title)
     const input = screen.getByRole('textbox')
@@ -30,7 +34,7 @@ describe('NodeTitle', () => {
 
   it('saves title on Enter key', () => {
     const onTitleChange = vi.fn()
-    render(<NodeTitle title="Test Node" onTitleChange={onTitleChange} />)
+    renderWithTheme(<NodeTitle title="Test Node" onTitleChange={onTitleChange} />)
     const title = screen.getByText('Test Node')
     fireEvent.doubleClick(title)
     const input = screen.getByRole('textbox')
@@ -40,7 +44,7 @@ describe('NodeTitle', () => {
   })
 
   it('shows default title', () => {
-    render(<NodeTitle title="New Node" />)
+    renderWithTheme(<NodeTitle title="New Node" />)
     expect(screen.getByText('New Node')).toBeInTheDocument()
   })
 })

@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 import NodeTitle from './NodeTitle'
 import NodeMicBtn from './NodeMicBtn'
 import NodeStatus from './NodeStatus'
@@ -9,6 +10,34 @@ import NodeDetailPanel from './NodeDetailPanel'
 import type { NodeProps } from './nodeTypes'
 import { useNodeState } from './useNodeState'
 import { useNodeLogging } from './useNodeLogging'
+
+const NodeWrap = styled.div`
+  padding: ${({ theme }) => theme.spacing.md};
+  border-radius: ${({ theme }) => theme.radius.md};
+  background-color: ${({ theme }) => theme.colors.bgElevated};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: ${({ theme }) => theme.shadow.sm};
+  min-width: 200px;
+  max-width: 300px;
+`
+
+const NodeHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`
+
+const MicWrap = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`
+
+const PromptWrap = styled.div`
+  flex: 1;
+`
 
 export default function Node({ data, onSend, onTitleChange }: NodeProps) {
   const nodeLog = useNodeLogging()
@@ -45,51 +74,27 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
 
   const nodeContent = useMemo(
     () => (
-      <div
-        style={{
-          padding: '12px',
-          borderRadius: '8px',
-          backgroundColor: '#fff',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          minWidth: '200px',
-          maxWidth: '300px',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '8px',
-          }}
-        >
+      <NodeWrap>
+        <NodeHeader>
           <NodeTitle title={data.title} onTitleChange={handleTitleChange} />
           <NodeStatus status={data.status} />
-        </div>
+        </NodeHeader>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '8px',
-            marginBottom: '8px',
-          }}
-        >
+        <MicWrap>
           <NodeMicBtn
             isRec={isRec}
             onToggleRec={toggleRec}
             onStreamTxt={(txt) => setPromptTxt(txt)}
           />
-          <div style={{ flex: 1 }}>
+          <PromptWrap>
             <NodePromptArea
               value={promptTxt}
               onChange={setPromptTxt}
               onSend={handleSend}
               streamedTxt={streamedTxt}
             />
-          </div>
-        </div>
+          </PromptWrap>
+        </MicWrap>
 
         <NodeAgenticTodos
           todos={data.todos}
@@ -101,7 +106,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
           expanded={detailExpanded}
           onToggle={toggleDetail}
         />
-      </div>
+      </NodeWrap>
     ),
     [
       data,

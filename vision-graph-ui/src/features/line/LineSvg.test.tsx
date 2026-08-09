@@ -1,13 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
+import { ThemeProvider } from '../../shared/ThemeProvider'
 import LineSvg from './LineSvg'
+
+const renderWithTheme = (ui: React.ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('LineSvg', () => {
   describe('Render line btwn two coords', () => {
     it('SVG path visible', () => {
       const srcCoord = { x: 0, y: 0 }
       const dstCoord = { x: 100, y: 100 }
-      const { container } = render(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} />)
+      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} />)
       const path = container.querySelector('path')
       expect(path).toBeVisible()
     })
@@ -15,7 +18,7 @@ describe('LineSvg', () => {
     it('path stroke gray', () => {
       const srcCoord = { x: 0, y: 0 }
       const dstCoord = { x: 100, y: 100 }
-      const { container } = render(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} />)
+      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} />)
       const path = container.querySelector('path')
       expect(path).toHaveAttribute('stroke', '#666666')
     })
@@ -25,7 +28,7 @@ describe('LineSvg', () => {
     it('stroke-width is 4', () => {
       const srcCoord = { x: 0, y: 0 }
       const dstCoord = { x: 100, y: 100 }
-      const { container } = render(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isActive />)
+      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isActive />)
       const path = container.querySelector('path')
       expect(path).toHaveAttribute('stroke-width', '4')
     })
@@ -35,7 +38,7 @@ describe('LineSvg', () => {
     it('stroke darker on hover', () => {
       const srcCoord = { x: 0, y: 0 }
       const dstCoord = { x: 100, y: 100 }
-      const { container } = render(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isHovered />)
+      const { container } = renderWithTheme(<LineSvg srcCoord={srcCoord} dstCoord={dstCoord} isHovered />)
       const path = container.querySelector('path')
       expect(path).toHaveAttribute('stroke', '#444444')
     })

@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ConnectedSettings } from './Settings'
+import { ThemeProvider } from '../../shared/ThemeProvider'
 import { STORAGE_KEY } from './settingsData'
+
+const renderWithTheme = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('Settings', () => {
   beforeEach(() => {
@@ -9,7 +12,7 @@ describe('Settings', () => {
   })
 
   it('persists to localStorage', () => {
-    render(<ConnectedSettings />)
+    renderWithTheme(<ConnectedSettings />)
     const checkbox = screen.getByRole('checkbox')
     fireEvent.click(checkbox)
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -26,13 +29,13 @@ describe('Settings', () => {
       folderPath: '',
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-    render(<ConnectedSettings />)
+    renderWithTheme(<ConnectedSettings />)
     const checkbox = screen.getByRole('checkbox')
     expect(checkbox).not.toBeChecked()
   })
 
   it('uses defaults when localStorage empty', () => {
-    render(<ConnectedSettings />)
+    renderWithTheme(<ConnectedSettings />)
     const checkbox = screen.getByRole('checkbox')
     expect(checkbox).toBeChecked()
   })

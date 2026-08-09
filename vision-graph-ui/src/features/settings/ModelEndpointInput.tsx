@@ -1,6 +1,28 @@
 import { useState, useCallback } from 'react'
+import styled from 'styled-components'
 import type { ModelEndpointInputProps } from './settingsTypes'
 import { hasValidEndpoint } from './settingsPredicates'
+
+const CfgWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+`
+
+const CfgInput = styled.input<{ $hasErr: boolean }>`
+  border: 1px solid ${({ theme, $hasErr }) => $hasErr ? theme.colors.error : theme.colors.border};
+  padding: ${({ theme }) => theme.spacing.sm};
+  background: ${({ theme }) => theme.colors.bg};
+  color: ${({ theme }) => theme.colors.text};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  font-family: ${({ theme }) => theme.font.sans};
+  font-size: ${({ theme }) => theme.font.sizeMd};
+  outline: none;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.borderActive};
+  }
+`
 
 export const ModelEndpointInput = ({ eptTxt, onChange }: ModelEndpointInputProps): JSX.Element => {
   const [isTouched, setIsTouched] = useState(false)
@@ -18,18 +40,16 @@ export const ModelEndpointInput = ({ eptTxt, onChange }: ModelEndpointInputProps
     setIsTouched(true)
   }, [])
 
-  const inputStyle = showError ? { border: '2px solid red' } : {}
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <input
+    <CfgWrapper>
+      <CfgInput
         type="text"
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        style={inputStyle}
+        $hasErr={showError}
         placeholder="http://localhost:8080"
       />
-    </div>
+    </CfgWrapper>
   )
 }

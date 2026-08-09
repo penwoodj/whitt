@@ -1,3 +1,4 @@
+import styled from 'styled-components'
 import type { LineSvgProps } from './lineTypes'
 import { statusColor } from './lineTransforms'
 import { isAct } from './linePredicates'
@@ -6,6 +7,17 @@ type LineSvgPropsInternal = LineSvgProps & {
   onMouseEnter?: () => void
   onMouseLeave?: () => void
 }
+
+type EdgeSvgProps = {
+  $viewBox: string
+}
+
+const EdgeSvg = styled.svg<EdgeSvgProps>`
+  width: 100%;
+  height: 100%;
+  viewBox: ${({ $viewBox }) => $viewBox};
+  overflow: visible;
+`
 
 const renderPath = (srcX: number, srcY: number, dstX: number, dstY: number): string => {
   const midX = (srcX + dstX) / 2
@@ -22,14 +34,10 @@ export default function LineSvg({ srcCoord, dstCoord, isActive, isHovered, statu
   const darkerStroke = isHovered ? '#444444' : stroke
 
   const pathD = renderPath(srcCoord.x, srcCoord.y, dstCoord.x, dstCoord.y)
+  const viewBox = `0 0 ${Math.max(srcCoord.x, dstCoord.x) + 10} ${Math.max(srcCoord.y, dstCoord.y) + 10}`
 
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox={`0 0 ${Math.max(srcCoord.x, dstCoord.x) + 10} ${Math.max(srcCoord.y, dstCoord.y) + 10}`}
-      style={{ overflow: 'visible' }}
-    >
+    <EdgeSvg $viewBox={viewBox}>
       <path
         d={pathD}
         stroke={darkerStroke}
@@ -39,6 +47,6 @@ export default function LineSvg({ srcCoord, dstCoord, isActive, isHovered, statu
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       />
-    </svg>
+    </EdgeSvg>
   )
 }

@@ -1,55 +1,73 @@
 import type { NodeData } from './nodeTypes'
+import styled from 'styled-components'
 
 type NodeTooltipProps = {
   node: NodeData
   children: React.ReactNode
 }
 
+const TooltipWrap = styled.div`
+  position: relative;
+  display: inline-block;
+`
+
+const TooltipBox = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  color: ${({ theme }) => theme.colors.textInverse};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: ${({ theme }) => theme.zIndex.tooltip};
+  pointer-events: none;
+
+  ${TooltipWrap}:hover & {
+    opacity: 1;
+    visibility: visible;
+  }
+`
+
+const TooltipTitle = styled.div`
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  margin-bottom: 4px;
+`
+
+const TooltipRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+
+const Capitalize = styled.span`
+  text-transform: capitalize;
+`
+
+const MutedTxt = styled.span`
+  color: ${({ theme }) => theme.colors.textMuted};
+`
+
 export default function NodeTooltip({ node, children }: NodeTooltipProps) {
   const lastUpdateTxt = node.lastUpdate ? node.lastUpdate.toLocaleTimeString() : 'Never'
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        display: 'inline-block',
-      }}
-    >
+    <TooltipWrap>
       {children}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginBottom: '8px',
-          padding: '8px 12px',
-          backgroundColor: '#1f2937',
-          color: '#fff',
-          borderRadius: '4px',
-          fontSize: '11px',
-          whiteSpace: 'nowrap',
-          opacity: 0,
-          visibility: 'hidden',
-          transition: 'opacity 0.2s, visibility 0.2s',
-          zIndex: 1000,
-          pointerEvents: 'none',
-        }}
-        className="node-tooltip"
-      >
-        <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{node.title}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ textTransform: 'capitalize' }}>{node.status}</span>
-          <span style={{ color: '#9ca3af' }}>•</span>
-          <span style={{ color: '#9ca3af' }}>Updated: {lastUpdateTxt}</span>
-        </div>
-      </div>
-      <style>{`
-        .node-tooltip:hover {
-          opacity: 1 !important;
-          visibility: visible !important;
-        }
-      `}</style>
-    </div>
+      <TooltipBox className="node-tooltip">
+        <TooltipTitle>{node.title}</TooltipTitle>
+        <TooltipRow>
+          <Capitalize>{node.status}</Capitalize>
+          <MutedTxt>•</MutedTxt>
+          <MutedTxt>Updated: {lastUpdateTxt}</MutedTxt>
+        </TooltipRow>
+      </TooltipBox>
+    </TooltipWrap>
   )
 }

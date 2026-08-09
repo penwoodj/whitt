@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
+import { useTheme } from 'styled-components'
+import styled from 'styled-components'
 import type { LineProps } from './lineTypes'
 import { statusColor } from './lineTransforms'
 import { hasErr } from './linePredicates'
@@ -9,8 +11,11 @@ import LineAnim from './LineAnim'
 
 const lineLog = log('Line')
 
+const EdgeWrap = styled.g``
+
 export default function Line({ srcCoord, dstCoord, lineKind, status = 'idle', isActive, onLabelClick }: LineProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const theme = useTheme()
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true)
@@ -24,19 +29,21 @@ export default function Line({ srcCoord, dstCoord, lineKind, status = 'idle', is
 
   const isErrorState = hasErr(status)
   const strokeColor = statusColor(status)
+  const errorColor = theme.colors.error
+  const finalStrokeColor = isErrorState ? errorColor : strokeColor
 
   useEffect(() => {
     lineLog.debug('Line rendered')
   }, [])
 
   return (
-    <g>
+    <EdgeWrap>
       <LineSvg
         srcCoord={srcCoord}
         dstCoord={dstCoord}
         isActive={isActive}
         isHovered={isHovered}
-        statusColor={isErrorState ? '#ff0000' : strokeColor}
+        statusColor={finalStrokeColor}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       />
@@ -44,9 +51,9 @@ export default function Line({ srcCoord, dstCoord, lineKind, status = 'idle', is
         srcCoord={srcCoord}
         dstCoord={dstCoord}
         status={status}
-        statusColor={isErrorState ? '#ff0000' : strokeColor}
+        statusColor={finalStrokeColor}
       />
       {lineKind && <LineLabel srcCoord={srcCoord} dstCoord={dstCoord} lineKind={lineKind} onLabelClick={onLabelClick} />}
-    </g>
+    </EdgeWrap>
   )
 }

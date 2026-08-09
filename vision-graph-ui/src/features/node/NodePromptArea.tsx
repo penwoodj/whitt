@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import styled from 'styled-components'
 
 type NodePromptAreaProps = {
   value: string
@@ -7,8 +8,39 @@ type NodePromptAreaProps = {
   streamedTxt?: string
 }
 
+const PromptWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: ${({ theme }) => theme.spacing.sm};
+`
+
+const PromptInput = styled.textarea`
+  width: 100%;
+  min-height: 60px;
+  padding: ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  font-size: ${({ theme }) => theme.font.sizeSm};
+  font-family: ${({ theme }) => theme.font.sans};
+  resize: vertical;
+`
+
+const SendBtn = styled.button<{ $disabled: boolean }>`
+  padding: 6px 12px;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  border: none;
+  background-color: ${({ $disabled, theme }) =>
+    $disabled ? theme.colors.textMuted : theme.colors.primary};
+  color: ${({ theme }) => theme.colors.textInverse};
+  font-size: 12px;
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  align-self: flex-end;
+`
+
 export default function NodePromptArea({ value, onChange, onSend, streamedTxt }: NodePromptAreaProps) {
-  const [isStreaming, setIsStreaming] = useState(false)
+  const [isStreaming] = useState(false)
 
   const handleChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -32,50 +64,20 @@ export default function NodePromptArea({ value, onChange, onSend, streamedTxt }:
   }, [onSend])
 
   const displayTxt = isStreaming && streamedTxt ? streamedTxt : value
+  const isDisabled = isStreaming || !displayTxt.trim()
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        padding: '8px',
-      }}
-    >
-      <textarea
+    <PromptWrap>
+      <PromptInput
         value={displayTxt}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="Enter prompt..."
         disabled={isStreaming}
-        style={{
-          width: '100%',
-          minHeight: '60px',
-          padding: '8px',
-          borderRadius: '4px',
-          border: '1px solid #e5e7eb',
-          fontSize: '13px',
-          fontFamily: 'inherit',
-          resize: 'vertical',
-        }}
       />
-      <button
-        onClick={handleSendClick}
-        disabled={isStreaming || !displayTxt.trim()}
-        style={{
-          padding: '6px 12px',
-          borderRadius: '4px',
-          border: 'none',
-          backgroundColor: isStreaming || !displayTxt.trim() ? '#9ca3af' : '#3b82f6',
-          color: '#fff',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          cursor: isStreaming || !displayTxt.trim() ? 'not-allowed' : 'pointer',
-          alignSelf: 'flex-end',
-        }}
-      >
+      <SendBtn $disabled={isDisabled} onClick={handleSendClick} disabled={isDisabled}>
         {isStreaming ? 'Streaming...' : 'Send'}
-      </button>
-    </div>
+      </SendBtn>
+    </PromptWrap>
   )
 }

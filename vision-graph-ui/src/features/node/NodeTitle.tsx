@@ -1,9 +1,25 @@
 import { useState, useCallback } from 'react'
+import styled from 'styled-components'
 
 type NodeTitleProps = {
   title: string
   onTitleChange?: (title: string) => void
 }
+
+const TitleInput = styled.input`
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  font-size: ${({ theme }) => theme.font.sizeSm};
+  width: 120px;
+`
+
+const TitleSpan = styled.span`
+  font-weight: ${({ theme }) => theme.font.weightBold};
+  font-size: ${({ theme }) => theme.font.sizeSm};
+  cursor: pointer;
+  user-select: none;
+`
 
 export default function NodeTitle({ title, onTitleChange }: NodeTitleProps) {
   const [isEditing, setIsEditing] = useState(false)
@@ -32,35 +48,16 @@ export default function NodeTitle({ title, onTitleChange }: NodeTitleProps) {
 
   if (isEditing) {
     return (
-      <input
+      <TitleInput
         type="text"
         value={editTitle}
         onChange={(evt) => setEditTitle(evt.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         autoFocus
-        style={{
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          padding: '4px 8px',
-          fontSize: '14px',
-          width: '120px',
-        }}
       />
     )
   }
 
-  return (
-    <span
-      onDoubleClick={handleDblClick}
-      style={{
-        fontWeight: 'bold',
-        fontSize: '14px',
-        cursor: 'pointer',
-        userSelect: 'none',
-      }}
-    >
-      {title}
-    </span>
-  )
+  return <TitleSpan onDoubleClick={handleDblClick}>{title}</TitleSpan>
 }
