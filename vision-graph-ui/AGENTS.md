@@ -468,11 +468,85 @@ Override: user explicitly invokes "build now" or "don't stop" → skip questions
 
 ---
 
-Revision: 2 (2026-08-08)
+Revision: 3 (2026-08-08)
 
-Changes in Rev 2:
-- Added Section 10: Skill loading mandatory + improvement loop.
-- Added Section 11: File size caps + folder rules.
-- Added Section 12: Caveman terse everywhere (docs, code, Gherkin, tests, commits).
-- Added Section 13: Sub-agent routing table.
-- Added Section 14: Question protocol (2-3 MCQs max per turn going forward).
+Changes in Rev 3:
+- Added Section 15: styled-components mandate + theme tokens.
+
+---
+
+## 15. Styling — styled-components + Theme (HARD)
+
+### Library
+
+**`styled-components` v6+** is the ONLY allowed styling approach for components in this subfolder. Inline `style={{...}}` props are FORBIDDEN in component `.tsx` files (allowed only in stories for story-level layout wrappers).
+
+CSS files (`.css`) for new code are FORBIDDEN. Existing CSS (App.css, index.css) is legacy — migrate when touched.
+
+### Scoped styling
+
+`styled-components` automatically scopes styles to the component + its children via generated class names. NEVER use global CSS selectors. NEVER use `createGlobalStyle` except for resets in `src/shared/`.
+
+### Theme tokens (single source of truth)
+
+`src/shared/theme.ts` exports `Theme` type + `darkTheme` (default). Tokens cover:
+- `colors` (bg, bgElevated, bgHover, border, borderActive, text, textMuted, textInverse, primary, primaryHover, success, warning, error, recording, idle, running, done)
+- `spacing` (xs/sm/md/lg/xl)
+- `radius` (sm/md/lg/pill)
+- `font` (sans/mono/sizeXs..sizeXl/weightNormal/Medium/Bold)
+- `shadow` (sm/md/lg)
+- `transition` (fast/base/slow)
+- `zIndex` (base/overlay/modal/tooltip)
+
+Access in components via `${({ theme }) => theme.colors.bg}` interpolation.
+
+### ThemeProvider
+
+`src/shared/ThemeProvider.tsx` wraps `styled-components`'s ThemeProvider. Use it at app root + in Storybook preview + in tests.
+
+```typescript
+import { ThemeProvider } from '@/shared/ThemeProvider'
+
+<ThemeProvider>
+  <App />
+</ThemeProvider>
+```
+
+### Styling rules (caveman)
+
+| Pattern | Use |
+|---|---|
+| Define styled component | `const Title = styled.h1\`color: ${({ theme }) => theme.colors.text};\`` |
+| Reference theme | `${({ theme }) => theme.colors.primary}` |
+| Conditional style | `${({ $isRec }) => $isRec ? \`color: red\` : \`color: gray\`}` |
+| Hover/state | `&:hover { background: ${({ theme }) => theme.colors.bgHover}; }` |
+| Nested child | `& > span { font-weight: bold; }` |
+| Prop-driven | Use transient props (`$isActive` not `isActive`) to avoid DOM warnings |
+| Compose | `const Btn = styled(BaseBtn)\`...\`` |
+
+### Forbidden
+
+- Inline `style={{...}}` in component `.tsx` (only stories/layout wrappers)
+- CSS files for new code (legacy `.css` migrations allowed when touched)
+- Global CSS selectors in styled-components strings
+- Hardcoded color hex (use theme token)
+- Tailwind, emotion, CSS modules, scss files (legacy libs not in deps)
+- `!important` in styled strings
+
+### Dark theme default
+
+`darkTheme` is the only theme for now. NO light theme work. When `ThemeProvider` is used without props, defaults to `darkTheme`.
+
+### Migration protocol
+
+When converting existing component from inline styles:
+1. Read component, identify all inline `style={{...}}` blocks
+2. Create one `const X = styled.Tag\`...\`` per logical block
+3. Replace theme-able values with `${({ theme }) => theme.colors.X}` (etc.)
+4. Replace conditional values with transient props (`$isRec`, `$hasErr`)
+5. Keep behavior identical — only styling changes
+6. Tests must still pass (queries by text/role, not by inline style)
+
+### Skill loading
+
+Before styling work, agents MUST load `modern-react` skill (project-local at `.opencode/skills/modern-react/SKILL.md`). It has the styled-component patterns + dark theme conventions.
