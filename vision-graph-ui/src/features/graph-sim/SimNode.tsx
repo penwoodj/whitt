@@ -81,6 +81,10 @@ export default function SimNode({ data }: SimNodeProps) {
             onChange={handlePromptChange}
             streamedTxt={nodeData.promptTxt}
             isStream={false}
+            isRec={nodeData.isRec}
+            isCycleRun={false}
+            onToggleRec={onMicClick || (() => {})}
+            onSend={() => {}}
           />
         </PromptWrap>
       </NodeBody>

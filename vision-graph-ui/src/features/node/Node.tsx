@@ -4,7 +4,6 @@ import NodeTitle from './NodeTitle'
 import NodeStatus from './NodeStatus'
 import NodePromptArea from './NodePromptArea'
 import NodeAgenticTodos from './NodeAgenticTodos'
-import NodeFooter from './NodeFooter'
 import NodeTooltip from './NodeTooltip'
 import NodeDetailPanel from './NodeDetailPanel'
 import type { NodeProps } from './nodeTypes'
@@ -89,15 +88,10 @@ export default function Node({ data, isActive, onSend, onTitleChange }: NodeProp
           onChange={setPromptTxt}
           streamedTxt={streamedTxt}
           isStream={isStream}
-        />
-
-        <NodeFooter
           isRec={isRec}
-          isStream={isStream}
           isCycleRun={data.isCycleRun || false}
-          promptTxt={promptTxt}
           onToggleRec={toggleRec}
-          onStreamTxt={(txt) => setPromptTxt(txt)}
+          onStreamTxt={setPromptTxt}
           onSend={handleSend}
         />
 

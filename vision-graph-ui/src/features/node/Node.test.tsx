@@ -32,13 +32,14 @@ describe('Node', () => {
     expect(screen.queryByText('Agentic Tasks (0)')).not.toBeInTheDocument()
   })
 
-  it('renders footer with send button', () => {
+  it('renders composer with send button', () => {
     const node = emptyNode('1')
     renderWithTheme(<Node data={node} />)
-    expect(screen.getByText('Send')).toBeInTheDocument()
+    const sendBtn = screen.getByLabelText('Send prompt')
+    expect(sendBtn).toBeInTheDocument()
   })
 
-  it('renders footer with mic button', () => {
+  it('renders composer with mic button', () => {
     const node = emptyNode('1')
     renderWithTheme(<Node data={node} />)
     const micBtn = document.querySelector('button[title*="recording"]')
@@ -50,10 +51,10 @@ describe('Node', () => {
     const node = emptyNode('1')
     renderWithTheme(<Node data={node} onSend={onSend} />)
 
-    const textarea = screen.getByPlaceholderText('Enter prompt...')
+    const textarea = screen.getByPlaceholderText('Ask anything...')
     fireEvent.change(textarea, { target: { value: 'test prompt' } })
 
-    const sendBtn = screen.getByText('Send')
+    const sendBtn = screen.getByLabelText('Send prompt')
     fireEvent.click(sendBtn)
 
     expect(onSend).toHaveBeenCalledWith('test prompt')
