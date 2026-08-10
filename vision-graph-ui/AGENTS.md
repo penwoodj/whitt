@@ -484,10 +484,35 @@ Override: user explicitly invokes "build now" or "don't stop" → skip questions
 
 ---
 
-Revision: 4 (2026-08-09)
+Revision: 5 (2026-08-09)
+
+Changes in Rev 5:
+- Section 17: Added "Node Lifecycle (Collapsed → Hover → Expand)" rules per ADR-0012 (sphere→square morph, 3-state lifecycle, details panel gating).
 
 Changes in Rev 4:
 - Section 11: Added "Project root boundary" rule (no package.json/node_modules/.storybook at whitt repo root — must live in vision-graph-ui/ only).
+
+---
+
+## 17. Node Lifecycle (Collapsed → Hover → Expand)
+
+Per ADR-0012. Default node state = title text only (no shape, no composer).
+Hover reveals sphere outline. Click morphs sphere→square containing composer.
+
+States:
+- collapsed: title text floating, no shape
+- hovered: title in sphere outline (dashed primary border)
+- expanded: square composer (textarea + mic + send), auto-focused
+
+Transitions:
+- collapsed → hovered: mouse enter
+- hovered → collapsed: mouse leave (if not focused)
+- hovered → expanded: click
+- expanded → collapsed: Escape OR click outside
+
+Morph: 240ms ease on border-radius, width, height, padding, background-color.
+
+Details panel: ONLY appears after lifecycle='done' (full record → stream → stop → send → cycle → done flow).
 
 ---
 

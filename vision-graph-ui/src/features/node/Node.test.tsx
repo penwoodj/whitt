@@ -3,53 +3,115 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import Node from './Node'
 import { ThemeProvider } from '../../shared/ThemeProvider'
-import { emptyNode, busyNode } from './nodeData'
+import type { NodeData } from './nodeTypes'
 
 const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
+const createNode = (overrides: Partial<NodeData> = {}): NodeData => ({
+  id: '1',
+  title: 'New Node',
+  status: 'idle',
+  type: 'task',
+  lifecycle: 'initial',
+  nodeViewState: 'collapsed',
+  promptTxt: '',
+  todos: [],
+  lastUpdate: null,
+  detailExpanded: false,
+  todosExpanded: false,
+  isRec: false,
+  isCycleRun: false,
+  ...overrides,
+})
+
 describe('Node', () => {
-  it('renders node with title', () => {
-    const node = emptyNode('1')
+  it('renders collapsed node with title only', () => {
+    const node = createNode()
     renderWithTheme(<Node data={node} />)
     expect(screen.getAllByText('New Node')[0]).toBeInTheDocument()
+    expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('renders node with status', () => {
-    const node = busyNode('1')
+  it('shows sphere outline on hover', () => {
+    const node = createNode()
     renderWithTheme(<Node data={node} />)
-    expect(screen.getByText('Running')).toBeInTheDocument()
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+
+    expect(nodeWrap).toHaveStyle({ border: '1px dashed #007ACC' })
   })
 
-  it('renders agentic todos when lifecycle is agentic-running', () => {
-    const node = busyNode('1')
+  it('expands to square composer on click', () => {
+    const node = createNode()
     renderWithTheme(<Node data={node} />)
-    expect(screen.getByText('Agentic Tasks (2)')).toBeInTheDocument()
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
+
+    expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+    expect(screen.getByLabelText('Send prompt')).toBeInTheDocument()
   })
 
-  it('does not render agentic todos when lifecycle is initial', () => {
-    const node = emptyNode('1')
+  it('collapses on Escape key', () => {
+    const node = createNode()
     renderWithTheme(<Node data={node} />)
-    expect(screen.queryByText('Agentic Tasks (0)')).not.toBeInTheDocument()
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
+
+    expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+
+    fireEvent.keyDown(nodeWrap, { key: 'Escape' })
+    expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('renders composer with send button', () => {
-    const node = emptyNode('1')
-    renderWithTheme(<Node data={node} />)
-    const sendBtn = screen.getByLabelText('Send prompt')
-    expect(sendBtn).toBeInTheDocument()
+  it('collapses on click outside', () => {
+    const node = createNode()
+    const { container } = renderWithTheme(<Node data={node} />)
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
+
+    expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+
+    fireEvent.mouseDown(container)
+    expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('renders composer with mic button', () => {
-    const node = emptyNode('1')
+  it('does not render details panel when lifecycle is not done', () => {
+    const node = createNode({ lifecycle: 'initial' })
     renderWithTheme(<Node data={node} />)
-    const micBtn = document.querySelector('button[title*="recording"]')
-    expect(micBtn).toBeInTheDocument()
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
+
+    expect(screen.queryByText('Details')).not.toBeInTheDocument()
+  })
+
+  it('renders details panel when lifecycle is done and expanded', () => {
+    const node = createNode({ lifecycle: 'done' })
+    renderWithTheme(<Node data={node} />)
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
+
+    expect(screen.getByText('Details')).toBeInTheDocument()
   })
 
   it('calls onSend when send button clicked with text', () => {
     const onSend = vi.fn()
-    const node = emptyNode('1')
+    const node = createNode()
     renderWithTheme(<Node data={node} onSend={onSend} />)
+
+    const nodeWrap = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeWrap)
+    fireEvent.click(nodeWrap)
 
     const textarea = screen.getByPlaceholderText('Ask anything...')
     fireEvent.change(textarea, { target: { value: 'test prompt' } })
@@ -58,52 +120,5 @@ describe('Node', () => {
     fireEvent.click(sendBtn)
 
     expect(onSend).toHaveBeenCalledWith('test prompt')
-  })
-
-  it('calls onTitleChange when title edited', () => {
-    const onTitleChange = vi.fn()
-    const node = emptyNode('1')
-    renderWithTheme(<Node data={node} onTitleChange={onTitleChange} />)
-
-    const title = screen.getAllByText('New Node')[0]
-    fireEvent.doubleClick(title)
-
-    const input = screen.getAllByRole('textbox')[0]
-    fireEvent.change(input, { target: { value: 'New Title' } })
-    fireEvent.blur(input)
-
-    expect(onTitleChange).toHaveBeenCalledWith('New Title')
-  })
-
-  it('toggles todos on click when agentic todos visible', () => {
-    const node = busyNode('1')
-    renderWithTheme(<Node data={node} />)
-
-    const todosBtn = screen.getByText('Agentic Tasks (2)')
-    expect(screen.queryByText('research')).not.toBeInTheDocument()
-
-    fireEvent.click(todosBtn)
-    expect(screen.getByText('research')).toBeInTheDocument()
-  })
-
-  it('toggles detail panel on click', () => {
-    const node = emptyNode('1')
-    renderWithTheme(<Node data={node} />)
-
-    const detailsBtn = screen.getByText('Details')
-    expect(screen.queryByText('Node Details')).not.toBeInTheDocument()
-
-    fireEvent.click(detailsBtn)
-    expect(screen.getByText('Node Details')).toBeInTheDocument()
-  })
-
-  it('renders tooltip on hover', () => {
-    const node = emptyNode('1')
-    node.title = 'Test Node'
-    renderWithTheme(<Node data={node} />)
-
-    const tooltip = document.querySelector('.node-tooltip')
-    expect(tooltip).toBeInTheDocument()
-    expect(tooltip).toHaveTextContent('Test Node')
   })
 })

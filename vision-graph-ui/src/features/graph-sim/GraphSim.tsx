@@ -121,6 +121,7 @@ export default function GraphSim() {
           status: 'idle',
           type: 'task',
           lifecycle: 'initial',
+          nodeViewState: 'collapsed',
           promptTxt: '',
           todos: [],
           lastUpdate: null,
@@ -170,6 +171,7 @@ export default function GraphSim() {
           status: 'idle',
           type: 'task',
           lifecycle: 'initial',
+          nodeViewState: 'collapsed',
           promptTxt: '',
           todos: [],
           lastUpdate: null,
@@ -259,6 +261,7 @@ export default function GraphSim() {
           status: 'idle',
           type: 'task',
           lifecycle: 'initial',
+          nodeViewState: 'collapsed',
           promptTxt: text,
           todos: [],
           lastUpdate: new Date(),
@@ -302,20 +305,21 @@ export default function GraphSim() {
       id: childId,
       type: 'custom',
       position: { x: 300, y: 400 },
-      data: {
-        id: childId,
-        title: `Refine: ${text.slice(0, 20)}...`,
-        status: 'running',
-        type: 'task',
-        lifecycle: 'initial',
-        promptTxt: text,
-        todos: [],
-        lastUpdate: new Date(),
-        detailExpanded: false,
-        todosExpanded: false,
-        isRec: false,
-        isCycleRun: false,
-      } as NodeData,
+        data: {
+          id: childId,
+          title: `Refine: ${text.slice(0, 20)}...`,
+          status: 'running',
+          type: 'task',
+          lifecycle: 'initial',
+          nodeViewState: 'collapsed',
+          promptTxt: text,
+          todos: [],
+          lastUpdate: new Date(),
+          detailExpanded: false,
+          todosExpanded: false,
+          isRec: false,
+          isCycleRun: false,
+        } as NodeData,
     }
 
     const edge: Edge = {
@@ -444,10 +448,9 @@ export default function GraphSim() {
           onNodesChange={(changes) => setNodes((nds) => applyNodeChanges(changes, nds))}
           onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
           nodeTypes={nodeTypes}
-          defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
           minZoom={0.2}
           maxZoom={4}
-          fitView
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls />

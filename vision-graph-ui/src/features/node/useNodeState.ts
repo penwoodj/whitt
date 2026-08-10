@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import type { NodeViewState } from './nodeTypes'
 
 export const useNodeState = () => {
   const [isRec, setIsRec] = useState(false)
@@ -7,6 +8,7 @@ export const useNodeState = () => {
   const [todosExpanded, setTodosExpanded] = useState(false)
   const [detailExpanded, setDetailExpanded] = useState(false)
   const [streamedTxt, setStreamedTxt] = useState('')
+  const [nodeViewState, setNodeViewState] = useState<NodeViewState>('collapsed')
   const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const toggleRec = useCallback(() => {
@@ -47,6 +49,12 @@ export const useNodeState = () => {
 
   const toggleDetail = useCallback(() => setDetailExpanded((prev) => !prev), [])
 
+  const setHovered = useCallback(() => setNodeViewState('hovered'), [])
+
+  const setExpanded = useCallback(() => setNodeViewState('expanded'), [])
+
+  const setCollapsed = useCallback(() => setNodeViewState('collapsed'), [])
+
   useEffect(() => {
     return () => {
       if (streamIntervalRef.current) {
@@ -63,6 +71,10 @@ export const useNodeState = () => {
     todosExpanded,
     detailExpanded,
     streamedTxt,
+    nodeViewState,
+    setHovered,
+    setExpanded,
+    setCollapsed,
     toggleRec,
     sendPrompt,
     toggleTodos,

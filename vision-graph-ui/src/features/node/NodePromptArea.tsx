@@ -58,12 +58,12 @@ const Actions = styled.div`
 `
 
 const SendBtn = styled.button<{ $disabled: boolean }>`
-  width: 36px;
-  height: 36px;
+  width: 25px;
+  height: 25px;
   display: grid;
   place-items: center;
   border: none;
-  border-radius: 50%;
+  border-radius: 6px;
   background-color: ${({ $disabled }) => ($disabled ? 'rgba(255,255,255,0.25)' : 'white')};
   color: black;
   cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};

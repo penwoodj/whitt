@@ -9,9 +9,9 @@ type NodeMicBtnProps = {
 }
 
 const MicBtn = styled.button<{ $isRec: boolean }>`
-  width: 32px;
-  height: 32px;
-  border-radius: ${({ theme }) => theme.radius.pill};
+  width: 25px;
+  height: 25px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   display: flex;
