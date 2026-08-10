@@ -14,6 +14,7 @@ const createNode = (overrides: Partial<NodeData> = {}): NodeData => ({
   type: 'task',
   lifecycle: 'initial',
   nodeViewState: 'collapsed',
+  focused: false,
   promptTxt: '',
   todos: [],
   lastUpdate: null,
@@ -25,56 +26,96 @@ const createNode = (overrides: Partial<NodeData> = {}): NodeData => ({
 })
 
 describe('Node', () => {
-  it('renders collapsed node with title only', () => {
+  it('renders minimized box with title + state by default', () => {
     const node = createNode()
     renderWithTheme(<Node data={node} />)
+
     expect(screen.getAllByText('New Node')[0]).toBeInTheDocument()
+    expect(screen.getByText('Idle')).toBeInTheDocument()
     expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('shows sphere outline on hover', () => {
+  it('expands box on hover (composer visible)', () => {
     const node = createNode()
     renderWithTheme(<Node data={node} />)
 
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-
-    expect(nodeWrap).toHaveStyle({ border: '1px dashed #007ACC' })
-  })
-
-  it('expands to square composer on click', () => {
-    const node = createNode()
-    renderWithTheme(<Node data={node} />)
-
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
 
     expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
     expect(screen.getByLabelText('Send prompt')).toBeInTheDocument()
   })
 
-  it('collapses on Escape key', () => {
+  it('click pins box open (focused state, border primary)', () => {
     const node = createNode()
     renderWithTheme(<Node data={node} />)
 
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
 
     expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+    expect(nodeBox).toHaveStyle({ borderColor: '#007ACC' })
+  })
 
-    fireEvent.keyDown(nodeWrap, { key: 'Escape' })
+  it('mouse leave on hovered (not focused) collapses', () => {
+    const node = createNode()
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.mouseLeave(nodeBox)
+
     expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('collapses on click outside', () => {
+  it('mouse leave on focused stays open', () => {
+    const node = createNode()
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
+    fireEvent.mouseLeave(nodeBox)
+
+    expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+  })
+
+  it('close btn collapses', () => {
+    const node = createNode()
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
+
+    const closeBtn = screen.getByText('×')
+    fireEvent.click(closeBtn)
+
+    expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
+  })
+
+  it('escape collapses', () => {
+    const node = createNode()
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
+
+    expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
+
+    fireEvent.keyDown(nodeBox, { key: 'Escape' })
+    expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
+  })
+
+  it('click outside collapses', () => {
     const node = createNode()
     const { container } = renderWithTheme(<Node data={node} />)
 
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
 
     expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
 
@@ -82,36 +123,14 @@ describe('Node', () => {
     expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
   })
 
-  it('does not render details panel when lifecycle is not done', () => {
-    const node = createNode({ lifecycle: 'initial' })
-    renderWithTheme(<Node data={node} />)
-
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
-
-    expect(screen.queryByText('Details')).not.toBeInTheDocument()
-  })
-
-  it('renders details panel when lifecycle is done and expanded', () => {
-    const node = createNode({ lifecycle: 'done' })
-    renderWithTheme(<Node data={node} />)
-
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
-
-    expect(screen.getByText('Details')).toBeInTheDocument()
-  })
-
   it('calls onSend when send button clicked with text', () => {
     const onSend = vi.fn()
     const node = createNode()
     renderWithTheme(<Node data={node} onSend={onSend} />)
 
-    const nodeWrap = screen.getByRole('button')
-    fireEvent.mouseEnter(nodeWrap)
-    fireEvent.click(nodeWrap)
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
 
     const textarea = screen.getByPlaceholderText('Ask anything...')
     fireEvent.change(textarea, { target: { value: 'test prompt' } })
@@ -120,5 +139,27 @@ describe('Node', () => {
     fireEvent.click(sendBtn)
 
     expect(onSend).toHaveBeenCalledWith('test prompt')
+  })
+
+  it('does not render details panel when lifecycle is not done', () => {
+    const node = createNode({ lifecycle: 'initial' })
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
+
+    expect(screen.queryByText('Details')).not.toBeInTheDocument()
+  })
+
+  it('renders details panel when lifecycle is done and expanded', () => {
+    const node = createNode({ lifecycle: 'done' })
+    renderWithTheme(<Node data={node} />)
+
+    const nodeBox = screen.getByRole('button')
+    fireEvent.mouseEnter(nodeBox)
+    fireEvent.click(nodeBox)
+
+    expect(screen.getByText('Details')).toBeInTheDocument()
   })
 })

@@ -20,6 +20,7 @@ export type NodeData = {
   type: NodeType
   lifecycle: NodeLifecycle
   nodeViewState: NodeViewState
+  focused: boolean
   promptTxt: string
   todos: Todo[]
   lastUpdate: Date | null

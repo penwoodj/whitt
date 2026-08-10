@@ -494,23 +494,22 @@ Changes in Rev 4:
 
 ---
 
-## 17. Node Lifecycle (Collapsed → Hover → Expand)
+## 17. Node Lifecycle (Minimized Box → Expanded Box)
 
-Per ADR-0012. Default node state = title text only (no shape, no composer).
-Hover reveals sphere outline. Click morphs sphere→square containing composer.
+Per ADR-0012. Default node state = minimized box (title + state badge, small width). Hover expands to full box with composer. Click pins open (focused) until explicitly closed.
 
 States:
-- collapsed: title text floating, no shape
-- hovered: title in sphere outline (dashed primary border)
-- expanded: square composer (textarea + mic + send), auto-focused
+- collapsed: minimized box (small width ~120-180px, title + state badge, no composer)
+- hovered: expanded box (full width ~320-420px, composer visible, border subtle)
+- expanded (focused): same as hovered but border: borderActive (primary blue), box-shadow: md, stays open
 
 Transitions:
-- collapsed → hovered: mouse enter
-- hovered → collapsed: mouse leave (if not focused)
-- hovered → expanded: click
-- expanded → collapsed: Escape OR click outside
+- collapsed → hovered: mouse enter NodeBox
+- hovered → collapsed: mouse leave (only if NOT focused AND not actively typing)
+- hovered → expanded (focused): click anywhere on NodeBox
+- expanded → collapsed: Escape OR click outside OR click close btn (X)
 
-Morph: 240ms ease on border-radius, width, height, padding, background-color.
+Morph: 240ms ease on width, height, padding, border-color, box-shadow. Same box shape throughout (border-radius 12px).
 
 Details panel: ONLY appears after lifecycle='done' (full record → stream → stop → send → cycle → done flow).
 

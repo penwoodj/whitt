@@ -1,76 +1,81 @@
-# ADR-0012: Sphere-Square Node Morph Lifecycle
+# ADR-0012: Minimized Box → Expanded Box Node Lifecycle
 
 **Status:** Proposed
 **Date:** 2026-08-09
+**Supersedes:** ADR-0012 (Sphere-Square Node Morph)
 
 ## Context
 
-User wants minimal canvas presence. Nodes start as title text only floating (no shape, no composer). Hover reveals sphere outline (visual indicator of interactivity). Click morphs sphere to square containing composer (committed workspace). This reduces visual noise and requires deliberate user engagement.
+User wants SAME BOX throughout node lifecycle, just minimized vs expanded size (NOT sphere→square morph). Node starts as minimized box showing title + state badge. Hover expands to full box with composer + UI. Click pins box open (focused) until explicitly closed.
 
 ## Decision
 
-3-state node lifecycle: collapsed → hovered → expanded.
+3-state node lifecycle: collapsed (minimized box) → hovered (expanded box) → expanded (focused/pinned).
 
 ### States
 
-- **collapsed**: title text floating, transparent bg, no shape
-- **hovered**: title in sphere outline (dashed primary border), minimal padding
-- **expanded**: square composer (textarea + mic + send), elevated bg, auto-focused
+- **collapsed**: minimized box (small width ~120-180px, single row title + state badge, no composer). Bg: bgElevated. Border: subtle.
+- **hovered**: expanded box (full width ~320-420px, title+state header + composer visible + conditional todos/details). Bg: bgElevated. Border: subtle. NOT focused.
+- **expanded (focused)**: same as hovered but border: borderActive (primary blue), box-shadow: md (more prominent). Auto-focus textarea. Stays open until close action.
 
 ### Transitions
 
-- collapsed → hovered: mouse enter
-- hovered → collapsed: mouse leave (if not focused)
-- hovered → expanded: click
-- expanded → collapsed: Escape key OR click outside node
+- collapsed → hovered: mouse enter NodeBox
+- hovered → collapsed: mouse leave (only if NOT focused AND not actively typing)
+- hovered → expanded (focused): click anywhere on NodeBox
+- expanded → collapsed: Escape OR click outside OR click close btn
 
 ### Morph Animation
 
-240ms ease on border-radius, width, height, padding, background-color.
-
-Sphere (border-radius 50%, transparent bg, tight padding) → Square (border-radius 12px, elevated bg, expanded padding).
+240ms ease on width, height, padding, border-color, box-shadow. Same box shape throughout (border-radius 12px). Minimized = small box. Expanded = full box.
 
 ## Consequences
 
-Less visual noise on canvas. Intentional engagement required (hover reveals intent, click commits). Morph animation provides tactile feedback. Details panel appears only after full agentic cycle (lifecycle='done').
+Same box shape throughout (visual consistency). User controls engagement level (hover preview, click commit). Focused state prevents accidental collapse during typing. Close actions explicit (X btn, Escape, click outside).
 
 ## Features
 
 ```gherkin
-Feature: Node collapse/hover/expand lifecycle
+Feature: Node minimized→expanded box lifecycle
   As usr on graph
-  I want node start as title text
-  So canvas clean until I engage
+  I want node start as minimized box w/ title + state
+  So canvas stays compact until I engage
 
-  Scenario: Collapsed by default
+  Scenario: Minimized box by default
     Given new node spawned
     When rendered
-    Then title text visible
+    Then box visible (not just text)
+    And box shows title + state tag
     And no composer visible
-    And no sphere shape
 
-  Scenario: Hover shows sphere outline
-    Given collapsed node
-    When usr hovers title
-    Then sphere outline visible (border 1px dashed primary)
-    And title inside sphere
-
-  Scenario: Click morphs to square composer
-    Given hovered node
-    When usr clicks sphere
-    Then sphere morphs to square (240ms ease)
+  Scenario: Hover expands box
+    Given minimized box
+    When usr hovers box
+    Then box expands (240ms ease)
     And composer visible (textarea + mic + send)
+    And conditional todos visible (if lifecycle warrants)
+    And conditional details visible (if lifecycle=done)
+
+  Scenario: Click pins box open
+    Given hovered (expanded) box
+    When usr clicks box
+    Then box border becomes primary (focused)
     And textarea auto-focused
+    And box stays expanded on mouse leave
+
+  Scenario: Close btn collapses
+    Given focused (expanded) box
+    When usr clicks X btn
+    Then collapses to minimized box
+    And focus cleared
 
   Scenario: Escape collapses
-    Given expanded node
+    Given focused box
     When usr presses Escape
-    Then square morphs back to sphere
-    And composer hidden
-    And title text remains
+    Then collapses to minimized box
 
   Scenario: Click outside collapses
-    Given expanded node
-    When usr clicks canvas (outside node)
-    Then collapses back to title-only
+    Given focused box
+    When usr clicks canvas outside node
+    Then collapses to minimized box
 ```

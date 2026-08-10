@@ -9,6 +9,7 @@ export const useNodeState = () => {
   const [detailExpanded, setDetailExpanded] = useState(false)
   const [streamedTxt, setStreamedTxt] = useState('')
   const [nodeViewState, setNodeViewState] = useState<NodeViewState>('collapsed')
+  const [focused, setFocused] = useState(false)
   const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const toggleRec = useCallback(() => {
@@ -49,11 +50,21 @@ export const useNodeState = () => {
 
   const toggleDetail = useCallback(() => setDetailExpanded((prev) => !prev), [])
 
-  const setHovered = useCallback(() => setNodeViewState('hovered'), [])
+  const setHovered = useCallback(() => {
+    if (!focused) {
+      setNodeViewState('hovered')
+    }
+  }, [focused])
 
-  const setExpanded = useCallback(() => setNodeViewState('expanded'), [])
+  const setExpanded = useCallback(() => {
+    setNodeViewState('expanded')
+    setFocused(true)
+  }, [])
 
-  const setCollapsed = useCallback(() => setNodeViewState('collapsed'), [])
+  const setCollapsed = useCallback(() => {
+    setNodeViewState('collapsed')
+    setFocused(false)
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -72,6 +83,8 @@ export const useNodeState = () => {
     detailExpanded,
     streamedTxt,
     nodeViewState,
+    focused,
+    setFocused,
     setHovered,
     setExpanded,
     setCollapsed,
