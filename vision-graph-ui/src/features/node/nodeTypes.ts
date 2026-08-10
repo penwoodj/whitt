@@ -28,6 +28,9 @@ export type NodeData = {
   todosExpanded: boolean
   isRec: boolean
   isCycleRun: boolean
+  bodyMarkdown?: string
+  isStream: boolean
+  streamedTxt: string
 }
 
 export type NodeProps = {

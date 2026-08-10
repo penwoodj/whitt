@@ -71,7 +71,6 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     promptTxt,
     setPromptTxt,
     todosExpanded,
-    detailExpanded,
     streamedTxt,
     nodeViewState,
     focused,
@@ -81,7 +80,6 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     toggleRec,
     sendPrompt,
     toggleTodos,
-    toggleDetail,
   } = useNodeState()
 
   const handleSend = useCallback(() => {
@@ -192,9 +190,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
               onSend={handleSend}
             />
 
-            {data.lifecycle === 'done' && (
-              <NodeDetailPanel expanded={detailExpanded} onToggle={toggleDetail} />
-            )}
+            {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
           </>
         )}
       </NodeBox>

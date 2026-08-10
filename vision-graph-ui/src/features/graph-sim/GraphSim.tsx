@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { ReactFlow, Background, Controls } from 'reactflow'
+import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges } from 'reactflow'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from 'reactflow'
 import ProjectPicker from '../project-picker'
@@ -14,6 +14,7 @@ import { useGraphSimLogging } from './useGraphSimLogging'
 import type { NodeData } from '../node/nodeTypes'
 import { buildSampleProjects } from '../project-picker/projectPickerData'
 import type { Project } from '../project-picker/projectPickerTypes'
+import { loadProjectGraph } from '../../shared/fsGraphLoader'
 
 const Placeholder = styled.div`
   display: flex;
@@ -60,8 +61,8 @@ export default function GraphSim() {
                 data: {
                   ...node.data,
                   lifecycle: 'done',
-                  detailExpanded: true,
                   isCycleRun: false,
+                  bodyMarkdown: (node.data as any).bodyMarkdown || generatePlaceholderMarkdown(node.data.promptTxt),
                 } as NodeData,
               }
             : node
@@ -106,41 +107,31 @@ export default function GraphSim() {
     }
   }, [activeNodeId, todos])
 
-  const handleProjectSelect = useCallback((id: string) => {
+  const handleProjectSelect = useCallback(async (id: string) => {
     setActiveProjectId(id)
     setSimState('graph')
-    setGraphTitle('New Research')
-    setNodes([
-      {
-        id: 'root',
-        type: 'custom',
-        position: { x: 0, y: 0 },
-        data: {
-          id: 'root',
-          title: 'Voice Node',
-          status: 'idle',
-          type: 'task',
-          lifecycle: 'initial',
-          nodeViewState: 'collapsed',
-          focused: false,
-          promptTxt: '',
-          todos: [],
-          lastUpdate: null,
-          detailExpanded: false,
-          todosExpanded: false,
-          isRec: false,
-          isCycleRun: false,
-        } as NodeData,
-      } as FlowNode,
-    ])
-    setEdges([])
-    setActiveNodeId('root')
-    setCanTravelBack(false)
-    setCanTravelForward(false)
-    setCommitLabel('')
-    setSnapshots([])
-    setCurrentSnapshotIndex(-1)
-    simLog.info('Project selected', { projectId: id })
+    
+    try {
+      const projectId = id as 'ai-frameworks' | 'local-first' | 'whitt-arch'
+      const { nodes: loadedNodes, edges: loadedEdges } = await loadProjectGraph(projectId)
+      
+      setGraphTitle(loadedNodes[0]?.data.title || 'Project Graph')
+      setNodes(loadedNodes)
+      setEdges(loadedEdges)
+      setActiveNodeId(loadedNodes[0]?.id || null)
+      setCanTravelBack(false)
+      setCanTravelForward(false)
+      setCommitLabel('')
+      setSnapshots([])
+      setCurrentSnapshotIndex(-1)
+      
+      simLog.info('Project graph loaded', { projectId, nodeCount: loadedNodes.length, edgeCount: loadedEdges.length })
+    } catch (error) {
+      simLog.error('Failed to load project graph', { projectId: id, error })
+      setGraphTitle('Error Loading Project')
+      setNodes([])
+      setEdges([])
+    }
   }, [simLog])
 
   const handleNewProject = useCallback(() => {
@@ -397,9 +388,9 @@ export default function GraphSim() {
     return () => document.removeEventListener('mouseup', handleMouseUp)
   }, [])
 
-  const nodeTypes = {
-    custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
-  }
+const nodeTypes = {
+  custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
+}
 
   if (simState === 'picker') {
     return (
@@ -477,4 +468,24 @@ export default function GraphSim() {
   )
 }
 
-import { applyNodeChanges, applyEdgeChanges } from 'reactflow'
+function generatePlaceholderMarkdown(promptTxt: string): string {
+  return `# Response
+
+Based on your prompt: "${promptTxt}"
+
+## Key findings
+- Analysis completed successfully
+- Relevant information gathered
+- Synthesis of key concepts
+
+## Sources
+- [Internal Knowledge Base](#)
+- [Research Database](#)
+- [Documentation Archive](#)
+
+## Next Steps
+- Review findings
+- Expand on specific topics
+- Generate follow-up questions
+`
+}
