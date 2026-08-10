@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/react-vite'
 import { ThemeProvider } from '../src/shared/ThemeProvider'
 import type { ReactNode } from 'react'
+import '../src/index.css'
 
 const withThemeProvider = (Story: () => ReactNode) => (
   <ThemeProvider>
@@ -18,7 +19,10 @@ const preview: Preview = {
     },
     backgrounds: {
       default: 'dark',
-      values: [{ name: 'dark', value: '#0a0a0a' }],
+      values: [
+        { name: 'dark', value: '#1E1E1E' },
+        { name: 'darker', value: '#0a0a0a' },
+      ],
     },
     a11y: {
       test: 'todo',
