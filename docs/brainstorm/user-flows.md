@@ -20,7 +20,7 @@
 7. Agent runs: morphing icon loader + changing step title; edges breathe. EXE-14/15/11
 8. Agent creates node md file → preview appears in expanded node. EXE-17, FIL-01/02
 9. Agent assumes spoken-to node = context; initial prompt creates one file only. AGT-01/03
-10. Graph shows agent mutations as real-time movement. AGT-04
+10. Graph shows agent mutations as real-time movement. AGT-04, AGT-06
 
 ## Flow C — Edit Prompt Before Send
 
