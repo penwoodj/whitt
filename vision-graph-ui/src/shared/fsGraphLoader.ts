@@ -45,17 +45,34 @@ function parseMd(raw: string, slug: string, path: string): FsNode {
   }
 }
 
-function parseYaml(yaml: string): Record<string, any> {
-  const result: Record<string, any> = {}
+function parseYaml(yaml: string): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
   const lines = yaml.split('\n')
-  
+  let currentListKey: string | null = null
+
   for (const line of lines) {
+    if (line.startsWith('  - ')) {
+      const itemValue = line.slice(4).trim().replace(/^["']|["']$/g, '')
+      if (currentListKey) {
+        const existing = result[currentListKey]
+        if (Array.isArray(existing)) {
+          existing.push(itemValue)
+        } else {
+          result[currentListKey] = [itemValue]
+        }
+      }
+      continue
+    }
+
     const match = line.match(/^(\w+):\s*(.*)$/)
     if (match) {
       const [, key, value] = match
-      if (value.startsWith('[') && value.endsWith(']')) {
-        result[key] = value.slice(1, -1).split(',').map(v => v.trim().replace(/^["']|["']$/g, ''))
-      } else if (value === 'null' || value === '') {
+      currentListKey = null
+
+      if (value === '') {
+        currentListKey = key
+        result[key] = []
+      } else if (value === 'null') {
         result[key] = null
       } else if (value === 'true') {
         result[key] = true
@@ -68,7 +85,7 @@ function parseYaml(yaml: string): Record<string, any> {
       }
     }
   }
-  
+
   return result
 }
 
