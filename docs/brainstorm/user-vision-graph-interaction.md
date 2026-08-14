@@ -93,7 +93,7 @@ child node**, **expand on** generated content.
 
 ## Relationship to Existing Vision Docs
 
-- Supersedes emphasis in `../../README.md` (five pillars) toward: simpler nodes,
+- Supersedes emphasis in `../vision-graph-ui.md` (five pillars) toward: simpler nodes,
   voice-centric, fish-eye dual-scale, bubbles-of-light aesthetic.
 - Consistent with ADR-0011 (graph↔FS mapping — grouping = folders is exactly this).
 - Consistent with ADR-0012 (sphere→square morph — bubbles of light = sphere form).

@@ -581,7 +581,7 @@ focus_jump: <node-id | null>
 
 ### References
 
-- Full spec: `docs/adr/0011-graph-to-filesystem-mapping.md`
+- Full spec: `../docs/adr/0011-graph-to-filesystem-mapping.md`
 - Related: ADR-0006 (.whitt/ markdown + YAML), ADR-0007 (Neo4j + FS sync)
 
 ---
