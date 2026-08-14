@@ -4,6 +4,11 @@
 **Date:** 2026-04-07  
 **Status:** READY TO EXECUTE (after review cycle 3)
 
+> **2026-08-14 dedup note:** transferred `opencode/docs/plans/03-glyphnova-ui/` tree
+> removed — near-duplicate of canonical `docs/inspiration-reports/yaml-to-rust-agentsdk/`
+> (17/18 files identical; diverged `tasks/00` variant + full tree retained in git history,
+> commit before `chore(docs)` dedup of 2026-08-14).
+
 This plan governs the one-time transfer of documentation from `~/code/yaml-to-rust-agentsdk/` to `~/code/whitt/opencode/docs/`. It was reviewed in 3 full critical review cycles (see REVIEW-CYCLE-{1,2,3}.md).
 
 ---
