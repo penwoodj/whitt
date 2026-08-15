@@ -48,9 +48,11 @@ LGT-07	03	slice03 -- LGT-07 reduced motion	pass
 LGT-08	03	slice03 -- LGT-08 bar rest state	pass
 EXP-01	04	-	todo
 EXP-03	04	-	todo
-EXP-05	04	-	todo
-EXP-06	04	-	todo
-EXP-07	04	-	todo
+EXP-04	04	slice04 -- EXP-04 bar of light	pass
+EXP-05	04	slice04 -- EXP-05 bar hover tooltip	pass
+EXP-06	04	slice04 -- EXP-06 bar click toggles STT	pass
+EXP-07	04	slice04 -- EXP-07 bar dblclick sends	pass
+EXP-08	04	slice04 -- EXP-08 bar breathes	pass
 EXP-09	04	-	todo
 EXP-10	04	-	todo
 EXP-11	04	slice04 -- EXP-11 close tri-path ESC	pass

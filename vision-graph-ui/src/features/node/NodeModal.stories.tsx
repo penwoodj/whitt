@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 import { userEvent, within, waitFor, expect } from '@storybook/test'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import { NodeModalWrapper } from './NodeModalWrapper'
+import { NodeModalBarSlot } from './NodeModalBarSlot'
+import { NodeModalContent } from './NodeModalContent'
 import { useModalState } from './useModalState'
 import type { NodeData } from './nodeTypes'
 
@@ -178,6 +181,177 @@ export const EXPC02SizeCaps: Story = {
         maxWidth: '90vw',
         maxHeight: '80vh',
         overflowY: 'auto',
+      })
+    })
+  },
+}
+
+function TestModalWithBar() {
+  const { isModalOpen, openModal, closeModal } = useModalState()
+  const [isRec, setIsRec] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+
+  const handleToggleRec = () => {
+    setIsRec((prev) => !prev)
+  }
+
+  const handleSend = () => {
+    console.log('Sending prompt...')
+  }
+
+  const handleBarHover = () => {
+    setShowTooltip(true)
+  }
+
+  return (
+    <ThemeProvider>
+      <div>
+        <button
+          onClick={() => openModal('1', createNode(), { x: 100, y: 200 })}
+        >
+          Open Modal with Bar
+        </button>
+        <NodeModalWrapper>
+          {isModalOpen && (
+            <div>
+              <NodeModalBarSlot
+                state={isRec ? 'recording' : 'idle'}
+                isRec={isRec}
+                onToggleRec={handleToggleRec}
+                onSend={handleSend}
+                onHover={handleBarHover}
+              />
+              {showTooltip && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '20px',
+                    left: '10px',
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                  }}
+                >
+                  {isRec ? 'Recording...' : 'Click to record'}
+                </div>
+              )}
+              <NodeModalContent>
+                <h2 id={`modal-title-${isModalOpen.nodeId}`}>
+                  {isModalOpen.node.title}
+                </h2>
+                <p>Modal content with bar of light at top</p>
+              </NodeModalContent>
+            </div>
+          )}
+        </NodeModalWrapper>
+      </div>
+    </ThemeProvider>
+  )
+}
+
+export const EXP04BarOfLight: Story = {
+  name: 'slice04 -- EXP-04 bar of light',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP05BarHoverTooltip: Story = {
+  name: 'slice04 -- EXP-05 bar hover tooltip',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.hover(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Click to record')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP06BarClickTogglesSTT: Story = {
+  name: 'slice04 -- EXP-06 bar click toggles STT',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByText('Click to record')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.click(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Recording...')).toBeInTheDocument()
+    })
+
+    await userEvent.click(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Click to record')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP07BarDblclickSends: Story = {
+  name: 'slice04 -- EXP-07 bar dblclick sends',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.dblClick(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Recording...')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP08BarBreathes: Story = {
+  name: 'slice04 -- EXP-08 bar breathes',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.click(barSlot)
+
+    await waitFor(() => {
+      expect(barSlot).toHaveStyle({
+        animation: expect.stringContaining('breatheScale'),
       })
     })
   },
