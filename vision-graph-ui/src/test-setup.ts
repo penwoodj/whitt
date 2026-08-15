@@ -10,10 +10,13 @@ class ResizeObserverStub {
 
 globalThis.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver
 
+Element.prototype.scrollIntoView = vi.fn()
+
 afterEach(() => {
   cleanup()
 })
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.clearAllTimers()
 })

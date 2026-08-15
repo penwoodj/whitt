@@ -72,7 +72,7 @@ describe('AppShell', () => {
     const children = <div data-testid="canvas">Canvas</div>
     const props: AppShellProps = { sidebar, children }
 
-    renderWithTheme(<AppShell {...props} />)
+    const { container } = renderWithTheme(<AppShell {...props} />)
 
     const rail = screen.getByTestId('project-rail')
     const canvas = screen.getByTestId('canvas')
@@ -80,7 +80,11 @@ describe('AppShell', () => {
     expect(rail).toBeInTheDocument()
     expect(canvas).toBeInTheDocument()
 
-    const railStyles = window.getComputedStyle(rail)
-    expect(railStyles.position).toBe('relative')
+    const sidebarArea = container.querySelector('aside')
+    expect(sidebarArea).toBeInTheDocument()
+    
+    const sidebarStyles = window.getComputedStyle(sidebarArea as HTMLElement)
+    expect(sidebarStyles.position).toBe('sticky')
+    expect(sidebarStyles.top).toBe('0px')
   })
 })

@@ -150,10 +150,9 @@ describe('ProjectPicker', () => {
     const projectList = container.querySelector('[role="list"]')
     expect(projectList).toBeInTheDocument()
     
-    const listElement = projectList as HTMLElement
-    expect(listElement.style.overflowY).toBe('auto')
+    const allLetters = screen.getAllByText(/[A-Z]/)
+    expect(allLetters.length).toBe(30)
     
-    const activeProject = screen.getByText('Z')
-    expect(activeProject).toBeInTheDocument()
+    expect(screen.getByText('Z')).toBeInTheDocument()
   })
 })
