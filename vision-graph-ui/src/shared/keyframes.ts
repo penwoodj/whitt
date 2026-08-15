@@ -32,3 +32,14 @@ export const restGlow = keyframes`
     box-shadow: 0 0 8px rgba(106, 153, 85, 0.2);
   }
 `
+
+export const morphFade = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
