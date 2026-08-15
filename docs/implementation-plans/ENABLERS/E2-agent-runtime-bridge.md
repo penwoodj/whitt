@@ -2,7 +2,7 @@
 
 > Executes: `vision-graph-ui/.opencode/skills/agent-runtime-bridge/SKILL.md` (AgentEvt bus + fake runtime)
 > Validation spec: `docs/feature-requirements/validation/slice-05.validation.md` + `slice-06.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-14). Tasks commits 029df8a..9f7201b (7). Gate: scoped vitest src/shared/agent 48/48 green, tsc --noEmit 0, full suite 12 failed = exact pre-existing baseline (0 new), build-storybook 0.
 > Depends on: none
 
 ## 1. Objective

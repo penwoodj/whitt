@@ -2,7 +2,7 @@
 
 > Executes: `docs/adr/0011-graph-to-filesystem-mapping.md` (FS = truth, memory = cache)
 > Validation spec: N/A (enabler, no GWT cases)
-> Status: NOT-STARTED
+> Status: IN-PROGRESS (gate answered 2026-08-14: Q1=repair in-place, Q2=File System Access API, Q3=never-deleted per ADR-0011 standing decision; tasks running)
 > Depends on: none
 
 ## 1. Objective
@@ -54,6 +54,11 @@ Ask user (2-3 questions max, `question` tool):
 2. **Real FsPort backend choice**: When building real FsPort (not fake), should we use (a) File System Access API (browser native, requires user permission per-folder) OR (b) desktop-shell IPC to Rust backend (Tauri later)? Decision affects API design: File System Access = async handles, desktop-shell = path strings. For now, we stub real port; this decision gates implementation.
 
 3. **Prompt file audit retention**: Should .prompts files (VOX-16) be (a) never deleted (full audit trail, disk grows) OR (b) prune after 30 days (balanced) OR (c) prune after send (minimal)? ADR-0011 says "NEVER deleted on send" but long-term storage policy needs decision.
+
+**ANSWERED 2026-08-14 (user via question tool + ADR-0011):**
+1. **Repair in-place** — fix YAML parser, edge building, lifecycle mapping in existing fsGraphLoader.
+2. **File System Access API** — async handles; design FsPort accordingly; desktop-shell IPC deferred.
+3. **Never deleted (a)** — settled by ADR-0011 standing decision ("NEVER deleted on send"); revisit only if disk growth becomes real problem.
 
 Record answers in this file, then never re-ask.
 
