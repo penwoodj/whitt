@@ -1,9 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { render } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, renderHook, waitFor } from '@testing-library/react'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import { darkTheme } from '../../shared/theme'
 import NodeStatus from '../node/NodeStatus'
 import type { NodeStatus as NodeStatusType } from '../node/nodeTypes'
+import { useVoiceLevel } from './useVoiceLevel'
+import * as analyserModule from '../../shared/audio/analyser'
 
 const renderWithTheme = (ui: React.ReactElement) =>
   render(<ThemeProvider theme={darkTheme}>{ui}</ThemeProvider>)
@@ -79,5 +81,81 @@ describe('Light language state→glow mapping (LGT-01)', () => {
     const hasHex = /#[0-9A-Fa-f]{6}/.test(backgroundColor + boxShadow)
 
     expect(hasHex).toBe(false)
+  })
+})
+
+describe('Light language amplitude driver (LGT-02, LGT-03)', () => {
+  const mockGetAnalyserLevel = vi.spyOn(analyserModule, 'getAnalyserLevel')
+  const mockAnalyser = {} as AnalyserNode
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockGetAnalyserLevel.mockReturnValue(0)
+  })
+
+  it('LGT-02: level 0 returns idle (no breathing)', () => {
+    mockGetAnalyserLevel.mockReturnValue(0)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    expect(result.current).toBe(0)
+  })
+
+  it('LGT-02: level 0.5 returns idle + 0.5 * 0.08 within tolerance', async () => {
+    mockGetAnalyserLevel.mockReturnValue(0.5)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    await waitFor(() => {
+      const k = 0.08
+      const expected = 0.5 * k
+      const tolerance = 0.01
+
+      expect(Math.abs(result.current - expected)).toBeLessThan(tolerance)
+    })
+  })
+
+  it('LGT-02: level 0.9 returns idle + 0.9 * 0.08 within tolerance', async () => {
+    mockGetAnalyserLevel.mockReturnValue(0.9)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    await waitFor(() => {
+      const k = 0.08
+      const expected = 0.9 * k
+      const tolerance = 0.01
+
+      expect(Math.abs(result.current - expected)).toBeLessThan(tolerance)
+    })
+  })
+
+  it('LGT-02: hook returns value from analyser after initial tick', async () => {
+    mockGetAnalyserLevel.mockReturnValue(0.7)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    await waitFor(() => {
+      const k = 0.08
+      const expected = 0.7 * k
+      const tolerance = 0.01
+
+      expect(Math.abs(result.current - expected)).toBeLessThan(tolerance)
+    })
+  })
+
+  it('LGT-03: sub-gate level (0.01) returns still (0)', () => {
+    mockGetAnalyserLevel.mockReturnValue(0.01)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    expect(result.current).toBe(0)
+  })
+
+  it('LGT-03: level at noise gate (0.02) returns still (0)', () => {
+    mockGetAnalyserLevel.mockReturnValue(0.02)
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    expect(result.current).toBe(0)
   })
 })
