@@ -75,3 +75,9 @@ Feature: App shell layout
     Given AppShell w/ project B loaded
     When usr clicks new bubble
     Then canvas reset to single bubble
+
+  Scenario: APPC-01 rail scrolls
+    Given AppShell w/ 30 projects seeded
+    When component renders
+    Then rail scrollable
+    And selected stays visible

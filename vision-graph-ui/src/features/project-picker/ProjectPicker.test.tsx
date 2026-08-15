@@ -129,4 +129,31 @@ describe('ProjectPicker', () => {
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument()
   })
+
+  it('APPC-01 rail scrolls', () => {
+    const projects = Array.from({ length: 30 }, (_, i) => ({
+      id: `project-${i}`,
+      label: `Project ${i}`,
+      iconLetter: String.fromCharCode(65 + (i % 26)),
+      lastOpened: new Date(),
+    }))
+    
+    const props: ProjectPickerProps = {
+      projects,
+      activeProjectId: 'project-25',
+      onSelect: vi.fn(),
+      onNew: vi.fn(),
+    }
+
+    const { container } = renderWithTheme(<ProjectPicker {...props} />)
+
+    const projectList = container.querySelector('[role="list"]')
+    expect(projectList).toBeInTheDocument()
+    
+    const listElement = projectList as HTMLElement
+    expect(listElement.style.overflowY).toBe('auto')
+    
+    const activeProject = screen.getByText('Z')
+    expect(activeProject).toBeInTheDocument()
+  })
 })

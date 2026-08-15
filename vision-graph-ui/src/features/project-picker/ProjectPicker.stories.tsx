@@ -64,3 +64,18 @@ export const APPC02EmptyRail: Story = {
     onNew: () => {},
   },
 }
+
+export const APPC01RailScrolls: Story = {
+  name: 'slice01 -- APPC-01 rail scrolls',
+  args: {
+    projects: Array.from({ length: 30 }, (_, i) => ({
+      id: `project-${i}`,
+      label: `Project ${i}`,
+      iconLetter: String.fromCharCode(65 + (i % 26)),
+      lastOpened: new Date(),
+    })),
+    activeProjectId: 'project-25',
+    onSelect: () => {},
+    onNew: () => {},
+  },
+}

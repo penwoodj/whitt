@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, forwardRef } from 'react'
 import styled from 'styled-components'
 import type { ProjectIconProps } from './projectPickerTypes'
 
@@ -48,54 +48,61 @@ const getFirstLetter = (text: string): string => {
   return text.trim().charAt(0).toUpperCase() || ''
 }
 
-export default function ProjectIcon({ label, iconLetter, $isActive, onClick }: ProjectIconProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [title, setTitle] = useState(label)
+const ProjectIcon = forwardRef<HTMLButtonElement, ProjectIconProps>(
+  ({ label, iconLetter, $isActive, onClick }, ref) => {
+    const [isEditing, setIsEditing] = useState(false)
+    const [title, setTitle] = useState(label)
 
-  const handleIconClick = () => {
-    onClick()
-  }
+    const handleIconClick = () => {
+      onClick()
+    }
 
-  const handleTitleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsEditing(true)
-  }
+    const handleTitleClick = (e: React.MouseEvent) => {
+      e.stopPropagation()
+      setIsEditing(true)
+    }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value)
-  }
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setTitle(e.target.value)
+    }
 
-  const handleTitleBlur = () => {
-    setIsEditing(false)
-  }
-
-  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    const handleTitleBlur = () => {
       setIsEditing(false)
     }
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        setIsEditing(false)
+      }
+    }
+
+    const displayLetter = isEditing ? getFirstLetter(title) : iconLetter
+
+    return (
+      <IconBtn 
+        ref={ref}
+        $isActive={$isActive} 
+        onClick={handleIconClick} 
+        aria-label={title} 
+        title={title} 
+        aria-current={$isActive ? 'true' : 'false'}
+      >
+        {displayLetter}
+        {isEditing && (
+          <TitleInput
+            value={title}
+            onChange={handleTitleChange}
+            onBlur={handleTitleBlur}
+            onKeyDown={handleTitleKeyDown}
+            onClick={handleTitleClick}
+            autoFocus
+          />
+        )}
+      </IconBtn>
+    )
   }
+)
 
-  const displayLetter = isEditing ? getFirstLetter(title) : iconLetter
+ProjectIcon.displayName = 'ProjectIcon'
 
-  return (
-    <IconBtn 
-      $isActive={$isActive} 
-      onClick={handleIconClick} 
-      aria-label={title} 
-      title={title} 
-      aria-current={$isActive ? 'true' : 'false'}
-    >
-      {displayLetter}
-      {isEditing && (
-        <TitleInput
-          value={title}
-          onChange={handleTitleChange}
-          onBlur={handleTitleBlur}
-          onKeyDown={handleTitleKeyDown}
-          onClick={handleTitleClick}
-          autoFocus
-        />
-      )}
-    </IconBtn>
-  )
-}
+export default ProjectIcon
