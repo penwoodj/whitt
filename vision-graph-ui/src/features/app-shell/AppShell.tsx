@@ -27,29 +27,56 @@ const Shell = styled.div`
 const SidebarArea = styled.aside`
   grid-row: 1 / -1;
   grid-column: 1;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 `
 
 const TopbarArea = styled.header`
   grid-row: 1;
   grid-column: 2;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 `
 
 const MainArea = styled.main`
   grid-row: 2;
   grid-column: 2;
   overflow: hidden;
+  position: relative;
 `
 
-export default function AppShell({ sidebar, topbar, children }: AppShellProps) {
-  const shellLog = useAppShellLogging()
+const ErrorArea = styled.div<{ $hasError: boolean }>`
+  grid-row: 2;
+  grid-column: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none;
+  
+  ${({ $hasError }) => !$hasError && 'display: none;'}
+`
 
-  shellLog.debug('AppShell rendered', { hasSidebar: !!sidebar, hasTopbar: !!topbar })
+export default function AppShell({ sidebar, topbar, children, errorState }: AppShellProps) {
+  const shellLog = useAppShellLogging()
+  const hasError = !!errorState
+
+  shellLog.debug('AppShell rendered', { hasSidebar: !!sidebar, hasTopbar: !!topbar, hasError })
 
   return (
     <Shell>
       {sidebar && <SidebarArea>{sidebar}</SidebarArea>}
       {topbar && <TopbarArea>{topbar}</TopbarArea>}
       <MainArea>{children}</MainArea>
+      <ErrorArea $hasError={hasError}>{errorState}</ErrorArea>
     </Shell>
   )
 }

@@ -56,4 +56,31 @@ describe('AppShell', () => {
     expect(screen.queryByTestId('topbar')).not.toBeInTheDocument()
     expect(screen.getByTestId('children')).toBeInTheDocument()
   })
+
+  it('APP-01 opens new project', () => {
+    const children = <div data-testid="canvas">Canvas</div>
+    const props: AppShellProps = { children }
+
+    renderWithTheme(<AppShell {...props} />)
+
+    expect(screen.getByTestId('canvas')).toBeInTheDocument()
+    expect(screen.queryByTestId('project-picker')).not.toBeInTheDocument()
+  })
+
+  it('APP-02 rail fixed', () => {
+    const sidebar = <div data-testid="project-rail">ProjectRail</div>
+    const children = <div data-testid="canvas">Canvas</div>
+    const props: AppShellProps = { sidebar, children }
+
+    renderWithTheme(<AppShell {...props} />)
+
+    const rail = screen.getByTestId('project-rail')
+    const canvas = screen.getByTestId('canvas')
+
+    expect(rail).toBeInTheDocument()
+    expect(canvas).toBeInTheDocument()
+
+    const railStyles = window.getComputedStyle(rail)
+    expect(railStyles.position).toBe('relative')
+  })
 })

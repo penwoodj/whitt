@@ -48,3 +48,18 @@ export const ChildrenOnly: Story = {
     children: <div style={{ padding: '16px' }}>Main Content</div>,
   } as AppShellProps,
 }
+
+export const APP01OpensNewProject: Story = {
+  name: 'slice01 -- APP-01 opens new project',
+  args: {
+    children: <div data-testid="canvas">Single white bubble rendered</div>,
+  } as AppShellProps,
+}
+
+export const APP02RailFixed: Story = {
+  name: 'slice01 -- APP-02 rail fixed',
+  args: {
+    sidebar: <div data-testid="project-rail" style={{ width: '60px', background: '#1f1f1f' }}>Project Rail</div>,
+    children: <div data-testid="canvas" style={{ transform: 'translateX(500px)' }}>Canvas panned right</div>,
+  } as AppShellProps,
+}

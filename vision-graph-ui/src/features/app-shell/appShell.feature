@@ -26,3 +26,15 @@ Feature: App shell layout
     Given AppShell w/ children only
     When component renders
     Then children fills full space
+
+  Scenario: APP-01 opens new project
+    Given AppShell mounted w/o active project
+    When component renders
+    Then single white bubble rendered in canvas
+    And project picker hidden
+
+  Scenario: APP-02 rail fixed
+    Given AppShell w/ project rail visible
+    When usr pans canvas hard right
+    Then rail still at left edge
+    And rail unaffected by canvas pan/zoom
