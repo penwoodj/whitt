@@ -1,0 +1,4 @@
+{"t":0.00,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.10,"kind":"step-start","runId":"r1","stepId":"s1","title":"Step 1"}
+{"t":0.20,"kind":"step-error","runId":"r1","stepId":"s1","msg":"Parse failed"}
+{"t":0.30,"kind":"run-done","runId":"r1","nodeId":"n1","status":"error"}

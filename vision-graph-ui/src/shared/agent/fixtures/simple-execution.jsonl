@@ -1,0 +1,5 @@
+{"t":0.00,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.10,"kind":"step-start","runId":"r1","stepId":"s1","title":"Parsing prompt"}
+{"t":0.50,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":0.60,"kind":"file-write","runId":"r1","path":"topic-a.md","actor":"agent"}
+{"t":0.70,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}

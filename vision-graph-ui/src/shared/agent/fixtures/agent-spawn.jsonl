@@ -1,0 +1,5 @@
+{"t":0.00,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.10,"kind":"step-start","runId":"r1","stepId":"s1","title":"Thinking"}
+{"t":0.20,"kind":"graph-mutation","runId":"r1","mutation":{"op":"spawn","parentNodeId":"n1","newNodeId":"n2","title":"Sub topic"}}
+{"t":0.50,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":0.60,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}
