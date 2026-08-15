@@ -6,6 +6,10 @@ import NodePromptArea from './NodePromptArea'
 import NodeAgenticTodos from './NodeAgenticTodos'
 import NodeTooltip from './NodeTooltip'
 import NodeDetailPanel from './NodeDetailPanel'
+import { NodeModalWrapper } from './NodeModalWrapper'
+import { NodeModalBarSlot } from './NodeModalBarSlot'
+import { NodeModalContent } from './NodeModalContent'
+import { NodeModalHalo } from './NodeModalHalo'
 import type { NodeProps } from './nodeTypes'
 import { useNodeState } from './useNodeState'
 import { log } from '../../shared/logger'
@@ -80,6 +84,9 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     toggleRec,
     sendPrompt,
     toggleTodos,
+    isModalOpen,
+    openNodeModal,
+    closeNodeModal,
   } = useNodeState()
 
   const handleSend = useCallback(() => {
@@ -129,6 +136,27 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     [focused, setCollapsed]
   )
 
+  const handleRightClick = useCallback(
+    (evt: React.MouseEvent) => {
+      evt.preventDefault()
+      evt.stopPropagation()
+      const nodeBox = nodeRef.current
+      if (nodeBox) {
+        const rect = nodeBox.getBoundingClientRect()
+        openNodeModal(data.id, data, { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }, false)
+      }
+    },
+    [data, openNodeModal]
+  )
+
+  const handleDblClick = useCallback(() => {
+    const nodeBox = nodeRef.current
+    if (nodeBox) {
+      const rect = nodeBox.getBoundingClientRect()
+      sendPrompt(onSend, data, { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 })
+    }
+  }, [onSend, data, sendPrompt])
+
   useEffect(() => {
     const handleClickOutside = (evt: MouseEvent) => {
       if (focused && nodeRef.current && !nodeRef.current.contains(evt.target as Node)) {
@@ -146,54 +174,91 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
   const isExpanded = nodeViewState === 'expanded' || nodeViewState === 'hovered'
 
   return (
-    <NodeTooltip node={data}>
-      <NodeBox
-        ref={nodeRef}
-        $minimized={isMinimized}
-        $focused={focused}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="button"
-        aria-expanded={isExpanded}
-      >
-        <NodeHeader>
-          <HeaderLeft>
-            <NodeTitle title={data.title} onTitleChange={handleTitleChange} />
-          </HeaderLeft>
-          <HeaderRight>
-            <NodeStatus status={data.status} />
-            {focused && <CloseBtn onClick={handleCloseBtn}>×</CloseBtn>}
-          </HeaderRight>
-        </NodeHeader>
+    <>
+      <NodeTooltip node={data}>
+        <NodeBox
+          ref={nodeRef}
+          $minimized={isMinimized}
+          $focused={focused}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
+          onDoubleClick={handleDblClick}
+          onContextMenu={handleRightClick}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          role="button"
+          aria-expanded={isExpanded}
+        >
+          <NodeHeader>
+            <HeaderLeft>
+              <NodeTitle title={data.title} onTitleChange={handleTitleChange} />
+            </HeaderLeft>
+            <HeaderRight>
+              <NodeStatus status={data.status} />
+              {focused && <CloseBtn onClick={handleCloseBtn}>×</CloseBtn>}
+            </HeaderRight>
+          </NodeHeader>
 
-        {isExpanded && (
-          <>
-            <NodeAgenticTodos
-              todos={data.todos}
-              expanded={todosExpanded}
-              onToggle={toggleTodos}
-              showAgentic={showAgentic}
-            />
+          {isExpanded && (
+            <>
+              <NodeAgenticTodos
+                todos={data.todos}
+                expanded={todosExpanded}
+                onToggle={toggleTodos}
+                showAgentic={showAgentic}
+              />
 
-            <NodePromptArea
-              value={promptTxt}
-              onChange={setPromptTxt}
-              streamedTxt={streamedTxt}
-              isStream={isStream}
+              <NodePromptArea
+                value={promptTxt}
+                onChange={setPromptTxt}
+                streamedTxt={streamedTxt}
+                isStream={isStream}
+                isRec={isRec}
+                isCycleRun={data.isCycleRun || false}
+                onToggleRec={toggleRec}
+                onStreamTxt={setPromptTxt}
+                onSend={handleSend}
+              />
+
+              {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
+            </>
+          )}
+        </NodeBox>
+      </NodeTooltip>
+
+      <NodeModalWrapper>
+        {isModalOpen && (
+          <NodeModalHalo state={data.status} isLive={data.lifecycle === 'agentic-running' || data.lifecycle === 'done'}>
+            <NodeModalBarSlot
+              state={isRec ? 'recording' : data.status}
               isRec={isRec}
-              isCycleRun={data.isCycleRun || false}
               onToggleRec={toggleRec}
-              onStreamTxt={setPromptTxt}
               onSend={handleSend}
             />
-
-            {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
-          </>
+            <NodeModalContent>
+              <NodeAgenticTodos
+                todos={data.todos}
+                expanded={todosExpanded}
+                onToggle={toggleTodos}
+                showAgentic={showAgentic}
+              />
+              <NodePromptArea
+                value={promptTxt}
+                onChange={setPromptTxt}
+                streamedTxt={streamedTxt}
+                isStream={isStream}
+                isRec={isRec}
+                isCycleRun={data.isCycleRun || false}
+                onToggleRec={toggleRec}
+                onStreamTxt={setPromptTxt}
+                onSend={handleSend}
+              />
+              {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
+            </NodeModalContent>
+          </NodeModalHalo>
         )}
-      </NodeBox>
-    </NodeTooltip>
+      </NodeModalWrapper>
+    </>
   )
 }

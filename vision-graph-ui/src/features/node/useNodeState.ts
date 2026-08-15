@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import type { NodeViewState } from './nodeTypes'
+import { useModalState, type ModalState } from './useModalState'
 
 export const useNodeState = () => {
   const [isRec, setIsRec] = useState(false)
@@ -10,7 +11,9 @@ export const useNodeState = () => {
   const [streamedTxt, setStreamedTxt] = useState('')
   const [nodeViewState, setNodeViewState] = useState<NodeViewState>('collapsed')
   const [focused, setFocused] = useState(false)
+  const [autoRecord, setAutoRecord] = useState(false)
   const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { isModalOpen, openModal, closeModal } = useModalState()
 
   const toggleRec = useCallback(() => {
     setIsRec((prev) => {
@@ -37,13 +40,18 @@ export const useNodeState = () => {
   }, [streamedTxt])
 
   const sendPrompt = useCallback(
-    (onSend?: (txt: string) => void) => {
+    (onSend?: (txt: string) => void, nodeData?: any, position?: { x: number; y: number }) => {
       if (promptTxt.trim() && onSend) {
         onSend(promptTxt.trim())
         setPromptTxt('')
       }
+
+      if (nodeData && position) {
+        openModal(nodeData.id, nodeData, position)
+        setAutoRecord(true)
+      }
     },
-    [promptTxt]
+    [promptTxt, openModal]
   )
 
   const toggleTodos = useCallback(() => setTodosExpanded((prev) => !prev), [])
@@ -64,7 +72,27 @@ export const useNodeState = () => {
   const setCollapsed = useCallback(() => {
     setNodeViewState('collapsed')
     setFocused(false)
+    setAutoRecord(false)
   }, [])
+
+  const openNodeModal = useCallback(
+    (nodeId: string, nodeData: any, position: { x: number; y: number }, shouldAutoRecord = false) => {
+      openModal(nodeId, nodeData, position)
+      setAutoRecord(shouldAutoRecord)
+    },
+    [openModal]
+  )
+
+  const closeNodeModal = useCallback(() => {
+    closeModal()
+    setAutoRecord(false)
+  }, [closeModal])
+
+  useEffect(() => {
+    if (autoRecord && !isRec) {
+      toggleRec()
+    }
+  }, [autoRecord, isRec, toggleRec])
 
   useEffect(() => {
     return () => {
@@ -92,5 +120,8 @@ export const useNodeState = () => {
     sendPrompt,
     toggleTodos,
     toggleDetail,
+    isModalOpen,
+    openNodeModal,
+    closeNodeModal,
   }
 }

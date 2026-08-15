@@ -5,6 +5,7 @@ import { ThemeProvider } from '../../shared/ThemeProvider'
 import { NodeModalWrapper } from './NodeModalWrapper'
 import { NodeModalBarSlot } from './NodeModalBarSlot'
 import { NodeModalContent } from './NodeModalContent'
+import { NodeModalHalo } from './NodeModalHalo'
 import { useModalState } from './useModalState'
 import type { NodeData } from './nodeTypes'
 
@@ -353,6 +354,136 @@ export const EXP08BarBreathes: Story = {
       expect(barSlot).toHaveStyle({
         animation: expect.stringContaining('breatheScale'),
       })
+    })
+  },
+}
+
+function TestModalWithHalo() {
+  const { isModalOpen, openModal } = useModalState()
+  const [isRec, setIsRec] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
+
+  return (
+    <ThemeProvider>
+      <div>
+        <button
+          onClick={() => {
+            const node = createNode({ status: isRunning ? 'running' : 'idle' })
+            openModal('1', node, { x: 100, y: 200 })
+            setIsRunning(true)
+          }}
+        >
+          Open Modal with Halo
+        </button>
+        <NodeModalWrapper>
+          {isModalOpen && (
+            <NodeModalHalo state={isRunning ? 'running' : 'idle'} isLive={isRunning}>
+              <div style={{ padding: '24px' }}>
+                <h2>Modal with Halo</h2>
+                <p>Halo shows {isRunning ? 'running' : 'idle'} state</p>
+                <button onClick={() => setIsRunning(!isRunning)}>
+                  Toggle Running State
+                </button>
+              </div>
+            </NodeModalHalo>
+          )}
+        </NodeModalWrapper>
+      </div>
+    </ThemeProvider>
+  )
+}
+
+export const EXP01SendExpands: Story = {
+  name: 'slice04 -- EXP-01 send expands',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.dblClick(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Recording...')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP02BallBecomesHalo: Story = {
+  name: 'slice04 -- EXP-02 ball becomes halo',
+  render: () => <TestModalWithHalo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Halo')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('modal-halo')).toBeInTheDocument()
+      expect(canvas.getByText('Halo shows running state')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP03ExpandAutoRecords: Story = {
+  name: 'slice04 -- EXP-03 expand auto-records',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    const barSlot = canvas.getByTestId('bar-slot')
+    await userEvent.dblClick(barSlot)
+
+    await waitFor(() => {
+      expect(canvas.getByText('Recording...')).toBeInTheDocument()
+      expect(barSlot).toHaveStyle({
+        animation: expect.stringContaining('breatheScale'),
+      })
+    })
+  },
+}
+
+export const EXP09RightClickNoSTT: Story = {
+  name: 'slice04 -- EXP-09 right click no STT',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+      expect(canvas.getByText('Click to record')).toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP10BallRunningState: Story = {
+  name: 'slice04 -- EXP-10 ball running state',
+  render: () => <TestModalWithHalo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Halo')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('modal-halo')).toBeInTheDocument()
+      expect(canvas.getByText('Halo shows running state')).toBeInTheDocument()
+    })
+
+    const halo = canvas.getByTestId('modal-halo')
+    expect(halo).toHaveStyle({
+      borderColor: '#4FC1FF',
     })
   },
 }

@@ -1,6 +1,6 @@
 Feature: Node Modal Lifecycle
   As usr on graph
-  I want node modals w/ single-active constraint + origin-anchored transitions + size caps + close paths + bar of light slot
+  I want node modals w/ single-active constraint + origin-anchored transitions + size caps + close paths + bar of light slot + halo integration
   So I focus one node at a time while maintaining smooth visual morph
 
   Scenario: EXPC-01 single modal constraint
@@ -76,3 +76,37 @@ Feature: Node Modal Lifecycle
     Then bar of light breathes
     And breathing follows voice level
     And breathing uses S03 GlowBall pattern
+
+  Scenario: EXP-01 send expands
+    Given node w/ prompt text
+    When usr sends prompt via dblclick or bar dblclick
+    Then modal expands
+    And execution starts
+    And modal shows running state
+
+  Scenario: EXP-02 ball becomes halo
+    Given modal expanded
+    And execution is running
+    Then glow ball becomes halo around modal
+    And halo breathes with execution state
+    And halo uses S03 HaloRing pattern
+
+  Scenario: EXP-03 expand auto-records
+    Given modal opens via send
+    When modal expands
+    Then STT auto-starts
+    And bar shows recording state
+    And no extra click needed
+
+  Scenario: EXP-09 right click no STT
+    Given node on graph
+    When usr right-clicks node
+    Then modal opens
+    But STT does NOT auto-start
+    And bar shows idle state
+
+  Scenario: EXP-10 ball running state
+    Given node executing
+    When usr collapses modal
+    Then node bubble shows running glow token
+    And bubble uses theme.glow.stateGlow.running

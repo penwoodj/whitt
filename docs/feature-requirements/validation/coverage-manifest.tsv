@@ -46,15 +46,16 @@ LGT-05	03	slice03 -- LGT-05 halo geometry	pass
 LGT-06	03	-	deferred
 LGT-07	03	slice03 -- LGT-07 reduced motion	pass
 LGT-08	03	slice03 -- LGT-08 bar rest state	pass
-EXP-01	04	-	todo
-EXP-03	04	-	todo
+EXP-01	04	slice04 -- EXP-01 send expands	pass
+EXP-02	04	slice04 -- EXP-02 ball becomes halo	pass
+EXP-03	04	slice04 -- EXP-03 expand auto-records	pass
 EXP-04	04	slice04 -- EXP-04 bar of light	pass
 EXP-05	04	slice04 -- EXP-05 bar hover tooltip	pass
 EXP-06	04	slice04 -- EXP-06 bar click toggles STT	pass
 EXP-07	04	slice04 -- EXP-07 bar dblclick sends	pass
 EXP-08	04	slice04 -- EXP-08 bar breathes	pass
-EXP-09	04	-	todo
-EXP-10	04	-	todo
+EXP-09	04	slice04 -- EXP-09 right click no STT	pass
+EXP-10	04	slice04 -- EXP-10 ball running state	pass
 EXP-11	04	slice04 -- EXP-11 close tri-path ESC	pass
 EXPC-01	04	slice04 -- EXPC-01 single modal	pass
 EXPC-02	04	slice04 -- EXPC-02 size caps	pass
