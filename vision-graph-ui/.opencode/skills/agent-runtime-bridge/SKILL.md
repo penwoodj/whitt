@@ -96,4 +96,4 @@ Keep derivation pure (lodash/fp `flow`). Store slice: `features/agent-bridge/`.
 - `docs/feature-requirements/slices/05-execution-viz.md` (EXEC cases, event refs)
 - `docs/feature-requirements/slices/06-agent-semantics.md` (AGTC-01 vocabulary)
 - ragflow pattern: `docs/brainstorm/research-inspiration-survey.md` §6
-- ADR-0011 (FS = truth): `../docs/adr/0011-graph-to-filesystem-mapping.md`
+- ADR-0011 (FS = truth): `docs/adr/0011-graph-to-filesystem-mapping.md` (repo-root path)
