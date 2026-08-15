@@ -39,7 +39,23 @@ Extend existing 3-state node lifecycle (collapsed/hovered/expanded per ADR-0012)
 
 ## 4. Question-cycle gate (AGENTS.md §1 Stage 1 — MANDATORY before tests)
 
-Ask user (2-3 questions max, `question` tool): Modal max-size caps (percentages or fixed px?), ESC precedence order (tooltip → modal → collapsed), origin transition anchor point (node center vs bubble position). Record answers in this file, then never re-ask.
+Ask user (2-3 multiple-choice questions max, `question` tool):
+
+1. **Modal max-size caps (C1 O5)**: Cap expanded modal size how?
+   - A) Viewport percentages (e.g. 80vw × 80vh — scales w/ window)
+   - B) Fixed px (e.g. 640 × 720 — predictable layout)
+   - C) Hybrid (fixed w/ clamp to viewport %)
+
+2. **ESC precedence order**: ESC pressed while tooltip pinned inside expanded modal — what closes first?
+   - A) Tooltip first, then modal on second ESC (innermost-first)
+   - B) Modal + tooltip together (one ESC = full collapse)
+   - C) Modal only; tooltip needs X click
+
+3. **Origin transition anchor**: Expansion morph anchors where?
+   - A) Node center (symmetric growth)
+   - B) Bubble position top-left (reads as "grows down-right")
+
+Record answers in this file, then never re-ask.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 

@@ -36,9 +36,20 @@ Deliver file preview/edit in node detail panel: markdown render, edit toggle, sa
 
 Ask user (2-3 questions max, `question` tool):
 
-1. **Markdown renderer choice**: `react-markdown` (already in package.json, used in NodeDetailPanel.tsx) — confirm or alternative?
-2. **Raw edit textarea vs code editor lib**: Plain `<textarea>` acceptable for now (per slice doc) or install CodeMirror 6/Shiki immediately (FIL-03 placeholder)?
-3. **Highlight persistence scope**: Session-only (selections clear on modal close) or persist in localStorage? (slice doc proposes session-only).
+1. **Markdown renderer choice**: 
+   - A) `react-markdown` (already in package.json, used in NodeDetailPanel.tsx)
+   - B) `marked` + DOMPurify (lighter, manual sanitization)
+   - C) `markdown-it` (plugin-rich)
+
+2. **Raw edit textarea vs code editor lib**: 
+   - A) Plain `<textarea>` now (per slice doc; CodeMirror deferred to FIL-03 non-md work)
+   - B) CodeMirror 6 now (md syntax highlight in raw mode)
+   - C) Shiki read-only highlight + textarea edit
+
+3. **Highlight persistence scope**: 
+   - A) Session-only (selections clear on modal close — slice doc proposal)
+   - B) localStorage (survive reload)
+   - C) FS annotations in frontmatter (deferred, ties to PIL)
 
 Record answers in this file, then never re-ask.
 

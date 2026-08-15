@@ -42,11 +42,22 @@ Every task in §5 touches ONLY files listed here. New file = new row.
 
 Ask user (2-3 questions max):
 
-1. **Prompt file naming**: Use format `.<node-id>/prompt-<n>.md` with YAML frontmatter (timestamp, sent-state)? Or different scheme?
+1. **Tooltip side-choice algorithm (C1 O1, VOX-05)**: How does tooltip pick right vs left of node?
+   - A) Bounding-box overlap check vs nearest neighbors (precise, O(n) per open)
+   - B) Viewport quadrant preference (cheap: node left-of-center → tooltip right)
+   - C) Hybrid — quadrant default, overlap check when neighbors within 1 node-width
 
-2. **Debounce window**: How long should prompt-file debounce be (2s suggested in ADR-0011, but explicit confirmation needed)?
+2. **Prompt file naming (VOX-16)**: Format inside `<node-dir>/.prompts/`?
+   - A) `<ts>-<slug>.md` w/ YAML frontmatter (sent-state, ts) — matches fs-graph-sync skill default
+   - B) `prompt-<n>.md` sequential counter
+   - C) `<iso-ts>.md` raw timestamp only
 
-3. **Empty send guard**: Should Enter/DBLCLICK on empty prompt show shake/flash feedback only, or also trigger mic start (alternative UX path)?
+3. **Empty send guard (VOXC-04)**: Enter/double-click on empty prompt does what?
+   - A) Shake/flash feedback only
+   - B) Flash + auto-start mic
+   - C) No-op silent
+
+Debounce window: 2s per ADR-0011 — settled default, no question needed.
 
 Record answers in this file, then never re-ask.
 

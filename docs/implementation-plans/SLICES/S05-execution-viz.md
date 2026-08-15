@@ -92,15 +92,15 @@ Record answers in this file, then never re-ask.
 - **Manifest**: Flip EXE-06, EXE-07, EXE-08, EXEC-01, EXEC-03 rows → `ready`→`pass` in coverage-manifest.tsv
 - **Commit**: `feat(execution): yaml workflow visualizer (EXE-06, EXE-07, EXE-08, EXEC-01, EXEC-03)`
 
-### Task 5.3 — Status bar card (cases: EXE-09, EXE-10, EXE-13)
-- **Gherkin first**: `vision-graph-ui/src/features/execution/status-bar.feature` (scenarios = EXE-09, EXE-10, EXE-13)
+### Task 5.3 — Status bar card (cases: EXE-09, EXE-10, EXE-13, EXEC-02)
+- **Gherkin first**: `vision-graph-ui/src/features/execution/status-bar.feature` (scenarios = EXE-09, EXE-10, EXE-13, EXEC-02)
 - **Red**: `StatusBarCard.test.tsx` + scenarios fail (component not defined)
-- **Green**: `StatusBarCard.tsx` — implement rounded minimal card with status text + loader only, hover affordance
+- **Green**: `StatusBarCard.tsx` — implement rounded minimal card with status text + loader only, hover affordance; step title truncates w/ ellipsis at card edge, full text on title hover (EXEC-02)
 - **Rip (if any)**: None — styled-components component per AGENTS.md §15
-- **Story**: `EXE-09 status card minimal`, `EXE-10 hover affordance`, `EXE-13 only text+loader` in `StatusBarCard.stories.tsx`
+- **Story**: `EXE-09 status card minimal`, `EXE-10 hover affordance`, `EXE-13 only text+loader`, `EXEC-02 title truncation` in `StatusBarCard.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run src/features/execution/StatusBarCard.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: Flip EXE-09, EXE-10, EXE-13 rows → `ready`→`pass` in coverage-manifest.tsv
-- **Commit**: `feat(execution): status bar card (EXE-09, EXE-10, EXE-13)`
+- **Manifest**: Flip EXE-09, EXE-10, EXE-13, EXEC-02 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(execution): status bar card (EXE-09, EXE-10, EXE-13, EXEC-02)`
 
 ### Task 5.4 — Morphing loader (cases: EXE-14)
 - **Gherkin first**: `vision-graph-ui/src/features/execution/morphing-loader.feature` (scenarios = EXE-14)

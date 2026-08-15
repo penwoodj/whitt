@@ -34,7 +34,7 @@ Deliver standard slippy-map navigation (wheel zoom-to-cursor, pan modes, fit-vie
 
 Ask user (2-3 questions max, `question` tool):
 
-1. **NAV-02 pan mode:** Hybrid (drag-empty=pan + space+drag + shift+drag=lasso) vs pure slippy default (React Flow default: pan=drag-empty, select=shift-drag)? Recommendation: hybrid aligns with GRPC-06 lasso while keeping one-gesture pan. Select: A) Hybrid (drag-empty OR space+drag = pan, shift+drag = lasso) B) Pure slippy (drag-empty = pan, shift-drag = select/lasso)
+1. **NAV-02 pan mode (C1 O15):** Hybrid (drag-empty=pan + space+drag + shift+drag=lasso) vs pure slippy default (React Flow default: pan=drag-empty, select=shift-drag)? Recommendation: hybrid aligns with GRPC-06 lasso while keeping one-gesture pan. Select: A) Hybrid (drag-empty OR space+drag = pan, shift+drag = lasso) B) Pure slippy (drag-empty = pan, shift-drag = select/lasso) C) Design-tool mode (panOnScroll + selectionOnDrag, Figma-style)
 
 2. **Fit-view keyboard shortcut:** Propose `1` (per slice spec) or `Shift+1` (Figma convention)? Select: A) `1` B) `Shift+1` C) Other (specify)
 
