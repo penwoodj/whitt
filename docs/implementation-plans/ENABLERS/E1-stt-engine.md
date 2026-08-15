@@ -2,7 +2,7 @@
 
 > Executes: Enabler E1 (unblocks S02, S03)
 > Validation spec: docs/feature-requirements/validation/E1.validation.md
-> Status: NOT-STARTED
+> Status: IN-PROGRESS (gate answered 2026-08-14; tasks 5.1+ running)
 > Depends on: nothing (first enabler, parallel w/ E4)
 
 ## 1. Objective
@@ -49,6 +49,12 @@ Ask user (2-3 questions max, `question` tool):
    - A) on (auto-endpointing, +2MB model)
    - B) off (manual toggle only)
 Record answers in this file, then never re-ask.
+
+**ANSWERED 2026-08-14 (user):**
+1. Model: user deferred ("whatever — an easy local whisper hotkey is basically exactly
+   the functionality I want for voice typing") → **base default + tiny fallback**
+   (recommended option; engine wrapper exposes model switch, so choice is not one-way).
+2. VAD: **off** (manual toggle only; no vad-web dependency in E1).
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
