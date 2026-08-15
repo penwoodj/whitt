@@ -2,7 +2,7 @@
 
 > Executes: enabler migration (reactflow 11 → @xyflow/react 12)
 > Validation spec: per AGENTS.md §7 verification commands
-> Status: NOT-STARTED
+> Status: DONE (2026-08-14) — commits cff3bd8 (dep swap), f2766f6 (imports ×4 files), 20f718b (nodeTypes memo). Verification: `npx tsc --noEmit` exit 0; `npx vitest run` 12 failed / 163 passed = exact pre-existing baseline (fsGraphLoader ×7, NodeDetailPanel ×1, Node ×1, GraphSim act() ×3), 0 new failures; `npm run build-storybook` exit 0; `npx vite build` exit 0 (190.92 kB js / 60.25 kB gzip); grep `from 'reactflow'` = 0. Storybook smoke (built static + playwright): GraphPage node drag 120px MOVED-OK 0 JS errors; GraphSim picker→project load→10 nodes render 0 JS errors. NOTE: `vitest --project=storybook` fails on PRE-EXISTING infra issue (dynamic-import + iframe CORS errors, affects all stories, not v12 — logged for later lane).
 > Depends on: nothing (FIRST enabler, parallel w/ E1)
 
 ## 1. Objective
