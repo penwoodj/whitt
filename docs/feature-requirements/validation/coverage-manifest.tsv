@@ -54,10 +54,10 @@ EXP-07	04	-	todo
 EXP-09	04	-	todo
 EXP-10	04	-	todo
 EXP-11	04	-	todo
-EXPC-01	04	-	todo
+EXPC-01	04	slice04 -- EXPC-01 single modal	pass
 EXPC-02	04	-	todo
 EXPC-03	04	-	todo
-EXPC-04	04	-	todo
+EXPC-04	04	slice04 -- EXPC-04 origin transition	pass
 EXE-01	05	-	todo
 EXE-02	05	-	todo
 EXE-03	05	-	todo
