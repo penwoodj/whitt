@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/01-app-shell.md` (cases: APP-01..07, APPC-01..03)
 > Validation spec: `docs/feature-requirements/validation/slice-01.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-15). Commits 0b81568, de12147, 2c04c9d, bcc4797, 0478292, 0583112, e828dac (S01-7 fix: test-setup scrollIntoView mock + test corrections; agent's first done-claim was false — 11 own-tests red — caught by orchestrator verify, fixed same session). Gate: full suite 326 pass / 5 fail = exact baseline (GraphSim act() ×3, Node ×1, NodeDetailPanel ×1), tsc 0, build-storybook 0. Manifest: APP-01..07 + APPC-01..03 = pass.
 > Depends on: E4 (react-flow upgrade — canvas mounts with @xyflow/react 12)
 
 ## 1. Objective
