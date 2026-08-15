@@ -17,7 +17,7 @@ describe('FakeSttEngine', () => {
 
     const startPromise = engine.start()
 
-    vi.runAllTimersAsync()
+    await vi.runAllTimersAsync()
     await startPromise
 
     expect(events.length).toBeGreaterThanOrEqual(2)
