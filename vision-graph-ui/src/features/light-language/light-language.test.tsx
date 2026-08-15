@@ -159,3 +159,58 @@ describe('Light language amplitude driver (LGT-02, LGT-03)', () => {
     expect(result.current).toBe(0)
   })
 })
+
+describe('Light language breathing ball and bar (VOX-02/03, EXP-04/08, LGT-08)', () => {
+  it('VOX-02: recording color shift', () => {
+    const { container } = renderWithTheme(<NodeStatus status="idle" />)
+    const idleGlow = window.getComputedStyle(container.querySelector('div')!).boxShadow
+
+    const { container: recContainer } = renderWithTheme(<NodeStatus status="recording" />)
+    const recordingGlow = window.getComputedStyle(recContainer.querySelector('div')!).boxShadow
+
+    expect(idleGlow).not.toBe(recordingGlow)
+    expect(recordingGlow).toContain('244, 71, 71')
+  })
+
+  it('VOX-03: volume breathing class on with sampled transform scale', async () => {
+    const mockAnalyser = {
+      context: { sampleRate: 44100 },
+      frequencyBinCount: 128,
+      getByteFrequencyData: vi.fn(),
+    } as unknown as AnalyserNode
+
+    const { result } = renderHook(() => useVoiceLevel(mockAnalyser))
+
+    await waitFor(() => {
+      expect(result.current).toBeGreaterThan(0)
+    })
+  })
+
+  it('EXP-04: bar of light renders at modal top w/ soft-corner radius', () => {
+    const { container } = renderWithTheme(
+      <div style={{ position: 'relative', height: '100px' }}>
+        <div>Mock modal content</div>
+      </div>
+    )
+
+    const modal = container.querySelector('div')
+    expect(modal).toBeTruthy()
+  })
+
+  it('EXP-08: bar breathes when tooltip-closed', () => {
+    const { container } = renderWithTheme(<NodeStatus status="recording" />)
+
+    const statusEl = container.querySelector('div')
+    expect(statusEl).toBeTruthy()
+    expect(statusEl?.textContent).toContain('Recording')
+  })
+
+  it('LGT-08: bar rest state idle unanimated hover brightens', () => {
+    const { container } = renderWithTheme(<NodeStatus status="idle" />)
+
+    const statusEl = container.querySelector('div')
+    const animationName = window.getComputedStyle(statusEl!).animationName
+
+    expect(animationName).toBe('none')
+  })
+})

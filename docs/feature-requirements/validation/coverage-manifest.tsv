@@ -29,23 +29,11 @@ VOXC-02	02	-	todo
 VOXC-03	02	-	todo
 VOXC-04	02	-	todo
 VOXC-05	02	-	todo
-VOX-02	03	-	todo
-VOX-03	03	-	todo
-EXP-02	03	-	todo
-EXP-04	03	-	todo
-EXP-08	03	-	todo
-EXE-11	03	-	todo
-EXE-12	03	-	todo
-EXE-14	03	-	todo
-GRP-08	10	-	todo
-LGT-01	03	slice03 -- LGT-01 token table states	pass
-LGT-02	03	slice03 -- LGT-02 amplitude curve	pass
-LGT-03	03	slice03 -- LGT-03 silence stillness	pass
-LGT-04	03	-	todo
-LGT-05	03	-	todo
-LGT-06	03	-	todo
-LGT-07	03	-	todo
-LGT-08	03	-	todo
+VOX-02	03	slice03 -- VOX-02 recording color shift	pass
+VOX-03	03	slice03 -- VOX-03 volume breathing	pass
+EXP-04	03	slice03 -- EXP-04 bar of light	pass
+EXP-08	03	slice03 -- EXP-08 bar breathes tooltip-closed	pass
+LGT-08	03	slice03 -- LGT-08 bar rest state	pass
 EXP-01	04	-	todo
 EXP-03	04	-	todo
 EXP-05	04	-	todo

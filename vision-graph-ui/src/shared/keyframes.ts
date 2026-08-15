@@ -17,3 +17,18 @@ export const recordingPulse = keyframes`
     opacity: 0.6;
   }
 `
+
+export const breatheScale = keyframes`
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+`
+
+export const restGlow = keyframes`
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(106, 153, 85, 0.2);
+  }
+`
