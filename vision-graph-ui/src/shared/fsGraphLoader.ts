@@ -1,4 +1,4 @@
-import type { Node as FlowNode, Edge } from 'reactflow'
+import type { Node as FlowNode, Edge } from '@xyflow/react'
 import type { NodeData } from '../features/node/nodeTypes'
 import { log } from './logger'
 
