@@ -50,4 +50,29 @@ describe('ProjectIcon', () => {
     fireEvent.click(screen.getByText('T'))
     expect(onClick).toHaveBeenCalled()
   })
+
+  it('APP-05 title inline edit', () => {
+    const onClick = vi.fn()
+    const props: ProjectIconProps = {
+      label: 'Test Project',
+      iconLetter: 'T',
+      $isActive: false,
+      onClick,
+    }
+
+    renderWithTheme(<ProjectIcon {...props} />)
+
+    const titleElement = screen.getByText('Test Project')
+    expect(titleElement).toBeInTheDocument()
+
+    fireEvent.click(titleElement)
+    const titleInput = screen.getByDisplayValue('Test Project')
+    expect(titleInput).toBeInTheDocument()
+
+    fireEvent.change(titleInput, { target: { value: 'Deep Work' } })
+    fireEvent.blur(titleInput)
+
+    expect(screen.getByText('Deep Work')).toBeInTheDocument()
+    expect(screen.getByText('D')).toBeInTheDocument()
+  })
 })

@@ -35,3 +35,20 @@ export const Active: Story = {
     onClick: () => {},
   } as ProjectIconProps,
 }
+
+export const APP05TitleInlineEdit: Story = {
+  name: 'slice01 -- APP-05 title inline edit',
+  args: {
+    label: 'Test Project',
+    iconLetter: 'T',
+    $isActive: false,
+    onClick: () => {},
+  } as ProjectIconProps,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click on the title to edit it inline. The letter updates to match the new title on blur.',
+      },
+    },
+  },
+}

@@ -56,3 +56,11 @@ Feature: App shell layout
     When component renders
     Then only new-project bubble visible
     And no list chrome shown
+
+  Scenario: APP-05 title inline edit
+    Given AppShell w/ project icon
+    When usr clicks title
+    And usr types "Deep Work"
+    And usr blurs
+    Then title text updated
+    And rail letter now "D"
