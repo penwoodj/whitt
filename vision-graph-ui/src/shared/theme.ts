@@ -66,6 +66,16 @@ export type Theme = {
     recordingPulse: string
     done: string
     idle: string
+    breathingScale: string
+    breathingAttack: string
+    breathingRelease: string
+    noiseGate: number
+    stateGlow: {
+      idle: string
+      recording: string
+      running: string
+      done: string
+    }
   }
   fishEye: {
     transitionDuration: string
@@ -149,6 +159,16 @@ export const darkTheme = {
     recordingPulse: '0 0 24px rgba(244, 71, 71, 0.8)',
     done: '0 0 12px rgba(78, 201, 176, 0.4)',
     idle: '0 0 8px rgba(106, 153, 85, 0.2)',
+    breathingScale: '0.08',
+    breathingAttack: '60ms',
+    breathingRelease: '200ms',
+    noiseGate: 0.02,
+    stateGlow: {
+      idle: '0 0 8px rgba(106, 153, 85, 0.2)',
+      recording: '0 0 24px rgba(244, 71, 71, 0.8)',
+      running: '0 0 12px rgba(0, 122, 204, 0.4)',
+      done: '0 0 12px rgba(78, 201, 176, 0.4)',
+    },
   },
   fishEye: {
     transitionDuration: '400ms',

@@ -38,20 +38,7 @@ const StatusWrap = styled.div<{ $pulse: boolean; $status: NodeStatusType }>`
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.textInverse};
   background-color: ${({ $status, theme }) => theme.colors[getStatusColor($status)]};
-  box-shadow: ${({ $status, theme }) => {
-    switch ($status) {
-      case 'idle':
-        return theme.glow.idle
-      case 'recording':
-        return theme.glow.recordingPulse
-      case 'running':
-        return theme.glow.primary
-      case 'done':
-        return theme.glow.done
-      default:
-        return 'none'
-    }
-  }};
+  box-shadow: ${({ $status, theme }) => theme.glow.stateGlow[$status]};
   animation: ${({ $pulse }) => ($pulse ? 'pulse 1.5s ease-in-out infinite' : 'none')};
 
   @keyframes pulse {

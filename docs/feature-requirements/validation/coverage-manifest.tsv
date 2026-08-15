@@ -38,7 +38,7 @@ EXE-11	03	-	todo
 EXE-12	03	-	todo
 EXE-14	03	-	todo
 GRP-08	10	-	todo
-LGT-01	03	-	todo
+LGT-01	03	slice03 -- LGT-01 token table states	pass
 LGT-02	03	-	todo
 LGT-03	03	-	todo
 LGT-04	03	-	todo
