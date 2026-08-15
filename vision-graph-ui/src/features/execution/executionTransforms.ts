@@ -2,6 +2,7 @@ import flow from 'lodash/fp/flow'
 import filter from 'lodash/fp/filter'
 import map from 'lodash/fp/map'
 import last from 'lodash/fp/last'
+import difference from 'lodash/fp/difference'
 import type { AgentEvt } from '../../shared/agent/types'
 import { isRunStart, isStepStart, isStepError, isStepDone } from '../../shared/agent/types'
 import { deriveBusyNodeIds } from '../../shared/agent/busySetReducer'
@@ -16,7 +17,13 @@ export interface ErrorState {
 }
 
 export const deriveBusySet = (evts: AgentEvt[]): Set<string> => {
-  return deriveBusyNodeIds(evts)
+  const busy = deriveBusyNodeIds(evts)
+  const runDoneNodeIds = flow([
+    filter((evt: AgentEvt) => evt.kind === 'run-done'),
+    map((evt: AgentEvt) => (evt as Extract<AgentEvt, { kind: 'run-done' }>).nodeId),
+  ])(evts) as string[]
+  const settled = difference([...busy], runDoneNodeIds)
+  return new Set(settled)
 }
 
 export const deriveStepTitle = (evts: AgentEvt[], nodeId: string): string | null => {
