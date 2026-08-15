@@ -68,7 +68,7 @@ Ask user (2-3 questions max):
    - Option A: Reuse exact component (DRY, consistent rendering)
    - Option B: Create read-only variant (smaller bundle for confirm-only use case)
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-15: Q1=A js-yaml dep. Q2=A Lucide React. Q3=A reuse YamlWorkflowVisualizer for confirm dialog.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
