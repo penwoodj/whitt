@@ -164,14 +164,25 @@ exists → what's missing → closure artifact (skill / cases / research).
 
 ## Skills Index (new, in `vision-graph-ui/.opencode/skills/`)
 
-| Skill | Closes | Research-dep |
-|---|---|---|
-| `local-stt` | A1 | yes (bg_ad87e845) |
-| `agent-runtime-bridge` | A2 | no (slice 05/06 + survey) |
-| `fs-graph-sync` | A3+A4 | no (ADR-0011/AGENTS §16) |
-| `storybook-agentic-e2e` | B1+B2+B3 | yes (bg_ec82e72f) |
-| `requirements-regression` | B4 | no (manifest/ADR-0016) |
-| `oss-code-adaptation` | C1 | yes (bg_901ac47a) |
+| Skill | Closes | Research-dep | Status |
+|---|---|---|---|
+| `local-stt` | A1 | yes (bg_ad87e845) | ✅ written |
+| `agent-runtime-bridge` | A2 | no (slice 05/06 + survey) | ✅ written |
+| `fs-graph-sync` | A3+A4 | no (ADR-0011/AGENTS §16) | ✅ written |
+| `storybook-agentic-e2e` | B1+B2+B3 | yes (bg_ec82e72f) | ✅ written |
+| `requirements-regression` | B4 | no (manifest/ADR-0016) | ✅ written |
+| `oss-code-adaptation` | C1 | yes (bg_901ac47a) | ✅ written |
+
+Research sources (librarian reports, 2026-08-14): OSS adaptation (licenses,
+vendor-vs-port, StrictMode patterns, VS Code/opensquilla notice precedents),
+agentic E2E (Lime AgentUiFixture replay, MSW 2.x sse(), chromatic
+pauseAnimationAtEnd + isChromatic, vitest #10058 timer fixes, mui-x rAF
+precedent, scripted analyser curves), local STT (browser-whisper stack,
+transformers.js v3 WebGPU/q4, Web Speech API = cloud — rejected, sidecars,
+one-AudioContext split, VAD, failure UX). Key research-driven decisions encoded:
+Web Speech API FORBIDDEN (cloud), provenance headers = license-mandated
+exception to no-comments rule, Vitest addon over test-runner, engine behind
+interface.
 
 All six referenced from this doc; implementation plan suites cite skill names +
 this gap doc. Skills follow existing SKILL.md format (frontmatter + sections),
