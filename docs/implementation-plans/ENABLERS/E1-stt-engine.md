@@ -2,7 +2,7 @@
 
 > Executes: Enabler E1 (unblocks S02, S03)
 > Validation spec: docs/feature-requirements/validation/E1.validation.md
-> Status: IN-PROGRESS (gate answered 2026-08-14; tasks 5.1+ running)
+> Status: DONE (2026-08-14). Tasks 5.1-5.8 commits 3f67317, 297e901, b690def, aff719b, e9d037e, c36b330, b873f1d, c5e6e54. Gate: scoped vitest 45/45 green (voice-capture + shared/stt + shared/audio), tsc --noEmit 0, full suite 12 failed = exact pre-existing baseline (fsGraphLoader ×7, NodeDetailPanel ×1, Node ×1, GraphSim act() ×3 — 0 new), build-storybook 0. WebGPU real-model tests skip w/ reason when navigator.gpu absent (no model downloads). Storybook vitest --project=storybook lane remains pre-existing broken infra (E4 log); storybook build includes all 9 validation stories.
 > Depends on: nothing (first enabler, parallel w/ E4)
 
 ## 1. Objective
