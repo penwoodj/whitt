@@ -6,6 +6,7 @@ import NodeStatus from '../node/NodeStatus'
 import { useVoiceLevel } from './useVoiceLevel'
 import { GlowBall } from './GlowBall'
 import { BarOfLight } from './BarOfLight'
+import { HaloRing } from './HaloRing'
 
 const meta = {
   title: 'slice03 -- LGT-01 token table states',
@@ -141,6 +142,55 @@ export const LGT08BarRestState: Story = {
       <div>Idle bar (unanimated, hover brightens)</div>
       <div style={{ marginTop: '8px' }}>
         <BarOfLight state="idle" width={250} height={6} />
+      </div>
+    </div>
+  ),
+}
+
+export const EXP02BallBecomesHalo: Story = {
+  name: 'EXP-02 ball becomes halo',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Modal with Halo Ring</div>
+      <div style={{ marginTop: '16px', position: 'relative', width: '200px', height: '150px', border: '1px solid #333' }}>
+        <HaloRing state="recording" isLive={true}>
+          <div>Modal Content</div>
+        </HaloRing>
+      </div>
+    </div>
+  ),
+}
+
+export const GRP08GroupingHalo: Story = {
+  name: 'GRP-08 grouping halo',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Group Selection with Halo</div>
+      <div style={{ marginTop: '16px', position: 'relative', width: '300px', height: '200px', border: '1px dashed #444' }}>
+        <HaloRing state="running" isLive={true}>
+          <div style={{ position: 'absolute', top: '10px', left: '10px' }}>Node 1</div>
+          <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>Node 2</div>
+        </HaloRing>
+      </div>
+    </div>
+  ),
+}
+
+export const LGT05HaloGeometry: Story = {
+  name: 'LGT-05 halo geometry',
+  render: () => (
+    <div style={{ display: 'flex', gap: '16px', padding: '16px' }}>
+      <div>
+        <div>Modal Halo</div>
+        <div style={{ marginTop: '8px', position: 'relative', width: '120px', height: '80px', border: '1px solid #333' }}>
+          <HaloRing state="recording" isLive={true} />
+        </div>
+      </div>
+      <div>
+        <div>Group Halo</div>
+        <div style={{ marginTop: '8px', position: 'relative', width: '120px', height: '80px', border: '1px dashed #444' }}>
+          <HaloRing state="running" isLive={true} />
+        </div>
       </div>
     </div>
   ),

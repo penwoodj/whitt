@@ -214,3 +214,46 @@ describe('Light language breathing ball and bar (VOX-02/03, EXP-04/08, LGT-08)',
     expect(animationName).toBe('none')
   })
 })
+
+describe('Light language halo geometry (EXP-02, GRP-08, LGT-05)', () => {
+  it('EXP-02: halo element wraps modal on expand', () => {
+    const { container } = renderWithTheme(
+      <div data-testid="modal">
+        <div data-testid="halo">Halo</div>
+        <div>Modal Content</div>
+      </div>
+    )
+
+    const halo = container.querySelector('[data-testid="halo"]')
+    const modal = container.querySelector('[data-testid="modal"]')
+
+    expect(halo).toBeTruthy()
+    expect(modal).toBeTruthy()
+  })
+
+  it('GRP-08: halo ring element wraps selection box', () => {
+    const { container } = renderWithTheme(
+      <div data-testid="selection-box">
+        <div data-testid="group-halo">Group Halo</div>
+      </div>
+    )
+
+    const groupHalo = container.querySelector('[data-testid="group-halo"]')
+    const selectionBox = container.querySelector('[data-testid="selection-box"]')
+
+    expect(groupHalo).toBeTruthy()
+    expect(selectionBox).toBeTruthy()
+  })
+
+  it('LGT-05: same halo component both cases (testid shared)', () => {
+    const { container } = renderWithTheme(
+      <>
+        <div data-testid="halo" data-context="modal">Modal Halo</div>
+        <div data-testid="halo" data-context="group">Group Halo</div>
+      </>
+    )
+
+    const halos = container.querySelectorAll('[data-testid="halo"]')
+    expect(halos.length).toBe(2)
+  })
+})

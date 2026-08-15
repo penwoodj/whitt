@@ -65,3 +65,19 @@ Feature: Light language glow state mapping
     Then bar unanimated
     When usr hovers bar
     Then bar brightens via filter/opacity change
+
+  Scenario: EXP-02 ball becomes halo
+    Given modal expands
+    Then halo element wraps modal
+    And ball element hidden
+
+  Scenario: GRP-08 grouping halo
+    Given usr forms group
+    Then halo ring element wraps selection box
+
+  Scenario: LGT-05 halo geometry
+    Given modal expands
+    And usr forms group
+    Then same halo component both cases (testid shared)
+    And halo inherits entity state glow
+    And halo breathes ONLY if entity live
