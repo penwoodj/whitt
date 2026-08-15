@@ -2,7 +2,7 @@
 
 > Executes: `docs/adr/0011-graph-to-filesystem-mapping.md` (FS = truth, memory = cache)
 > Validation spec: N/A (enabler, no GWT cases)
-> Status: IN-PROGRESS (gate answered 2026-08-14: Q1=repair in-place, Q2=File System Access API, Q3=never-deleted per ADR-0011 standing decision; tasks running)
+> Status: DONE (2026-08-15). Commits 04944aa, af5922c, e61ff8d, 34b6337, 96b5bc0. Gate: scoped vitest (fs + fsGraphLoader + GraphSync) 67/67 green; full suite 316 pass / 5 fail = exact baseline (12 − 7 repaired fsGraphLoader; remaining = GraphSim act() ×3, Node ×1, NodeDetailPanel ×1); tsc 0; build-storybook 0 (alias bug from 5.1/5.2 fixed e61ff8d). WatcherAdapter debt cleared (RealFsPort + real temp dirs, watcher scoped to root, 96b5bc0). NOTE: vitest must run from vision-graph-ui/ — repo root picks up .repos test files.
 > Depends on: none
 
 ## 1. Objective
