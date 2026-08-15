@@ -58,7 +58,7 @@ Ask user (2-3 questions max):
 
 Debounce window: 2s per ADR-0011 — settled default, no question needed.
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-15: Q1=C hybrid (quadrant default, overlap check when neighbors within 1 node-width). Q2=CUSTOM `<ts>-<graph-location-coords-hash>.md` (timestamp + hash of node graph coords; slug dropped, coords-hash identifies spatial origin; YAML frontmatter kept). Q3=A shake/flash only. Debounce 2s per ADR-0011.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
