@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { WriteQueue } from '@/shared/fs/WriteQueue'
+import { WriteQueue } from './WriteQueue'
 
 const meta: Meta<typeof WriteQueue> = {
   title: 'FS/WriteQueue',

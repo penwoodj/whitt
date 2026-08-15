@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { FakeFsPort } from '@/shared/fs/FakeFsPort'
+import { FakeFsPort } from './FakeFsPort'
 
 const meta: Meta<typeof FakeFsPort> = {
   title: 'FS/FakeFsPort',
