@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { useModalState } from './useModalState'
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -66,42 +65,44 @@ const CloseButton = styled.button`
 `
 
 type NodeModalWrapperProps = {
+  isOpen: boolean
+  onClose: () => void
+  origin?: { x: number; y: number }
   children?: React.ReactNode
 }
 
-export function NodeModalWrapper({ children }: NodeModalWrapperProps) {
-  const { isModalOpen, closeModal } = useModalState()
+export function NodeModalWrapper({ isOpen, onClose, origin, children }: NodeModalWrapperProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+  const originX = origin?.x ?? 0
+  const originY = origin?.y ?? 0
 
   useEffect(() => {
+    if (!isOpen) {
+      return undefined
+    }
+
     const handleEscape = (evt: KeyboardEvent) => {
-      if (evt.key === 'Escape' && isModalOpen) {
-        closeModal()
+      if (evt.key === 'Escape') {
+        onClose()
       }
     }
 
     const handleClickOutside = (evt: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(evt.target as Node) &&
-        isModalOpen
-      ) {
-        closeModal()
+      if (modalRef.current && !modalRef.current.contains(evt.target as Node)) {
+        onClose()
       }
     }
 
-    if (isModalOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.addEventListener('mousedown', handleClickOutside)
-    }
+    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('mousedown', handleClickOutside)
 
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isModalOpen, closeModal])
+  }, [isOpen, onClose])
 
-  if (!isModalOpen) {
+  if (!isOpen) {
     return null
   }
 
@@ -109,13 +110,13 @@ export function NodeModalWrapper({ children }: NodeModalWrapperProps) {
     <ModalOverlay>
       <ModalContent
         ref={modalRef}
-        $originX={isModalOpen.originX}
-        $originY={isModalOpen.originY}
+        $originX={originX}
+        $originY={originY}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={`modal-title-${isModalOpen.nodeId}`}
+        data-testid="modal-content"
       >
-        <CloseButton onClick={closeModal} aria-label="Close modal" data-testid="close-btn">
+        <CloseButton onClick={onClose} aria-label="Close modal" data-testid="close-btn">
           ×
         </CloseButton>
         {children}

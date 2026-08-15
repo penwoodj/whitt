@@ -241,37 +241,39 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
         </NodeBox>
       </NodeTooltip>
 
-      <NodeModalWrapper>
-        {isModalOpen && (
-          <NodeModalHalo state={data.status} isLive={data.lifecycle === 'agentic-running' || data.lifecycle === 'done'}>
-            <NodeModalBarSlot
-              state={isRec ? 'recording' : data.status}
+      <NodeModalWrapper
+        isOpen={Boolean(isModalOpen)}
+        onClose={closeNodeModal}
+        origin={isModalOpen ? { x: isModalOpen.originX, y: isModalOpen.originY } : undefined}
+      >
+        <NodeModalHalo state={data.status} isLive={data.lifecycle === 'agentic-running' || data.lifecycle === 'done'}>
+          <NodeModalBarSlot
+            state={isRec ? 'recording' : data.status}
+            isRec={isRec}
+            onToggleRec={toggleRec}
+            onSend={handleSend}
+          />
+          <NodeModalContent>
+            <NodeAgenticTodos
+              todos={data.todos}
+              expanded={todosExpanded}
+              onToggle={toggleTodos}
+              showAgentic={showAgentic}
+            />
+            <NodePromptArea
+              value={promptTxt}
+              onChange={setPromptTxt}
+              streamedTxt={streamedTxt}
+              isStream={isStream}
               isRec={isRec}
+              isCycleRun={data.isCycleRun || false}
               onToggleRec={toggleRec}
+              onStreamTxt={setPromptTxt}
               onSend={handleSend}
             />
-            <NodeModalContent>
-              <NodeAgenticTodos
-                todos={data.todos}
-                expanded={todosExpanded}
-                onToggle={toggleTodos}
-                showAgentic={showAgentic}
-              />
-              <NodePromptArea
-                value={promptTxt}
-                onChange={setPromptTxt}
-                streamedTxt={streamedTxt}
-                isStream={isStream}
-                isRec={isRec}
-                isCycleRun={data.isCycleRun || false}
-                onToggleRec={toggleRec}
-                onStreamTxt={setPromptTxt}
-                onSend={handleSend}
-              />
-              {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
-            </NodeModalContent>
-          </NodeModalHalo>
-        )}
+            {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
+          </NodeModalContent>
+        </NodeModalHalo>
       </NodeModalWrapper>
     </>
   )

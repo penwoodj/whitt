@@ -1,7 +1,10 @@
+/// <reference types="@testing-library/jest-dom" />
+
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { ThemeProvider } from '../../shared/ThemeProvider'
+import { NodeModalWrapper } from './NodeModalWrapper'
 import { useModalState } from './useModalState'
 import type { NodeData } from './nodeTypes'
 
@@ -36,13 +39,13 @@ describe('EXPC-01 single modal constraint', () => {
 
       return (
         <div>
-          <button onClick={() => openModal('A', nodeA, { x: 100, y: 200 })}>
+          <button type="button" onClick={() => openModal('A', nodeA, { x: 100, y: 200 })}>
             Open A
           </button>
-          <button onClick={() => openModal('B', nodeB, { x: 300, y: 400 })}>
+          <button type="button" onClick={() => openModal('B', nodeB, { x: 300, y: 400 })}>
             Open B
           </button>
-          <button onClick={closeModal}>Close</button>
+          <button type="button" onClick={closeModal}>Close</button>
           {isModalOpen && <div data-testid="modal">Modal: {isModalOpen.nodeId}</div>}
         </div>
       )
@@ -68,10 +71,10 @@ describe('EXPC-01 single modal constraint', () => {
 
       return (
         <div>
-          <button onClick={() => openModal('A', nodeA, { x: 100, y: 200 })}>
+          <button type="button" onClick={() => openModal('A', nodeA, { x: 100, y: 200 })}>
             Open A
           </button>
-          <button onClick={() => openModal('B', nodeB, { x: 300, y: 400 })}>
+          <button type="button" onClick={() => openModal('B', nodeB, { x: 300, y: 400 })}>
             Open B
           </button>
           {isModalOpen && <div data-testid="modal">{isModalOpen.nodeId}</div>}
@@ -99,7 +102,7 @@ describe('EXPC-04 origin-anchored transition', () => {
 
       return (
         <div>
-          <button onClick={() => openModal('1', node, { x: 150, y: 250 })}>
+          <button type="button" onClick={() => openModal('1', node, { x: 150, y: 250 })}>
             Open Modal
           </button>
           {isModalOpen && (
@@ -138,7 +141,7 @@ describe('EXPC-04 origin-anchored transition', () => {
 
       return (
         <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+          <button type="button" onClick={() => openModal('1', node, { x: 100, y: 200 })}>
             Open Modal
           </button>
           {isModalOpen && (
@@ -172,96 +175,33 @@ describe('EXPC-04 origin-anchored transition', () => {
 })
 
 describe('EXP-11 close tri-path', () => {
+  const ControlledModal = ({ onClose }: { onClose: () => void }) => (
+    <NodeModalWrapper isOpen onClose={onClose} origin={{ x: 100, y: 200 }}>
+      <div data-testid="modal">Modal</div>
+    </NodeModalWrapper>
+  )
+
   it('closes modal on ESC key', () => {
-    function TestComponent() {
-      const { isModalOpen, openModal, closeModal } = useModalState()
-      const node = createNode({ id: '1', title: 'Test Node' })
-
-      return (
-        <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
-            Open Modal
-          </button>
-          <button onClick={closeModal}>Close</button>
-          {isModalOpen && <div data-testid="modal">Modal</div>}
-        </div>
-      )
-    }
-
-    renderWithTheme(<TestComponent />)
-
-    const openBtn = screen.getByText('Open Modal')
-    fireEvent.click(openBtn)
-
+    const onClose = vi.fn()
+    renderWithTheme(<ControlledModal onClose={onClose} />)
     expect(screen.getByTestId('modal')).toBeInTheDocument()
-
     fireEvent.keyDown(document, { key: 'Escape' })
-    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 
   it('closes modal on click outside', () => {
-    function TestComponent() {
-      const { isModalOpen, openModal } = useModalState()
-      const node = createNode({ id: '1', title: 'Test Node' })
-
-      return (
-        <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
-            Open Modal
-          </button>
-          {isModalOpen && (
-            <div data-testid="modal">
-              <div data-testid="modal-content">Content</div>
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    const { container } = renderWithTheme(<TestComponent />)
-
-    const openBtn = screen.getByText('Open Modal')
-    fireEvent.click(openBtn)
-
+    const onClose = vi.fn()
+    renderWithTheme(<ControlledModal onClose={onClose} />)
     expect(screen.getByTestId('modal')).toBeInTheDocument()
-
-    fireEvent.mouseDown(container)
-    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    fireEvent.mouseDown(document.body)
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 
   it('closes modal on X button click', () => {
-    function TestComponent() {
-      const { isModalOpen, openModal, closeModal } = useModalState()
-      const node = createNode({ id: '1', title: 'Test Node' })
-
-      return (
-        <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
-            Open Modal
-          </button>
-          {isModalOpen && (
-            <div data-testid="modal">
-              <button onClick={closeModal} data-testid="close-btn">
-                ×
-              </button>
-              Content
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    renderWithTheme(<TestComponent />)
-
-    const openBtn = screen.getByText('Open Modal')
-    fireEvent.click(openBtn)
-
-    expect(screen.getByTestId('modal')).toBeInTheDocument()
-
-    const closeBtn = screen.getByTestId('close-btn')
-    fireEvent.click(closeBtn)
-
-    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+    const onClose = vi.fn()
+    renderWithTheme(<ControlledModal onClose={onClose} />)
+    fireEvent.click(screen.getByTestId('close-btn'))
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -273,7 +213,7 @@ describe('EXPC-02 size caps', () => {
 
       return (
         <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+          <button type="button" onClick={() => openModal('1', node, { x: 100, y: 200 })}>
             Open Modal
           </button>
           {isModalOpen && (
@@ -308,38 +248,13 @@ describe('EXPC-02 size caps', () => {
   })
 
   it('has inner scroll for overflow content', () => {
-    function TestComponent() {
-      const { isModalOpen, openModal } = useModalState()
-      const node = createNode({ id: '1', title: 'Test Node' })
+    renderWithTheme(
+      <NodeModalWrapper isOpen onClose={vi.fn()} origin={{ x: 100, y: 200 }}>
+        <div style={{ height: '2000px' }}>Huge Content</div>
+      </NodeModalWrapper>
+    )
 
-      return (
-        <div>
-          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
-            Open Modal
-          </button>
-          {isModalOpen && (
-            <div
-              data-testid="modal"
-              style={{
-                width: '810px',
-                maxHeight: '80vh',
-                overflowY: 'auto',
-              }}
-            >
-              <div style={{ height: '2000px' }}>Huge Content</div>
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    renderWithTheme(<TestComponent />)
-
-    const openBtn = screen.getByText('Open Modal')
-    fireEvent.click(openBtn)
-
-    const modal = screen.getByTestId('modal')
-    expect(modal).toHaveStyle({ overflowY: 'auto' })
-    expect(modal.scrollHeight).toBeGreaterThan(modal.clientHeight)
+    const modalContent = screen.getByTestId('modal-content')
+    expect(modalContent).toHaveStyle({ overflowY: 'auto' })
   })
 })

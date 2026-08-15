@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { userEvent, within, waitFor, expect } from '@storybook/test'
+import { userEvent, within, waitFor, expect } from 'storybook/test'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import { NodeModalWrapper } from './NodeModalWrapper'
 import { NodeModalBarSlot } from './NodeModalBarSlot'
@@ -40,7 +40,11 @@ function TestModal() {
         >
           Open Modal
         </button>
-        <NodeModalWrapper>
+        <NodeModalWrapper
+          isOpen={Boolean(isModalOpen)}
+          onClose={closeModal}
+          origin={isModalOpen ? { x: isModalOpen.originX, y: isModalOpen.originY } : undefined}
+        >
           {isModalOpen && (
             <div style={{ padding: '24px' }}>
               <h2 id={`modal-title-${isModalOpen.nodeId}`}>
@@ -212,7 +216,11 @@ function TestModalWithBar() {
         >
           Open Modal with Bar
         </button>
-        <NodeModalWrapper>
+        <NodeModalWrapper
+          isOpen={Boolean(isModalOpen)}
+          onClose={closeModal}
+          origin={isModalOpen ? { x: isModalOpen.originX, y: isModalOpen.originY } : undefined}
+        >
           {isModalOpen && (
             <div>
               <NodeModalBarSlot
@@ -375,7 +383,11 @@ function TestModalWithHalo() {
         >
           Open Modal with Halo
         </button>
-        <NodeModalWrapper>
+        <NodeModalWrapper
+          isOpen={Boolean(isModalOpen)}
+          onClose={closeModal}
+          origin={isModalOpen ? { x: isModalOpen.originX, y: isModalOpen.originY } : undefined}
+        >
           {isModalOpen && (
             <NodeModalHalo state={isRunning ? 'running' : 'idle'} isLive={isRunning}>
               <div style={{ padding: '24px' }}>
