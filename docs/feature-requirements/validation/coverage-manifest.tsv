@@ -9,26 +9,26 @@ APP-07	01	slice01 -- APP-07 fresh session	pass
 APPC-01	01	slice01 -- APPC-01 rail scrolls	pass
 APPC-02	01	slice01 -- APPC-02 empty rail	pass
 APPC-03	01	slice01 -- APPC-03 load failure	pass
-VOX-01	02	-	todo
-VOX-04	02	-	todo
-VOX-05	02	-	todo
-VOX-06	02	-	todo
-VOX-07	02	-	todo
-VOX-08	02	-	todo
-VOX-09	02	-	todo
-VOX-10	02	-	todo
-VOX-11	02	-	todo
-VOX-12	02	-	todo
-VOX-13	02	-	todo
-VOX-14	02	-	todo
-VOX-15	02	-	todo
-VOX-16	02	-	todo
-VOX-17	02	-	todo
-VOXC-01	02	-	todo
-VOXC-02	02	-	todo
-VOXC-03	02	-	todo
-VOXC-04	02	-	todo
-VOXC-05	02	-	todo
+VOX-01	02	slice02 -- VOX-01	pass
+VOX-04	02	slice02 -- VOX-04	pass
+VOX-05	02	slice02 -- VOX-05	pass
+VOX-06	02	slice02 -- VOX-06	pass
+VOX-07	02	slice02 -- VOX-07	pass
+VOX-08	02	slice02 -- VOX-08	pass
+VOX-09	02	slice02 -- VOX-09	pass
+VOX-10	02	slice02 -- VOX-10	pass
+VOX-11	02	slice02 -- VOX-11	pass
+VOX-12	02	slice02 -- VOX-12	pass
+VOX-13	02	slice02 -- VOX-13	pass
+VOX-14	02	slice02 -- VOX-14	pass
+VOX-15	02	slice02 -- VOX-15	pass
+VOX-16	02	slice02 -- VOX-16	pass
+VOX-17	02	slice02 -- VOX-17	pass
+VOXC-01	02	slice02 -- VOXC-01	pass
+VOXC-02	02	slice02 -- VOXC-02	pass
+VOXC-03	02	slice02 -- VOXC-03	pass
+VOXC-04	02	slice02 -- VOXC-04	pass
+VOXC-05	02	slice02 -- VOXC-05	pass
 VOX-02	03	slice03 -- VOX-02 recording color shift	pass
 VOX-03	03	slice03 -- VOX-03 volume breathing	pass
 EXP-02	03	slice03 -- EXP-02 ball becomes halo	pass

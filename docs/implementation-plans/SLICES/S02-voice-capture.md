@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/02-voice-capture.md` (cases: VOX-01,04..17, VOXC-01..05)
 > Validation spec: `docs/feature-requirements/validation/slice-02.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-15). Commits 51bc79d (VoiceNode + useVoiceInput + FakeSttEngine v2 scheduled-emissions + 20-case feature), 1f4879d (17 validation stories + hook gaps: send/cursor-insert/pin/debounced-writer/key handling; stories split across 6 files under 200 LOC cap). Gate: scoped voice-capture 35/35; full suite 362 pass / 5 fail = exact baseline; tsc 0; SB build 0; 20/20 slice02 stories live w/ correct naming. Two delegate deaths (prompt-length + 30m stall) recovered by orchestrator.
 > Depends on: E1-stt-engine, E4-react-flow-upgrade
 
 ## 1. Objective
