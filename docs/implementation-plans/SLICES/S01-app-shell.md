@@ -58,6 +58,11 @@ Ask user (2-3 questions max, `question` tool):
    - B) Show error immediately with retry button (manual control)
    - C) Auto-retry 3x with backoff, then error
 
+**Answers (2026-08-15, user):**
+1. Rail overflow = **A) vertical scroll**.
+2. Title persistence = **C) both** — folder slug + human-readable title in `.whitt/config.yml`.
+3. Load failure = **A) auto-retry once, then show error**.
+
 Record answers in this file, then never re-ask.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)

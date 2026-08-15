@@ -55,6 +55,11 @@ Ask user (2-3 multiple-choice questions max, `question` tool):
    - A) Node center (symmetric growth)
    - B) Bubble position top-left (reads as "grows down-right")
 
+**Answers (2026-08-15, user, verbatim + interpretation):**
+1. Modal max-size = *"90 characters max width in px fixed. that way when you zoom out on a graph on multiple expanded nodes"* → **fixed px width cap sized for ~90 chars content line (≈ 810px at 9px/char; pick exact px from typography scale)** — purpose: multiple expanded nodes stay legible when zoomed out. Height: clamp to viewport.
+2. ESC precedence = *"if tooltip is open and not on hover only display, and the details menu is expanded then it will collapse the outer most focus first so in this case the tooltip then the details panel of the node. if the tooltip is only displaying on hover and the expanded node is showing then it collapses the node."* → **innermost-focus-first**: pinned tooltip → details panel → node. Hover-only tooltip ≠ focus → ESC collapses node directly.
+3. Morph anchor = *"both as different view modes"* → **anchor is a view-mode toggle** (center vs top-left), user-selectable; default center.
+
 Record answers in this file, then never re-ask.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)

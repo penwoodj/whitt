@@ -40,7 +40,12 @@ Implements single-sourced state→glow mapping (idle/recording/running/done) as 
 
 ## 4. Question-cycle gate (AGENTS.md §1 Stage 1 — MANDATORY before tests)
 
-Ask user (2-3 questions max, `question` tool): the following open decisions this slice still owns — pull from slice "Open questions" section + decision register in EXECUTION-PROTOCOL.md. Record answers in this file, then never re-ask.
+Ask user (2-3 questions max, `question` tool): the following open decisions this slice still owns — pull from slice "Open questions" section + decision register in EXECUTION-PROTOCOL.md. **Answers (2026-08-15, user):**
+1. Done-state decay = **B) 3s fade to idle**.
+2. Breathing amplitude k = **A) 0.08**.
+3. Noise gate = **A) 0.02**.
+
+Record answers in this file, then never re-ask.
 
 1. **Done-state glow decay duration** (slice spec asks for 2s fade to idle; confirm visually in Storybook):
    - A) 2s fade to idle (as proposed in slice spec)
