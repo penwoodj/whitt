@@ -23,7 +23,7 @@
 
 | ID | Summary | From |
 |---|---|---|
-| VOX-02 | Recording color shift | `../../brainstorm/requirements/02-voice-input-tooltip.md` |
+| VOX-02 | Recording color shift | `../../broader-vision/requirements/02-voice-input-tooltip.md` |
 | VOX-03 | Volume breathing (cadence + amplitude) | same |
 | EXP-02 | Ball → halo when expanded | `03-expanded-node-modal.md` |
 | EXP-04 | Bar of light, soft corners/edges | same |

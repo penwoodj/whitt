@@ -19,7 +19,7 @@ whitt/
 └── README.md
 ```
 
-Start reading: `docs/vision-graph-ui.md` → `docs/brainstorm/` → `docs/adr/README.md`.
+Start reading: `docs/vision-graph-ui.md` → `docs/broader-vision/` → `docs/adr/README.md`.
 
 ## ***Coming Soon***
 - Tauri Desktop App: Rust - React

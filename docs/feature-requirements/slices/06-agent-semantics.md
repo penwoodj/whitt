@@ -11,7 +11,7 @@
 4. **PR-06-4** Every FS mutation projects to a graph movement event, real time (AGT-04/06).
 5. **PR-06-5** User can intervene mid-execution (AGT-05) — supervision is a first-class act.
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/05-agent-context-semantics.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/05-agent-context-semantics.md`)
 
 | ID | Summary |
 |---|---|

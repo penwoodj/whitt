@@ -4,8 +4,8 @@
 > slices, adds positive requirements, expands coverage with convention-derived cases,
 > and attaches implementation references (open-source code to adapt) + validation specs.
 >
-> Sources: `../brainstorm/requirements/` (user dictation, authoritative),
-> `../brainstorm/user-flows.md`, web research (graph-tool UX conventions, glow/animation
+> Sources: `../broader-vision/requirements/` (user dictation, authoritative),
+> `../broader-vision/user-flows.md`, web research (graph-tool UX conventions, glow/animation
 > implementations, Storybook testing patterns).
 
 ## Constraint (user-stated)
@@ -40,7 +40,7 @@ richness lives in light-language, voice, and agent behavior.
 | `[C]` | Convention — standard behavior in established graph tools (React Flow, Cytoscape, G6, tldraw, d3) or UX-pattern research. Gap-fill; user-confirmable. |
 | `[I]` | Inferred — derived from user intent/vision docs. |
 
-Inherited cases keep their Why lines in `../brainstorm/requirements/` (linked, not
+Inherited cases keep their Why lines in `../broader-vision/requirements/` (linked, not
 copied — single source of truth, no duplication). New cases carry full GWT + Why here.
 
 ## Case ID Scheme

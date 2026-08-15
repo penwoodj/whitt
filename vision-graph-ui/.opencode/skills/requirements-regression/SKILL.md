@@ -11,7 +11,7 @@ description: >
 
 - Implementing stories/tests from `docs/feature-requirements/validation/`
 - Claiming any GWT case pass/ready (verification protocol)
-- Editing cases in `docs/brainstorm/requirements/` or `docs/feature-requirements/`
+- Editing cases in `docs/broader-vision/requirements/` or `docs/feature-requirements/`
 - Wiring CI gates for the suite
 
 ## The Chain (ADR-0016)
@@ -65,7 +65,7 @@ bash docs/feature-requirements/validation/check-coverage.sh
 
 When ANY GWT case changes in docs/:
 
-1. `git diff --name-only` on `docs/brainstorm/requirements/` +
+1. `git diff --name-only` on `docs/broader-vision/requirements/` +
    `docs/feature-requirements/slices/` — list touched case IDs (grep `^## <ID>`).
 2. For each touched ID: flip manifest row `pass → fail` (requirement moved under
    the test) + update validation spec row + story name if prose changed.
@@ -110,4 +110,4 @@ Before claiming a case `pass`:
 - ADR-0016: `../docs/adr/0016-storybook-validation-architecture.md`
 - Manifest: `docs/feature-requirements/validation/coverage-manifest.tsv`
 - Validation specs: `docs/feature-requirements/validation/slice-*.validation.md`
-- GWT suites: `docs/brainstorm/requirements/` (upstream), slices (expanded)
+- GWT suites: `docs/broader-vision/requirements/` (upstream), slices (expanded)

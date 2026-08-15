@@ -11,7 +11,7 @@
 4. **PR-02-4** Every spoken prompt is persisted (debounced, per-prompt file) even if never sent.
 5. **PR-02-5** Mic/STT failures degrade gracefully with visible state + recovery.
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/02-voice-input-tooltip.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/02-voice-input-tooltip.md`)
 
 | ID | Summary |
 |---|---|

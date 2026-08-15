@@ -5,7 +5,7 @@ Status: proposed
 
 ## Context
 
-85 brainstorm GWT cases live in `docs/brainstorm/requirements/` organized by UI surface
+85 brainstorm GWT cases live in `docs/broader-vision/requirements/` organized by UI surface
 (app shell, voice, modal, execution...). User asked for reorganization into **feature
 slices** — vertical, buildable/testable units — plus expansion with convention-derived
 behavior, code references, and validation specs.

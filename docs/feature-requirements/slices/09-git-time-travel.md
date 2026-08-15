@@ -9,7 +9,7 @@
 3. **PR-09-3** All state rewindable — git is the trust substrate (GIT-03).
 4. **PR-09-4** Sync is explicit, one click, from the canvas (GIT-04).
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/08-git-time-travel-sync.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/08-git-time-travel-sync.md`)
 
 | ID | Summary |
 |---|---|

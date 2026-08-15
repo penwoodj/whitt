@@ -9,7 +9,7 @@
 3. **PR-08-3** Pills address content precisely (line numbers) — shared user/agent vocabulary.
 4. **PR-08-4** Selections weight agent attention (PIL-05) — pills are instructions, not decor.
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/07-context-pills.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/07-context-pills.md`)
 
 | ID | Summary |
 |---|---|

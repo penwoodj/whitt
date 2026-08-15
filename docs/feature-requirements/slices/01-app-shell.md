@@ -11,7 +11,7 @@
 4. **PR-01-4** Switching projects restores the exact prior graph arrangement (spatial memory).
 5. **PR-01-5** Rail scales to many projects without breaking layout.
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/01-app-shell-projects.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/01-app-shell-projects.md`)
 
 | ID | Summary |
 |---|---|

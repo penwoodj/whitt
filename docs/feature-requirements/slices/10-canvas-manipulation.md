@@ -17,7 +17,7 @@
 5. **PR-10-5** Physics feel: packed, calm, reheat-on-drag, settle — bubble-chart-js
    semantics (research survey §1).
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/09-canvas-grouping-manipulation.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/09-canvas-grouping-manipulation.md`)
 
 | ID | Summary |
 |---|---|

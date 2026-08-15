@@ -12,7 +12,7 @@
 5. **PR-07-5** Selection surfaces (ctrl-multi-highlight, ctrl+F) are speakable — they
    feed context pills (slice 08).
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/06-file-visualization-editing.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/06-file-visualization-editing.md`)
 
 | ID | Summary |
 |---|---|

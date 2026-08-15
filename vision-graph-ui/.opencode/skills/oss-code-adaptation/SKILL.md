@@ -123,5 +123,5 @@ also acceptable — keep w/ its consumer.
 ## References
 
 - Slice 03 code-rip table: `docs/feature-requirements/slices/03-light-language.md`
-- Survey perf table: `docs/brainstorm/research-inspiration-survey.md`
+- Survey perf table: `docs/broader-vision/research-inspiration-survey.md`
 - choosealicense.com (license texts), upstream repos' LICENSE files

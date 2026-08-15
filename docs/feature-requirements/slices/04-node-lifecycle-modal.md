@@ -14,7 +14,7 @@
    at the same graph position.
 5. **PR-04-5** Modal is sized to content, capped to viewport, and never traps the rail.
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/03-expanded-node-modal.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/03-expanded-node-modal.md`)
 
 | ID | Summary |
 |---|---|

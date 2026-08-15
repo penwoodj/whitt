@@ -98,4 +98,4 @@ await git.commit(`whitt: ${meta.action} ${slug} [${meta.actor}]`)
 - ADR-0011: `../docs/adr/0011-graph-to-filesystem-mapping.md`
 - AGENTS.md §16 (mapping), §2 (logs — use shared logger, never console.log)
 - Slices 07/09: `docs/feature-requirements/slices/`
-- Brainstorm: `docs/brainstorm/requirements/08-git-time-travel-sync.md`
+- Brainstorm: `docs/broader-vision/requirements/08-git-time-travel-sync.md`

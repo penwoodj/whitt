@@ -13,7 +13,7 @@
 4. **PR-05-4** Panel reflects live execution, never stale (EXE-16).
 5. **PR-05-5** Created files surface immediately in the node's preview area (EXE-17).
 
-## Inherited Cases (full GWT + Why: `../../brainstorm/requirements/04-agentic-execution-area.md`)
+## Inherited Cases (full GWT + Why: `../../broader-vision/requirements/04-agentic-execution-area.md`)
 
 | ID | Summary |
 |---|---|

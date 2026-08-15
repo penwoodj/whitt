@@ -2,7 +2,7 @@
 
 > Vertical slice: pan/zoom/fit/minimap — pure convention-fill (user specified no cases
 > here; graph tools' standard expectations apply). Fish-eye dual-scale remains deferred
-> research (see `../../brainstorm/research-inspiration-survey.md` synthesis).
+> research (see `../../broader-vision/research-inspiration-survey.md` synthesis).
 
 ## Positive Requirements
 

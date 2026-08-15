@@ -103,7 +103,7 @@ The graph UI is **not a replacement** for MVP-A. It is the **destination** that 
 
 - This vision statement: `docs/vision-graph-ui.md` (was `vision-graph-ui/README.md`).
 - Brainstorm docs (user vision, research survey, GWT requirements, user flows):
-  `docs/brainstorm/`.
+  `docs/broader-vision/`.
 - ADRs: `docs/adr/`.
 - *(planned)* `principles.md` — non-negotiable design principles derived from ADR-0004 + this vision. **Status: not started.**
 - *(planned)* `mvp-slice.md` — what subset of the graph UI is buildable on top of MVP-A contracts. **Status: not started.**
