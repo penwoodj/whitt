@@ -25,16 +25,39 @@ export const createEngine = (): SttEngine => {
   const capabilities = detectCapabilities()
 
   const start = async (): Promise<void> => {
-    state = 'listening'
-    logger.debug('SttEngine started', capabilities)
+    try {
+      state = 'listening'
+      logger.debug('SttEngine started', capabilities)
 
-    eventCallback?.({ type: 'progress', stage: 'loading', progress: 0 })
-    await new Promise(resolve => setTimeout(resolve, 100))
-    eventCallback?.({ type: 'progress', stage: 'decoding', progress: 0.5 })
-    await new Promise(resolve => setTimeout(resolve, 100))
-    eventCallback?.({ type: 'progress', stage: 'transcribing', progress: 1 })
+      if (!capabilities.secureContext) {
+        throw new Error('Insecure context: requires HTTPS or localhost')
+      }
 
-    state = 'idle'
+      eventCallback?.({ type: 'progress', stage: 'loading', progress: 0 })
+
+      if (capabilities.mic) {
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true })
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Microphone access denied'
+          throw new Error(`Permission denied: ${errorMsg}`)
+        }
+      } else {
+        throw new Error('No microphone detected')
+      }
+
+      eventCallback?.({ type: 'progress', stage: 'decoding', progress: 0.5 })
+      await new Promise(resolve => setTimeout(resolve, 100))
+      eventCallback?.({ type: 'progress', stage: 'transcribing', progress: 1 })
+
+      state = 'idle'
+    } catch (error) {
+      state = 'error'
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+      eventCallback?.({ type: 'error', error: errorMsg })
+      logger.error('SttEngine failed', errorMsg)
+      throw error
+    }
   }
 
   const stop = async (): Promise<void> => {
