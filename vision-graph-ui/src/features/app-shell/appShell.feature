@@ -38,3 +38,21 @@ Feature: App shell layout
     When usr pans canvas hard right
     Then rail still at left edge
     And rail unaffected by canvas pan/zoom
+
+  Scenario: APP-03 project letter bubbles
+    Given AppShell w/ seeded projects A, B, C
+    When component renders
+    Then shows one letter bubble per project
+    And letters match project titles
+
+  Scenario: APP-04 new project blank
+    Given AppShell w/ new project button
+    When usr clicks new bubble
+    Then title empty
+    And no letter glyph shown
+
+  Scenario: APPC-02 empty rail
+    Given AppShell w/ zero projects
+    When component renders
+    Then only new-project bubble visible
+    And no list chrome shown

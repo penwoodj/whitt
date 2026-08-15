@@ -78,4 +78,55 @@ describe('ProjectPicker', () => {
     fireEvent.click(newBtn)
     expect(onNew).toHaveBeenCalled()
   })
+
+  it('APP-03 project letter bubbles', () => {
+    const projects = [
+      { id: '1', label: 'Alpha', iconLetter: 'A', lastOpened: new Date() },
+      { id: '2', label: 'Beta', iconLetter: 'B', lastOpened: new Date() },
+      { id: '3', label: 'Gamma', iconLetter: 'G', lastOpened: new Date() },
+    ]
+    const props: ProjectPickerProps = {
+      projects,
+      activeProjectId: '1',
+      onSelect: vi.fn(),
+      onNew: vi.fn(),
+    }
+
+    renderWithTheme(<ProjectPicker {...props} />)
+
+    expect(screen.getByText('A')).toBeInTheDocument()
+    expect(screen.getByText('B')).toBeInTheDocument()
+    expect(screen.getByText('G')).toBeInTheDocument()
+  })
+
+  it('APP-04 new project blank', () => {
+    const onNew = vi.fn()
+    const props: ProjectPickerProps = {
+      projects: [{ id: '1', label: 'Existing', iconLetter: 'E', lastOpened: new Date() }],
+      activeProjectId: '',
+      onSelect: vi.fn(),
+      onNew,
+    }
+
+    renderWithTheme(<ProjectPicker {...props} />)
+
+    const newBtn = screen.getByRole('button', { name: /new project/i })
+    expect(newBtn).toBeInTheDocument()
+    fireEvent.click(newBtn)
+    expect(onNew).toHaveBeenCalled()
+  })
+
+  it('APPC-02 empty rail', () => {
+    const props: ProjectPickerProps = {
+      projects: [],
+      activeProjectId: '',
+      onSelect: vi.fn(),
+      onNew: vi.fn(),
+    }
+
+    renderWithTheme(<ProjectPicker {...props} />)
+
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument()
+  })
 })

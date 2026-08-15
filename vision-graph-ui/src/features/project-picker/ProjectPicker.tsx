@@ -16,11 +16,15 @@ const Sidebar = styled.div`
   border-right: 1px solid ${({ theme }) => theme.colors.border};
 `
 
-const ProjectList = styled.div`
+const ProjectList = styled.div<{ $isEmpty: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.sm};
   flex: 1;
+  width: 100%;
+  align-items: center;
+  
+  ${({ $isEmpty }) => $isEmpty && 'display: none;'}
 `
 
 const NewBtnContainer = styled.div`
@@ -29,6 +33,7 @@ const NewBtnContainer = styled.div`
 
 export default function ProjectPicker({ projects, activeProjectId, onSelect, onNew }: ProjectPickerProps) {
   const pickerLog = useProjectPickerLogging()
+  const isEmpty = projects.length === 0
 
   const handleSelect = (id: string) => {
     onSelect(id)
@@ -42,7 +47,7 @@ export default function ProjectPicker({ projects, activeProjectId, onSelect, onN
 
   return (
     <Sidebar>
-      <ProjectList>
+      <ProjectList $isEmpty={isEmpty} role="list">
         {projects.map((project) => (
           <ProjectIcon
             key={project.id}

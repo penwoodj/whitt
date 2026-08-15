@@ -30,3 +30,37 @@ export const Empty: Story = {
     onNew: () => {},
   },
 }
+
+export const APP03ProjectLetterBubbles: Story = {
+  name: 'slice01 -- APP-03 project letter bubbles',
+  args: {
+    projects: [
+      { id: '1', label: 'Alpha', iconLetter: 'A', lastOpened: new Date() },
+      { id: '2', label: 'Beta', iconLetter: 'B', lastOpened: new Date() },
+      { id: '3', label: 'Gamma', iconLetter: 'G', lastOpened: new Date() },
+    ],
+    activeProjectId: '1',
+    onSelect: () => {},
+    onNew: () => {},
+  },
+}
+
+export const APP04NewProjectBlank: Story = {
+  name: 'slice01 -- APP-04 new project blank',
+  args: {
+    projects: [{ id: '1', label: 'Existing', iconLetter: 'E', lastOpened: new Date() }],
+    activeProjectId: '',
+    onSelect: () => {},
+    onNew: () => {},
+  },
+}
+
+export const APPC02EmptyRail: Story = {
+  name: 'slice01 -- APPC-02 empty rail',
+  args: {
+    projects: [],
+    activeProjectId: '',
+    onSelect: () => {},
+    onNew: () => {},
+  },
+}

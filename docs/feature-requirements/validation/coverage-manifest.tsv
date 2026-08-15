@@ -1,13 +1,13 @@
 caseID	slice	story	status
 APP-01	01	slice01 -- APP-01 opens new project	pass
 APP-02	01	slice01 -- APP-02 rail fixed	pass
-APP-03	01	-	todo
-APP-04	01	-	todo
+APP-03	01	slice01 -- APP-03 project letter bubbles	pass
+APP-04	01	slice01 -- APP-04 new project blank	pass
 APP-05	01	-	todo
 APP-06	01	-	todo
 APP-07	01	-	todo
 APPC-01	01	-	todo
-APPC-02	01	-	todo
+APPC-02	01	slice01 -- APPC-02 empty rail	pass
 APPC-03	01	-	todo
 VOX-01	02	-	todo
 VOX-04	02	-	todo
