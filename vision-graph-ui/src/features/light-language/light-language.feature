@@ -81,3 +81,28 @@ Feature: Light language glow state mapping
     Then same halo component both cases (testid shared)
     And halo inherits entity state glow
     And halo breathes ONLY if entity live
+
+  Scenario: EXE-11 edges breathe executing
+    Given edge in running state
+    Then edge has animationName set
+    When edge becomes idle
+    Then edge animationName is none
+
+  Scenario: EXE-12 border animation eventual
+    Given component executing
+    Then border-beam class present
+
+  Scenario: EXE-14 morph loader
+    Given loader icon renders
+    Then icon cycles every ~1.2s
+    And only transform/opacity animate (no layout props)
+
+  Scenario: LGT-04 morph cadence
+    Given loader executing 4s
+    Then icon step ~1.2s
+    And only transform/opacity animate
+
+  Scenario: LGT-07 reduced motion
+    Given prefers-reduced-motion enabled
+    Then NO animationName on breathing elements
+    And state badge text present

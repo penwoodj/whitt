@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/03-light-language.md` (cases: VOX-02/03, EXP-02/04/08, EXE-11/12/14, GRP-08, LGT-01..08)
 > Validation spec: `docs/feature-requirements/validation/slice-03.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-15). Commits 55c6a5d..77f5ffd (tasks 3.1-3.7 + 3.8 stories + naming fix). Gate: full suite 347 pass / 5 fail = exact baseline; tsc 0; SB build 0; light-language scoped 21/21. LGT-06 glow perf budget DEFERRED per ADR-0015 (tier-1 sprite work). 16 stories renamed to `slice03 -- <CaseID> <name>` convention (agent drift caught + fixed). Manifest: 16 S03 cases pass, LGT-06 deferred (agent row-deletion damage repaired from 53da13c base).
 > Depends on: ENABLERS/E1-stt-engine.md (audio feed for breathing)
 
 ## 1. Objective

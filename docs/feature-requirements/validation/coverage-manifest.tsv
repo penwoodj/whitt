@@ -31,8 +31,20 @@ VOXC-04	02	-	todo
 VOXC-05	02	-	todo
 VOX-02	03	slice03 -- VOX-02 recording color shift	pass
 VOX-03	03	slice03 -- VOX-03 volume breathing	pass
+EXP-02	03	slice03 -- EXP-02 ball becomes halo	pass
 EXP-04	03	slice03 -- EXP-04 bar of light	pass
 EXP-08	03	slice03 -- EXP-08 bar breathes tooltip-closed	pass
+EXE-11	03	slice03 -- EXE-11 edges breathe executing	pass
+EXE-12	03	slice03 -- EXE-12 border animation eventual	pass
+EXE-14	03	slice03 -- EXE-14 morph loader	pass
+GRP-08	10	slice03 -- GRP-08 grouping halo	pass
+LGT-01	03	slice03 -- LGT-01 token table states	pass
+LGT-02	03	slice03 -- LGT-02 amplitude curve	pass
+LGT-03	03	slice03 -- LGT-03 silence stillness	pass
+LGT-04	03	slice03 -- LGT-04 morph cadence	pass
+LGT-05	03	slice03 -- LGT-05 halo geometry	pass
+LGT-06	03	-	deferred
+LGT-07	03	slice03 -- LGT-07 reduced motion	pass
 LGT-08	03	slice03 -- LGT-08 bar rest state	pass
 EXP-01	04	-	todo
 EXP-03	04	-	todo
@@ -106,7 +118,7 @@ GRP-04	10	-	todo
 GRP-05	10	-	todo
 GRP-06	10	-	todo
 GRP-07	10	(covered-by GRPC-10)	todo-functional	todo
-GRP-08	10	-	todo
+GRP-08	10	slice03 -- GRP-08 grouping halo	pass
 GRP-09	10	-	todo
 GRP-10	10	-	todo
 GRP-11	10	(nested graph - future)	deferred	todo
