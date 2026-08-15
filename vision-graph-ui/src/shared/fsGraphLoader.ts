@@ -98,8 +98,14 @@ function buildGraphData(nodes: FsNode[]): GraphData {
   const edges: GraphData['edges'] = []
 
   nodes.forEach(node => {
+    const parentDir = node.path.split('/').slice(0, -1).join('/')
+
     node.children.forEach(childPath => {
-      const childNode = nodes.find(n => n.path === childPath)
+      const resolvedChildPath = childPath.startsWith('./')
+        ? childPath.slice(2)
+        : `${parentDir}/${childPath}`
+
+      const childNode = nodes.find(n => n.path === resolvedChildPath)
       if (childNode) {
         edges.push({
           source: node.id,
@@ -175,7 +181,7 @@ function calculateRadialLayout(nodes: FsNode[]): Map<string, { x: number; y: num
     const children = nodes.filter(n => n.parent === root.path)
     children.forEach((child, childIndex) => {
       const childAngle = (childIndex / children.length) * 2 * Math.PI
-      const childRadius = 250
+      const childRadius = 150
       positions.set(child.id, {
         x: positions.get(root.id)!.x + Math.cos(childAngle) * childRadius,
         y: positions.get(root.id)!.y + Math.sin(childAngle) * childRadius
@@ -184,7 +190,7 @@ function calculateRadialLayout(nodes: FsNode[]): Map<string, { x: number; y: num
       const grandchildren = nodes.filter(n => n.parent === child.path)
       grandchildren.forEach((grandchild, gcIndex) => {
         const gcAngle = (gcIndex / grandchildren.length) * 2 * Math.PI
-        const gcRadius = 200
+        const gcRadius = 100
         positions.set(grandchild.id, {
           x: positions.get(child.id)!.x + Math.cos(gcAngle) * gcRadius,
           y: positions.get(child.id)!.y + Math.sin(gcAngle) * gcRadius

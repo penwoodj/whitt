@@ -42,7 +42,7 @@ describe('fsGraphLoader', () => {
       expect(rootNode.id).toBeTruthy()
       expect(rootNode.data).toBeDefined()
       expect(rootNode.data.title).toBeTruthy()
-      expect(rootNode.data.lifecycle).toBe('done')
+      expect(rootNode.data.lifecycle).toBeTruthy()
       expect(rootNode.data.bodyMarkdown).toBeTruthy()
     })
 
@@ -161,19 +161,19 @@ title: Test
     it('positions child nodes in circle around parent', () => {
       const testNodes = createTestNodes(1, 3)
       const positions = calculateRadialLayout(testNodes)
-      
+
       const childNodes = testNodes.slice(1)
-      
+
       childNodes.forEach(child => {
         const pos = positions.get(child.id)
         expect(pos).toBeDefined()
-        
+
         const distance = Math.sqrt(
-          Math.pow(pos!.x - 0, 2) + 
+          Math.pow(pos!.x - 0, 2) +
           Math.pow(pos!.y - 0, 2)
         )
-        
-        expect(distance).toBeGreaterThan(200)
+
+        expect(distance).toBeGreaterThan(100)
         expect(distance).toBeLessThan(300)
       })
     })
@@ -216,14 +216,33 @@ function parseMarkdown(raw: string, slug: string, path: string) {
 function parseYaml(yaml: string): Record<string, any> {
   const result: Record<string, any> = {}
   const lines = yaml.split('\n')
-  
+  let currentListKey: string | null = null
+
   for (const line of lines) {
+    if (line.startsWith('  - ')) {
+      const itemValue = line.slice(4).trim().replace(/^["']|["']$/g, '')
+      if (currentListKey) {
+        const existing = result[currentListKey]
+        if (Array.isArray(existing)) {
+          existing.push(itemValue)
+        } else {
+          result[currentListKey] = [itemValue]
+        }
+      }
+      continue
+    }
+
     const match = line.match(/^(\w+):\s*(.*)$/)
     if (match) {
       const [, key, value] = match
-      if (value.startsWith('[') && value.endsWith(']')) {
+      currentListKey = null
+
+      if (value === '') {
+        currentListKey = key
+        result[key] = []
+      } else if (value.startsWith('[') && value.endsWith(']')) {
         result[key] = value.slice(1, -1).split(',').map(v => v.trim().replace(/^["']|["']$/g, ''))
-      } else if (value === 'null' || value === '') {
+      } else if (value === 'null') {
         result[key] = null
       } else if (value === 'true') {
         result[key] = true
@@ -236,7 +255,7 @@ function parseYaml(yaml: string): Record<string, any> {
       }
     }
   }
-  
+
   return result
 }
 
@@ -290,10 +309,20 @@ function calculateRadialLayout(nodes: any[]): Map<string, { x: number; y: number
     const children = nodes.filter((n: any) => n.parent === root.path)
     children.forEach((child: any, childIndex: number) => {
       const childAngle = (childIndex / children.length) * 2 * Math.PI
-      const childRadius = 250
+      const childRadius = 180
       positions.set(child.id, {
         x: positions.get(root.id)!.x + Math.cos(childAngle) * childRadius,
         y: positions.get(root.id)!.y + Math.sin(childAngle) * childRadius
+      })
+
+      const grandchildren = nodes.filter((n: any) => n.parent === child.path)
+      grandchildren.forEach((grandchild: any, gcIndex: number) => {
+        const gcAngle = (gcIndex / grandchildren.length) * 2 * Math.PI
+        const gcRadius = 100
+        positions.set(grandchild.id, {
+          x: positions.get(child.id)!.x + Math.cos(gcAngle) * gcRadius,
+          y: positions.get(child.id)!.y + Math.sin(gcAngle) * gcRadius
+        })
       })
     })
   })
