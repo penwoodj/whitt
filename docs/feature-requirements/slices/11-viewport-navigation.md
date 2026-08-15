@@ -110,6 +110,128 @@ notify via glow on minimap instead of yanking camera
 **Why** `[I]`: AGTC-02 made visible — camera yanking on every background mutation
 would be seasickness; user-caused spawns deserve reveal.
 
+### NAVX-01 Ctrl-accelerated pan
+
+```gherkin
+Given canvas with nodes
+When user left-clicks and drags on empty canvas while holding Ctrl
+Then pan speed is accelerated compared to normal pan
+And pan direction follows mouse movement
+```
+
+**Why** `[S]`: "when control is used The pan is sped up"
+
+### NAVX-02 Arrow keys pan
+
+```gherkin
+Given canvas with nodes
+When user presses arrow keys (Up, Down, Left, Right)
+And user is not focused in speech-to-text input
+Then canvas pans in arrow key direction
+And pan speed is consistent
+```
+
+**Why** `[S]`: "I want the same behavior with arrow keys... When not and not selected into a speech-to-text to text input"
+
+### NAVX-03 WASD pan
+
+```gherkin
+Given canvas with nodes
+When user presses W, A, S, or D keys
+And user is not focused in speech-to-text input
+Then canvas pans in corresponding direction (W=up, A=left, S=down, D=right)
+And pan speed is consistent with arrow keys
+```
+
+**Why** `[S]`: "I want the same behavior with arrow keys and W A S D When not and not selected into a speech-to-text to text input"
+
+### NAVX-04 Expanded node drag via padding
+
+```gherkin
+Given expanded node with padding area around content
+When user left-clicks and drags in padding area (not on defined content areas)
+Then node moves with drag
+And all connections move with node
+And drag works same as non-expanded node drag
+```
+
+**Why** `[S]`: "If the node is expanding expanded and you are not clicking into a defined area and you're clicking into the padding in between or around the neck around the node then you can drag the node as well that way when it is expanded"
+
+### NAVX-05 Corner resize handles for expanded node
+
+```gherkin
+Given expanded node with rounded border
+When user hovers over corners of rounded border
+Then resize handles appear at corners
+When user drags corner resize handle
+Then expanded node size changes (expand or contract)
+And new size persists across loading sessions
+```
+
+**Why** `[S]`: "I also want to be able two from the corners on the rounded border be able to Expand and contract the expanded state of the node and have that stored and stay between loading sessions"
+
+### NAVX-06 Node location and grouping persistence
+
+```gherkin
+Given node with position and group membership
+When user changes node location or grouping
+Then node location stored to file system
+And node grouping stored to file system
+And both location and grouping persist across loading sessions
+```
+
+**Why** `[S]`: "So the node's location is stored and its grouping is stored in the file system"
+
+### NAVX-07 Node modal fit content default
+
+```gherkin
+Given node modal opened for first time or with default sizing
+Then modal size fits content
+And modal displays all content without scrolling (when content fits viewport)
+And modal height adapts to content length
+```
+
+**Why** `[S]`: "Have it in a default size that fits the content to content"
+
+### NAVX-08 Node modal expandable with min height
+
+```gherkin
+Given node modal with content
+When user expands or contracts modal size
+Then modal has minimum height constraint
+And minimum height includes content display plus minimum display area
+And faded shadow appears over text when content exceeds modal height
+And soft-edge scrollbar appears when content overflows
+And all edges are soft (not sharp)
+```
+
+**Why** `[S]`: "once there is details or information in the document that is not metadata Then I want to be able to expand and contract with a min height and a faded shadow of shadow over the text and a scroll bar but all with soft edges And that is the minimum height of the node is the content plus that minimum height display for the document content"
+
+### NAVX-09 Plain markdown body + metadata separation
+
+```gherkin
+Given node document with content and metadata
+When node renders
+Then document body always displays as plain markdown
+And metadata always stored in appropriate .whitt folder
+And metadata not mixed with markdown content
+```
+
+**Why** `[S]`: "I would also like this to be always plain markdown and always put metadata in the appropriate .whitt folder"
+
+### NAVX-10 ESC zoom out one level historical
+
+```gherkin
+Given user zoomed into nested graph or group view
+When user presses ESC
+Then canvas zooms out one level
+And view shows historical parent level of graph
+And current grouping (soft or hard) contracts to smaller view
+And zoom level matches previous zoom state before entering group
+```
+
+**Why** `[S]`: "esc zooms you out a level which does a historical view for the previous level up of the graph with the current grouping soft or hard being contracted to its smaller view"
+
 ## Implementation References
 
 | Source | What to adapt |

@@ -144,3 +144,26 @@ NAV-06	11	-	todo
 NAV-07	11	-	todo
 NAV-08	11	-	todo
 FIL-03	07	(non-markdown types - future)	deferred
+GRPX-01	10	slice10 -- GRPX-01 soft group dual persistence	todo
+GRPX-02	10	slice10 -- GRPX-02 left-click pan vs right-click lasso	todo
+GRPX-03	10	slice10 -- GRPX-03 selection halo + icon outside border	todo
+GRPX-04	10	slice10 -- GRPX-04 + icon tooltip menu actions	todo
+GRPX-05	10	slice10 -- GRPX-05 Make Folder visual transformation	todo
+GRPX-06	10	slice10 -- GRPX-06 Make Folder file system action	todo
+GRPX-07	10	slice10 -- GRPX-07 group detail panel with full graph view	todo
+GRPX-08	10	slice10 -- GRPX-08 unfocused group bubble + halo + mini-window	todo
+GRPX-09	10	slice10 -- GRPX-09 editable deterministic group titles	todo
+GRPX-10	10	slice10 -- GRPX-10 debounced file system reflection	todo
+GRPX-11	10	slice10 -- GRPX-11 double-right-click expand group	todo
+GRPX-12	10	slice10 -- GRPX-12 double-left-click expand + record	todo
+GRPX-13	10	slice10 -- GRPX-13 Flatten Folder action	todo
+NAVX-01	11	slice11 -- NAVX-01 ctrl-accelerated pan	todo
+NAVX-02	11	slice11 -- NAVX-02 arrow keys pan	todo
+NAVX-03	11	slice11 -- NAVX-03 WASD pan	todo
+NAVX-04	11	slice11 -- NAVX-04 expanded node drag via padding	todo
+NAVX-05	11	slice11 -- NAVX-05 corner resize handles for expanded node	todo
+NAVX-06	11	slice11 -- NAVX-06 node location and grouping persistence	todo
+NAVX-07	11	slice11 -- NAVX-07 node modal fit content default	todo
+NAVX-08	11	slice11 -- NAVX-08 node modal expandable with min height	todo
+NAVX-09	11	slice11 -- NAVX-09 plain markdown body + metadata separation	todo
+NAVX-10	11	slice11 -- NAVX-10 ESC zoom out one level historical	todo

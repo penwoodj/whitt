@@ -1,6 +1,6 @@
 # S10 — Canvas Manipulation Implementation Plan
 
-> Executes: `docs/feature-requirements/slices/10-canvas-manipulation.md` (cases: GRP-01..11, GRPC-01..10)
+> Executes: `docs/feature-requirements/slices/10-canvas-manipulation.md` (cases: GRP-01..11, GRPC-01..10, GRPX-01..13)
 > Validation spec: `docs/feature-requirements/validation/slice-10.validation.md`
 > Status: NOT-STARTED
 > Depends on: E4-react-flow-upgrade, E3-fs-graph-sync (Task 10.8 hard-group promotion calls FsPort.moveFiles)
@@ -40,12 +40,16 @@ Deliver canvas manipulation layer: multi-select, grouping (soft/hard), link draw
 
 ## 4. Question-cycle gate (AGENTS.md §1 Stage 1 — MANDATORY before tests)
 
-Ask user (2-3 questions max, `question` tool):
-1. **Soft group persistence**: Should soft groups persist per-session only (disappear on reload) or persist to localStorage? (Options: session-only, localStorage)
-2. **Default selection mode**: Should canvas start in lasso mode (drag-empty = select) or click-mode (drag-empty = pan, need lasso tool for select)? (Options: lasso-default, click-default)
-3. **Hard-group gesture**: Should soft→hard promotion be (a) right-click menu "Make Permanent" or (b) double-click group? (Options: right-click-menu, double-click, both)
+**User answers (verbatim from dictation):**
 
-Record answers in this file, then never re-ask.
+**Answer 1 (soft/hard group persistence):**
+"Local storage and persistent in the .whitt folder in the closest parent node folder. remember a node is a .md file (at least for now) and the hard grouping is a new folder and the soft grouping is stored in local storage and in the closest parent folder to all highlighted nodes .whitt folder"
+
+**Answer 2 (left-click pan, right-click lasso, + icon, Make Folder, group visualization, editable titles, debounced FS sync):**
+"left click is move canvas, and right click is lasso select, then on that select there is a + icon to the upper right hand corner outside of the selection halo border that if hovered over or clicked allows you to Make Folder, along with Speak to Selected, and others in a selection list in a tooltip then when selecting make folder it makes the halo border have a more pronounced harsher border with the halo staying about the same but the center of the border glow being more solid and less opac. when this is done the files and folders selected via their node representations are moved into a new folder and thus a new blank node .md doc at the top level also with a selection. when the soft group that is just in local storage and .whitt folder or folder is spoken to the group has a detail pannel similar to the node but adds the first thing in the soft corner box would be just the normal graph full size then when not focused the node becomes a bubble of light but with that soft or hard group halo border around it and the inner graph zoomed out so the node can be reasonably sized while still seeing a bigger than the agerage node little window into the collapsed node that contains a subgraph of information. I also want those to have editable titles that are determinstically stored with dash case all lower case either in the state strucutre in the correct .whitt folder, or as the folder name. I also want to make it so whatever the use does is reflected in the folder strucuture on a debounced basis with the live active memory of the graph for speed."
+
+**Answer 3 (Flatten Folder, double-click gestures):**
+"this was described in my previous answer but to reiterate We want a + Button in the upper right hand corner on hover and select of a grouping node that has a Make Folder and a Flatten Folder. If you double right click Then it expands the node And If you double-left click it expands the node and the note and starts recording with the speech to text speech-to-text tool tip in the upper right-hand corner around the new around the node expanded or not. those double right click or double left click are reserved for the recording gestures previously described in the requirements."
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
@@ -129,6 +133,96 @@ Record answers in this file, then never re-ask.
 - **Manifest**: flip GRP-07, GRPC-10 rows → `ready`→`pass` in coverage-manifest.tsv
 - **Commit**: `feat(canvas-manipulation): Hard group promotion (GRP-07, GRPC-10)`
 
+### Task 10.9 — Soft group dual persistence (cases: GRPX-01)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/soft-group-persistence.feature` (scenarios = GRPX-01)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements localStorage persistence for soft groups + .whitt folder persistence in closest parent node folder; `CanvasOps.tsx` loads soft groups from both sources on init
+- **Rip (if any)**: none
+- **Story**: `GRPX-01 soft group dual persistence` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-01 row → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Soft group dual persistence (GRPX-01)`
+
+### Task 10.10 — Pan/lasso gesture split (cases: GRPX-02)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/pan-lasso-gestures.feature` (scenarios = GRPX-02)
+- **Red**: `CanvasOps.test.tsx` fail
+- **Green**: `CanvasOps.tsx` configures ReactFlow with `panOnDrag={true}` for left-click, implements custom right-click lasso via `onMouseDown`/`onMouseMove`/`onMouseUp` handlers; overrides default GRPC-06 lasso behavior
+- **Rip (if any)**: none
+- **Story**: `GRPX-02 left-click pan vs right-click lasso` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-02 row → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Pan/lasso gesture split (GRPX-02)`
+
+### Task 10.11 — Selection halo + icon (cases: GRPX-03, GRPX-04)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/selection-halo-icon.feature` (scenarios = GRPX-03, GRPX-04)
+- **Red**: `CanvasOps.test.tsx` + `GroupBox.tsx` fail
+- **Green**: `GroupBox.tsx` renders selection halo border + + icon positioned OUTSIDE border (upper right corner); implements hover/click detection for tooltip menu with "Make Folder", "Speak to Selected", and other actions
+- **Rip (if any)**: none
+- **Story**: `GRPX-03 selection halo + icon outside border`, `GRPX-04 + icon tooltip menu actions` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-03, GRPX-04 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Selection halo + icon (GRPX-03, GRPX-04)`
+
+### Task 10.12 — Make Folder transformation + FS action (cases: GRPX-05, GRPX-06)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/make-folder.feature` (scenarios = GRPX-05, GRPX-06)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements "Make Folder" action: halo border becomes pronounced/harsher, center glow more solid/less opaque; calls FsPort.createFolder + FsPort.moveFiles (E3) to move selected files; creates new blank .md node at top level with selection active
+- **Rip (if any)**: none (uses fs-graph-sync from E3)
+- **Story**: `GRPX-05 Make Folder visual transformation`, `GRPX-06 Make Folder file system action` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-05, GRPX-06 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Make Folder transformation + FS action (GRPX-05, GRPX-06)`
+
+### Task 10.13 — Group detail panel + mini-window (cases: GRPX-07, GRPX-08)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/group-detail-panel.feature` (scenarios = GRPX-07, GRPX-08)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements group detail panel (node-like) with first section = full-size graph view of group contents; implements unfocused state: bubble of light + group halo + zoomed-out inner-graph mini-window (bigger than average node)
+- **Rip (if any)**: none
+- **Story**: `GRPX-07 group detail panel with full graph view`, `GRPX-08 unfocused group bubble + halo + mini-window` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-07, GRPX-08 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Group detail panel + mini-window (GRPX-07, GRPX-08)`
+
+### Task 10.14 — Editable group titles (cases: GRPX-09)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/group-titles.feature` (scenarios = GRPX-09)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements editable group titles with deterministic dash-case-lowercase storage; persists to state structure in correct .whitt folder (soft groups) or as folder name (hard groups); `GroupBox.tsx` adds inline edit affordance
+- **Rip (if any)**: none
+- **Story**: `GRPX-09 editable deterministic group titles` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-09 row → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Editable group titles (GRPX-09)`
+
+### Task 10.15 — Debounced FS reflection (cases: GRPX-10)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/debounced-fs-sync.feature` (scenarios = GRPX-10)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements debounced FS sync wrapper around FsPort operations; live active memory graph in localStorage provides speed; FS reflection occurs after debounce delay (propose 500ms)
+- **Rip (if any)**: none
+- **Story**: `GRPX-10 debounced file system reflection` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-10 row → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Debounced FS reflection (GRPX-10)`
+
+### Task 10.16 — Double-click group gestures (cases: GRPX-11, GRPX-12)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/group-dblclick-gestures.feature` (scenarios = GRPX-11, GRPX-12)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `CanvasOps.tsx` implements double-right-click on group = expand node only (no STT); implements double-left-click on group = expand node + start STT recording with tooltip in upper right-hand corner; both gestures work whether node expanded or not
+- **Rip (if any)**: none
+- **Story**: `GRPX-11 double-right-click expand group`, `GRPX-12 double-left-click expand + record` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-11, GRPX-12 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Double-click group gestures (GRPX-11, GRPX-12)`
+
+### Task 10.17 — Flatten Folder action (cases: GRPX-13)
+- **Gherkin first**: `vision-graph-ui/src/features/canvas-manipulation/flatten-folder.feature` (scenarios = GRPX-13)
+- **Red**: `CanvasOps.test.tsx` + `useGrouping.test.tsx` fail
+- **Green**: `useGrouping.ts` implements "Flatten Folder" action from + icon menu: removes folder structure, moves all member files to parent level, reverts group to soft group state or dissolves if no members remain
+- **Rip (if any)**: none (uses fs-graph-sync from E3)
+- **Story**: `GRPX-13 Flatten Folder action` in `CanvasOps.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run CanvasOps.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip GRPX-13 row → `ready`→`pass` in coverage-manifest.tsv
+- **Commit**: `feat(canvas-manipulation): Flatten Folder action (GRPX-13)`
+
 ## 6. Skill + agent routing (per task)
 
 | Task | Skills to load | Delegate to |
@@ -141,6 +235,15 @@ Record answers in this file, then never re-ask.
 | 10.6 | `react-flow`, `d3-graphics`, `modern-react`, `test-driven-development` | `category="deep"` |
 | 10.7 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
 | 10.8 | `react-flow`, `modern-react`, `test-driven-development`, `fs-graph-sync` | `category="deep"` |
+| 10.9 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.10 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.11 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.12 | `react-flow`, `modern-react`, `test-driven-development`, `fs-graph-sync` | `category="deep"` |
+| 10.13 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.14 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.15 | `react-flow`, `modern-react`, `test-driven-development`, `fs-graph-sync` | `category="deep"` |
+| 10.16 | `react-flow`, `modern-react`, `test-driven-development` | `category="deep"` |
+| 10.17 | `react-flow`, `modern-react`, `test-driven-development`, `fs-graph-sync` | `category="deep"` |
 
 ## 7. Live-system validation gate (slice DONE only when ALL pass)
 
