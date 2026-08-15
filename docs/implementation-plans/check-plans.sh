@@ -11,7 +11,7 @@ err() { echo "FAIL: $1"; FAIL=1; }
 ok() { echo "ok: $1"; }
 
 echo "== 1. Suite file inventory =="
-EXPECT="README.md EXECUTION-PROTOCOL.md"
+EXPECT="INDEX.md README.md EXECUTION-PROTOCOL.md"
 for f in $EXPECT; do [ -f "$f" ] && ok "$f" || err "missing $f"; done
 for d in CONTEXT ENABLERS SLICES; do [ -d "$d" ] && ok "$d/" || err "missing $d/"; done
 for f in CONTEXT/TEMPLATE.md CONTEXT/C0-reference-repos.md CONTEXT/C1-decision-register.md CONTEXT/C2-xyflow12-migration-facts.md; do

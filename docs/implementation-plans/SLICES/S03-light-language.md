@@ -73,7 +73,7 @@ Ask user (2-3 questions max, `question` tool): the following open decisions this
 - **Gherkin first**: `light-language.feature` (scenarios: LGT-02 amplitude curve, LGT-03 silence stillness)
 - **Red**: `light-language.test.tsx` — mock E1 analyser feed; assert level script 0/0.5/0.9 w/ smoothing; assert sub-gate level = still
 - **Green**: create `src/features/light-language/useVoiceLevel.ts` — consumes E1 analyser feed; returns smoothed level (0..1) with attack/release (60ms/200ms); noise gate (~0.02)
-- **Rip**: port from `.repos/unsloth/studio/frontend/src/features/chat/adapters/dictation-level.ts` (RAF tick loop: getByteFrequencyData → level) AND `.repos/autogpt/autogpt_platform/frontend/src/app/(no-navbar)/onboarding/steps/BrainDumpStep/components/useAudioBars.ts` (analyser fftSize 512, smoothing 0.45) via `oss-code-adaptation` skill; VERIFY license headers at rip time (unsloth=Apache-2.0, autogpt=MIT in platform folder)
+- **Rip**: READ-ONLY cadence params from `.repos/unsloth/studio/frontend/src/features/chat/adapters/dictation-level.ts` (RAF tick constants) + `.repos/autogpt/autogpt_platform/frontend/src/app/(no-navbar)/onboarding/steps/BrainDumpStep/components/useAudioBars.ts` (fftSize 512, smoothing 0.45) — breathing loop CONSUMES E1 `shared/audio/analyser.ts` level stream; do NOT re-port RAF loop (dedup: E1 owns it); VERIFY license headers at read time (unsloth=Apache-2.0, autogpt=MIT in platform folder)
 - **Story**: `LGT-02 amplitude curve` in `LightLanguage.stories.tsx` — level steps 0/0.5/0.9 w/ smoothing
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run light-language.test.tsx && npm run build-storybook` — all exit 0
 - **Manifest**: flip LGT-02, LGT-03 rows → `ready`→`pass` in coverage-manifest.tsv

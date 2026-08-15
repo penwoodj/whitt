@@ -3,7 +3,7 @@
 > Executes: `docs/feature-requirements/slices/10-canvas-manipulation.md` (cases: GRP-01..11, GRPC-01..10)
 > Validation spec: `docs/feature-requirements/validation/slice-10.validation.md`
 > Status: NOT-STARTED
-> Depends on: E4-react-flow-upgrade
+> Depends on: E4-react-flow-upgrade, E3-fs-graph-sync (Task 10.8 hard-group promotion calls FsPort.moveFiles)
 
 ## 1. Objective
 

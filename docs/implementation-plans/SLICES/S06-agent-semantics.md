@@ -41,7 +41,7 @@ Wires agent mutations → graph state via event bus + FS sync. Implements 7-op G
 | create | `vision-graph-ui/src/features/agent-semantics/useIntervention.test.ts` | Intervention queue + status interruption asserts |
 | create | `vision-graph-ui/src/features/agent-semantics/AgentSemantics.stories.tsx` | All validation stories per spec |
 | create | `vision-graph-ui/src/features/agent-semantics/fixtures/` | storybook-agentic-e2e JSONL fixtures for fake runtime |
-| rip→port | `vision-graph-ui/src/features/agent-bridge/derivedSets.ts` FROM `.repos/ragflow/web/src/pages/agent/hooks.tsx` | Event-derived busy-set, hasCycle validation |
+| rip→port | `vision-graph-ui/src/features/agent-bridge/derivedSets.ts` FROM `.repos/ragflow/web/src/pages/agent/hooks.tsx` | Event-derived busy-set ONLY (hasCycle validation owned by S10 `src/adapted/has-cycle-validator.ts` — import, do not re-port) |
 | modify | `vision-graph-ui/src/features/graph-sim/GraphSim.tsx` | Wire useAgentEvtStream, useGraphMutationHandler into graph state |
 | modify | `vision-graph-ui/src/shared/fsGraphLoader.ts` | Add E3 watcher→graph projection (AGT-06 FS truth) |
 
@@ -72,7 +72,7 @@ Record answers in this file, then never re-ask.
 - **Gherkin first**: `vision-graph-ui/src/features/agent-bridge/useAgentEvtStream.feature` (scenarios = event stream → busy-set)
 - **Red**: `useAgentEvtStream.test.ts` + scenarios fail (AgentEvt type not defined, derived sets not implemented)
 - **Green**: implement `useAgentEvtStream`, define `AgentEvt`/`GraphMutation` types, derive `busyNodeIds`, `stepTitleByNode`, `lastMutation` via lodash/fp flow
-- **Rip**: port `startButNotFinished` pattern from `.repos/ragflow/web/src/pages/agent/hooks.tsx` → `derivedSets.ts` via `oss-code-adaptation` skill (license: Apache-2.0, verified)
+- **Rip**: port `startButNotFinished` pattern from `.repos/ragflow/web/src/pages/agent/hooks.tsx` → `derivedSets.ts` via `oss-code-adaptation` skill (license: Apache-2.0, verified). hasCycle NOT ripped here — import `src/adapted/has-cycle-validator.ts` from S10 if needed for edge validation
 - **Story**: `AgentEvtStream basic` in `AgentSemantics.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run useAgentEvtStream.test.ts` — all exit 0
 - **Manifest**: flip AGTC-01 rows → `ready`→`pass` in coverage-manifest.tsv

@@ -18,7 +18,7 @@ Deliver mic → analyser → STT → tooltip → send → prompt file flow. Cons
 | Validation spec | `docs/feature-requirements/validation/slice-02.validation.md` |
 | User-flow narrative | `docs/broader-vision/user-flows.md` (Flow B, C) |
 | Skills to load | modern-react, storybook, local-stt, test-driven-development |
-| Code-rip sources | `.repos/omi/web/app/src/lib/audioCapture.ts`, `.repos/unsloth/studio/frontend/src/features/chat/adapters/dictation-level.ts` |
+| Code-rip sources | none — audio plumbing imported from E1 (`shared/audio/*`); no OSS rip in this slice |
 
 ## 3. File plan (REAL paths)
 
@@ -27,11 +27,10 @@ Deliver mic → analyser → STT → tooltip → send → prompt file flow. Cons
 | create | `vision-graph-ui/src/features/voice-capture/voiceCapture.feature` | Gherkin scenarios for VOX cases |
 | create | `vision-graph-ui/src/features/voice-capture/VoiceNode.stories.tsx` | Stories from validation spec (VoiceNode fixture) |
 | create | `vision-graph-ui/src/features/voice-capture/VoiceNode.test.tsx` | Tests map to .feature scenarios |
-| create | `vision-graph-ui/src/features/voice-capture/useVoiceInput.ts` | Hook wrapping E1 STT engine + AudioContext level feed |
+| create | `vision-graph-ui/src/features/voice-capture/useVoiceInput.ts` | Hook wrapping E1 STT engine + AudioContext level feed (imports `shared/audio/*` from E1 — NO re-port of analyser/RAF loop here) |
 | create | `vision-graph-ui/src/features/voice-capture/VoiceTooltip.tsx` | Pinnable tooltip (hover shows, click pins) |
 | create | `vision-graph-ui/src/features/voice-capture/VoicePromptInput.tsx` | Editable textarea (cursor-aware append) |
-| create | `vision-graph-ui/src/adapted/analyserLevelMeter.ts` | Rip from omi audioCapture.ts (analyser wiring) |
-| create | `vision-graph-ui/src/adapted/rafLevelLoop.ts` | Rip from unsloth dictation-level.ts (RAF tick loop) |
+| (none) | ~~analyser/RAF rips~~ REMOVED — dedup: E1 owns `shared/audio/analyser.ts` + `analyser-pattern.ts`; S02 consumes via imports |
 | modify | `vision-graph-ui/src/features/node/Node.tsx` | Wire mic btn click → useVoiceInput start/stop |
 | modify | `vision-graph-ui/src/features/node/NodeMicBtn.tsx` | Add recording state + dblClick handlers |
 | modify | `vision-graph-ui/src/features/node/NodePromptArea.tsx` | Render VoiceTooltip when recording active |
@@ -129,12 +128,12 @@ Record answers in this file, then never re-ask.
 - **Manifest**: flip VOX-11, VOX-12, VOX-13, VOX-17 rows → `ready`→`pass`
 - **Commit**: `feat(voice-capture): stop/resume recording (VOX-11, VOX-12, VOX-13, VOX-17)`
 
-### Task 5.7 — Analyser level feed (cases: none — infrastructure for slice 03)
+### Task 5.7 — Level feed integration (cases: none — infrastructure for slice 03)
 
 - **Gherkin first**: `voiceCapture.feature` (scenario: analyser level feeds bubble breathing)
-- **Red**: `VoiceNode.test.tsx` → mock AudioContext → analyser.getByteFrequencyData called, level emitted
-- **Green**: `useVoiceInput.ts` splits AudioContext source → AnalyserNode (fftSize 256) + STT worklet; `analyserLevelMeter.ts` (rip from omi) calculates RMS
-- **Rip (if any)**: `.repos/omi/web/app/src/lib/audioCapture.ts` → `src/adapted/analyserLevelMeter.ts` via `oss-code-adaptation` (MIT license)
+- **Red**: `VoiceNode.test.tsx` → mock `shared/audio/analyser` (E1) → level emitted to Node
+- **Green**: `useVoiceInput.ts` subscribes to E1's `shared/audio/analyser.ts` level stream (already built by E1 Task audio-feed — NO re-implementation; this task only wires the subscription into Node breathing state)
+- **Rip (if any)**: none (dedup: E1 owns analyser + RAF loop ports)
 - **Story**: `analyser level feed` in `VoiceNode.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run VoiceNode.test.tsx && npm run build-storybook`
 - **Manifest**: no coverage rows (infrastructure only)
