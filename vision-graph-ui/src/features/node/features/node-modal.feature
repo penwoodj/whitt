@@ -110,3 +110,13 @@ Feature: Node Modal Lifecycle
     When usr collapses modal
     Then node bubble shows running glow token
     And bubble uses theme.glow.stateGlow.running
+
+  Scenario: EXPC-03 ESC precedence
+    Given modal open for node
+    And tooltip pinned inside modal
+    When usr presses ESC
+    Then tooltip closes first
+    And modal persists
+    When usr presses ESC again
+    Then modal closes
+    And node bubble visible at same canvas position

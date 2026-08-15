@@ -129,11 +129,25 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
 
   const handleKeyDown = useCallback(
     (evt: React.KeyboardEvent) => {
-      if (evt.key === 'Escape' && focused) {
-        setCollapsed()
+      if (evt.key === 'Escape') {
+        // ESC precedence: tooltip → modal → node (innermost-focus-first)
+        const tooltipElement = document.querySelector('[data-testid*="tooltip"][data-focused="true"]')
+        if (tooltipElement && isModalOpen) {
+          evt.preventDefault()
+          return
+        }
+
+        if (isModalOpen) {
+          closeNodeModal()
+          return
+        }
+
+        if (focused) {
+          setCollapsed()
+        }
       }
     },
-    [focused, setCollapsed]
+    [focused, setCollapsed, isModalOpen, closeNodeModal]
   )
 
   const handleRightClick = useCallback(

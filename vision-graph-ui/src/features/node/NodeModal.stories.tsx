@@ -487,3 +487,29 @@ export const EXP10BallRunningState: Story = {
     })
   },
 }
+
+export const EXPC03EscPrecedence: Story = {
+  name: 'slice04 -- EXPC-03 esc precedence',
+  render: () => <TestModalWithBar />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal with Bar')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    // First ESC should close tooltip (if present) but keep modal
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => {
+      expect(canvas.getByTestId('bar-slot')).toBeInTheDocument()
+    })
+
+    // Second ESC should close modal
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => {
+      expect(canvas.queryByTestId('bar-slot')).not.toBeInTheDocument()
+    })
+  },
+}
