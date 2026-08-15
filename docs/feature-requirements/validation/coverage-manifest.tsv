@@ -4,8 +4,8 @@ APP-02	01	slice01 -- APP-02 rail fixed	pass
 APP-03	01	slice01 -- APP-03 project letter bubbles	pass
 APP-04	01	slice01 -- APP-04 new project blank	pass
 APP-05	01	slice01 -- APP-05 title inline edit	pass
-APP-06	01	-	todo
-APP-07	01	-	todo
+APP-06	01	slice01 -- APP-06 select loads graph	pass
+APP-07	01	slice01 -- APP-07 fresh session	pass
 APPC-01	01	-	todo
 APPC-02	01	slice01 -- APPC-02 empty rail	pass
 APPC-03	01	-	todo

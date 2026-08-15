@@ -63,3 +63,19 @@ export const APP02RailFixed: Story = {
     children: <div data-testid="canvas" style={{ transform: 'translateX(500px)' }}>Canvas panned right</div>,
   } as AppShellProps,
 }
+
+export const APP06SelectLoadsGraph: Story = {
+  name: 'slice01 -- APP-06 select loads graph',
+  args: {
+    sidebar: <div data-testid="project-rail" style={{ width: '60px', background: '#1f1f1f' }}>Project Rail</div>,
+    children: <div data-testid="canvas">Project B graph loaded</div>,
+  } as AppShellProps,
+}
+
+export const APP07FreshSession: Story = {
+  name: 'slice01 -- APP-07 fresh session',
+  args: {
+    sidebar: <div data-testid="project-rail" style={{ width: '60px', background: '#1f1f1f' }}>Project Rail</div>,
+    children: <div data-testid="canvas">Single bubble for new project</div>,
+  } as AppShellProps,
+}

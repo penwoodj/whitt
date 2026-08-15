@@ -64,3 +64,14 @@ Feature: App shell layout
     And usr blurs
     Then title text updated
     And rail letter now "D"
+
+  Scenario: APP-06 select loads graph
+    Given AppShell w/ project rail
+    When usr clicks project bubble B
+    Then mock loader called w/ B
+    And nodes of B rendered
+
+  Scenario: APP-07 fresh session
+    Given AppShell w/ project B loaded
+    When usr clicks new bubble
+    Then canvas reset to single bubble
