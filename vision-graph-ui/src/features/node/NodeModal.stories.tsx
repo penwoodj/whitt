@@ -100,3 +100,85 @@ export const EXPC04OriginTransition: Story = {
     )
   },
 }
+
+export const EXP11CloseTriPathESC: Story = {
+  name: 'slice04 -- EXP-11 close tri-path ESC',
+  render: () => <TestModal />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByText('Modal content for node 1')).toBeInTheDocument()
+    })
+
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => {
+      expect(canvas.queryByText('Modal content for node 1')).not.toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP11CloseTriPathClickOutside: Story = {
+  name: 'slice04 -- EXP-11 close tri-path click-outside',
+  render: () => <TestModal />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByText('Modal content for node 1')).toBeInTheDocument()
+    })
+
+    await userEvent.click(document.body)
+    await waitFor(() => {
+      expect(canvas.queryByText('Modal content for node 1')).not.toBeInTheDocument()
+    })
+  },
+}
+
+export const EXP11CloseTriPathXButton: Story = {
+  name: 'slice04 -- EXP-11 close tri-path X button',
+  render: () => <TestModal />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal')
+
+    await userEvent.click(openBtn)
+    await waitFor(() => {
+      expect(canvas.getByText('Modal content for node 1')).toBeInTheDocument()
+    })
+
+    const closeBtn = canvas.getByLabelText('Close modal')
+    await userEvent.click(closeBtn)
+    await waitFor(() => {
+      expect(canvas.queryByText('Modal content for node 1')).not.toBeInTheDocument()
+    })
+  },
+}
+
+export const EXPC02SizeCaps: Story = {
+  name: 'slice04 -- EXPC-02 size caps',
+  render: () => <TestModal />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const openBtn = canvas.getByText('Open Modal')
+
+    await userEvent.click(openBtn)
+
+    await waitFor(() => {
+      const modal = canvas.getByText('Modal content for node 1').closest(
+        'div[role="dialog"]'
+      )
+      expect(modal).toBeInTheDocument()
+      expect(modal).toHaveStyle({
+        width: '810px',
+        maxWidth: '90vw',
+        maxHeight: '80vh',
+        overflowY: 'auto',
+      })
+    })
+  },
+}

@@ -53,9 +53,9 @@ EXP-06	04	-	todo
 EXP-07	04	-	todo
 EXP-09	04	-	todo
 EXP-10	04	-	todo
-EXP-11	04	-	todo
+EXP-11	04	slice04 -- EXP-11 close tri-path ESC	pass
 EXPC-01	04	slice04 -- EXPC-01 single modal	pass
-EXPC-02	04	-	todo
+EXPC-02	04	slice04 -- EXPC-02 size caps	pass
 EXPC-03	04	-	todo
 EXPC-04	04	slice04 -- EXPC-04 origin transition	pass
 EXE-01	05	-	todo

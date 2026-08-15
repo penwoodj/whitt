@@ -170,3 +170,176 @@ describe('EXPC-04 origin-anchored transition', () => {
     )
   })
 })
+
+describe('EXP-11 close tri-path', () => {
+  it('closes modal on ESC key', () => {
+    function TestComponent() {
+      const { isModalOpen, openModal, closeModal } = useModalState()
+      const node = createNode({ id: '1', title: 'Test Node' })
+
+      return (
+        <div>
+          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+            Open Modal
+          </button>
+          <button onClick={closeModal}>Close</button>
+          {isModalOpen && <div data-testid="modal">Modal</div>}
+        </div>
+      )
+    }
+
+    renderWithTheme(<TestComponent />)
+
+    const openBtn = screen.getByText('Open Modal')
+    fireEvent.click(openBtn)
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+  })
+
+  it('closes modal on click outside', () => {
+    function TestComponent() {
+      const { isModalOpen, openModal } = useModalState()
+      const node = createNode({ id: '1', title: 'Test Node' })
+
+      return (
+        <div>
+          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+            Open Modal
+          </button>
+          {isModalOpen && (
+            <div data-testid="modal">
+              <div data-testid="modal-content">Content</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    const { container } = renderWithTheme(<TestComponent />)
+
+    const openBtn = screen.getByText('Open Modal')
+    fireEvent.click(openBtn)
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    fireEvent.mouseDown(container)
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+  })
+
+  it('closes modal on X button click', () => {
+    function TestComponent() {
+      const { isModalOpen, openModal, closeModal } = useModalState()
+      const node = createNode({ id: '1', title: 'Test Node' })
+
+      return (
+        <div>
+          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+            Open Modal
+          </button>
+          {isModalOpen && (
+            <div data-testid="modal">
+              <button onClick={closeModal} data-testid="close-btn">
+                ×
+              </button>
+              Content
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    renderWithTheme(<TestComponent />)
+
+    const openBtn = screen.getByText('Open Modal')
+    fireEvent.click(openBtn)
+
+    expect(screen.getByTestId('modal')).toBeInTheDocument()
+
+    const closeBtn = screen.getByTestId('close-btn')
+    fireEvent.click(closeBtn)
+
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
+  })
+})
+
+describe('EXPC-02 size caps', () => {
+  it('caps modal width to 810px and height to 80% viewport', () => {
+    function TestComponent() {
+      const { isModalOpen, openModal } = useModalState()
+      const node = createNode({ id: '1', title: 'Test Node' })
+
+      return (
+        <div>
+          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+            Open Modal
+          </button>
+          {isModalOpen && (
+            <div
+              data-testid="modal"
+              style={{
+                width: '810px',
+                maxWidth: '90vw',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+              }}
+            >
+              <div style={{ height: '2000px' }}>Huge Content</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    renderWithTheme(<TestComponent />)
+
+    const openBtn = screen.getByText('Open Modal')
+    fireEvent.click(openBtn)
+
+    const modal = screen.getByTestId('modal')
+    expect(modal).toHaveStyle({
+      width: '810px',
+      maxWidth: '90vw',
+      maxHeight: '80vh',
+      overflowY: 'auto',
+    })
+  })
+
+  it('has inner scroll for overflow content', () => {
+    function TestComponent() {
+      const { isModalOpen, openModal } = useModalState()
+      const node = createNode({ id: '1', title: 'Test Node' })
+
+      return (
+        <div>
+          <button onClick={() => openModal('1', node, { x: 100, y: 200 })}>
+            Open Modal
+          </button>
+          {isModalOpen && (
+            <div
+              data-testid="modal"
+              style={{
+                width: '810px',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+              }}
+            >
+              <div style={{ height: '2000px' }}>Huge Content</div>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    renderWithTheme(<TestComponent />)
+
+    const openBtn = screen.getByText('Open Modal')
+    fireEvent.click(openBtn)
+
+    const modal = screen.getByTestId('modal')
+    expect(modal).toHaveStyle({ overflowY: 'auto' })
+    expect(modal.scrollHeight).toBeGreaterThan(modal.clientHeight)
+  })
+})

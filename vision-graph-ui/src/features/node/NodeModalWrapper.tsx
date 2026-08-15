@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { useModalState } from './useModalState'
-import type { NodeData } from './nodeTypes'
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -58,6 +57,7 @@ const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: color 120ms ease, background-color 120ms ease;
+  z-index: 1;
 
   &:hover {
     color: ${({ theme }) => theme.colors.text};
@@ -115,7 +115,7 @@ export function NodeModalWrapper({ children }: NodeModalWrapperProps) {
         aria-modal="true"
         aria-labelledby={`modal-title-${isModalOpen.nodeId}`}
       >
-        <CloseButton onClick={closeModal} aria-label="Close modal">
+        <CloseButton onClick={closeModal} aria-label="Close modal" data-testid="close-btn">
           ×
         </CloseButton>
         {children}
