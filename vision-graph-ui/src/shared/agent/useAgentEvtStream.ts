@@ -4,7 +4,7 @@ import type { AgentEvt, GraphMutation } from './types'
 import { deriveBusyNodeIds } from './busySetReducer'
 import { isRunStart, isStepStart, isGraphMutation } from './types'
 
-interface AgentStreamState {
+export interface AgentStreamState {
   busyNodeIds: Set<string>
   stepTitleByNode: Map<string, string>
   lastMutation: GraphMutation | null
