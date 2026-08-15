@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/04-node-lifecycle-modal.md` (cases: EXP-01..11, EXPC-01..04)
 > Validation spec: `docs/feature-requirements/validation/slice-04.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-15). Commits b6442fd, 30a197b, 9ffebd2, 0f8425e, 3d78900, 83c55e0. Gate: scoped NodeModal 9/9 green; full suite 356 pass / 5 fail = exact baseline; tsc 0; SB build 0; 17 slice04 stories live. Fixes: wrapper rewritten controlled (isOpen/onClose/origin) after per-instance-state bug; stories migrated to storybook/test (SB10 path). Agent false-green + manifest premature-flip caught by orchestrator verify; semantics verified true post-fix.
 > Depends on: E4
 
 ## 1. Objective
