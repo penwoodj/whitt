@@ -15,6 +15,9 @@ import type { NodeData } from '../node/nodeTypes'
 import { buildSampleProjects } from '../project-picker/projectPickerData'
 import type { Project } from '../project-picker/projectPickerTypes'
 import { loadProjectGraph } from '../../shared/fsGraphLoader'
+import { FsGraphSync } from '../../shared/fs/FsGraphSync'
+import { FakeFsPort } from '../../shared/fs/FakeFsPort'
+import { simpleGit } from 'simple-git'
 
 const Placeholder = styled.div`
   display: flex;
@@ -87,6 +90,21 @@ export default function GraphSim() {
 
   const [selectedText, setSelectedText] = useState('')
   const [highlightPosition, setHighlightPosition] = useState<{ x: number; y: number } | null>(null)
+
+  const fsPort = useMemo(() => new FakeFsPort(), [])
+  const git = useMemo(() => simpleGit(), [])
+  const fsSync = useMemo(
+    () =>
+      new FsGraphSync(
+        fsPort,
+        git,
+        (event) => {
+          simLog.info('External FS change detected', { event })
+          simLog.debug('External change would trigger reload', { path: event.path })
+        }
+      ),
+    [fsPort, git, simLog]
+  )
 
   useEffect(() => {
     if (activeNodeId) {
@@ -196,6 +214,8 @@ export default function GraphSim() {
     setSyncStatus('syncing')
     simLog.info('Sync started')
 
+    fsSync.flush()
+
     setTimeout(() => {
       setSyncStatus('synced')
       setLastSyncLabel('Synced just now')
@@ -204,8 +224,8 @@ export default function GraphSim() {
       setTimeout(() => {
         setLastSyncLabel('Synced 1m ago')
       }, 60000)
-    }, 1500)
-  }, [simLog])
+    }, 500)
+  }, [fsSync, simLog])
 
   const handleTravelBack = useCallback(() => {
     if (currentSnapshotIndex > 0) {

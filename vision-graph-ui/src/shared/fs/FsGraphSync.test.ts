@@ -11,6 +11,12 @@ describe('FsGraphSync', () => {
   beforeEach(() => {
     fsPort = new FakeFsPort()
     git = simpleGit()
+
+    const mockAdd = vi.fn().mockResolvedValue(undefined)
+    const mockCommit = vi.fn().mockResolvedValue(undefined)
+    git.add = mockAdd
+    git.commit = mockCommit
+
     sync = new FsGraphSync(fsPort, git)
   })
 
@@ -37,9 +43,6 @@ describe('FsGraphSync', () => {
 
   describe('flush', () => {
     it('writes files via FsPort on flush', async () => {
-      const mockCommit = vi.fn().mockResolvedValue(undefined)
-      git.commit = mockCommit
-
       sync.write('test.md', 'content')
       sync.flush()
 
@@ -50,15 +53,12 @@ describe('FsGraphSync', () => {
     })
 
     it('creates git commit on flush', async () => {
-      const mockCommit = vi.fn().mockResolvedValue(undefined)
-      git.commit = mockCommit
-
       sync.write('test.md', 'content')
       sync.flush()
 
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      expect(mockCommit).toHaveBeenCalled()
+      expect(git.commit).toHaveBeenCalled()
     })
   })
 
