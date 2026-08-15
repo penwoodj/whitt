@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
@@ -388,9 +388,9 @@ export default function GraphSim() {
     return () => document.removeEventListener('mouseup', handleMouseUp)
   }, [])
 
-const nodeTypes = {
+const nodeTypes = useMemo(() => ({
   custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
-}
+}), [handleNodeSend])
 
   if (simState === 'picker') {
     return (
