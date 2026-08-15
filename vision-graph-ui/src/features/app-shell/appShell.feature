@@ -81,3 +81,9 @@ Feature: App shell layout
     When component renders
     Then rail scrollable
     And selected stays visible
+
+  Scenario: APPC-03 load failure
+    Given AppShell w/ project loading
+    When mock loader rejects
+    Then error region visible w/ cause
+    And retry clickable

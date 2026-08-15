@@ -8,7 +8,7 @@ APP-06	01	slice01 -- APP-06 select loads graph	pass
 APP-07	01	slice01 -- APP-07 fresh session	pass
 APPC-01	01	slice01 -- APPC-01 rail scrolls	pass
 APPC-02	01	slice01 -- APPC-02 empty rail	pass
-APPC-03	01	-	todo
+APPC-03	01	slice01 -- APPC-03 load failure	pass
 VOX-01	02	-	todo
 VOX-04	02	-	todo
 VOX-05	02	-	todo

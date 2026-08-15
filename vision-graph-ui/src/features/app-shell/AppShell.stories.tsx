@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import AppShell from './AppShell'
+import ErrorState from './ErrorState'
 import type { AppShellProps } from './appShellTypes'
 
 const meta: Meta<typeof AppShell> = {
@@ -77,5 +78,14 @@ export const APP07FreshSession: Story = {
   args: {
     sidebar: <div data-testid="project-rail" style={{ width: '60px', background: '#1f1f1f' }}>Project Rail</div>,
     children: <div data-testid="canvas">Single bubble for new project</div>,
+  } as AppShellProps,
+}
+
+export const APPC03LoadFailure: Story = {
+  name: 'slice01 -- APPC-03 load failure',
+  args: {
+    sidebar: <div data-testid="project-rail" style={{ width: '60px', background: '#1f1f1f' }}>Project Rail</div>,
+    children: <div data-testid="canvas">Canvas</div>,
+    errorState: <ErrorState message="Failed to load project: File not found" onRetry={() => {}} />,
   } as AppShellProps,
 }
