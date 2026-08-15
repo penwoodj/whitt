@@ -7,6 +7,8 @@ import { useVoiceLevel } from './useVoiceLevel'
 import { GlowBall } from './GlowBall'
 import { BarOfLight } from './BarOfLight'
 import { HaloRing } from './HaloRing'
+import { MorphLoader } from './MorphLoader'
+import { BreathingEdge } from './BreathingEdge'
 
 const meta = {
   title: 'slice03 -- LGT-01 token table states',
@@ -191,6 +193,97 @@ export const LGT05HaloGeometry: Story = {
         <div style={{ marginTop: '8px', position: 'relative', width: '120px', height: '80px', border: '1px dashed #444' }}>
           <HaloRing state="running" isLive={true} />
         </div>
+      </div>
+    </div>
+  ),
+}
+
+export const EXE11EdgesBreatheExecuting: Story = {
+  name: 'EXE-11 edges breathe executing',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Edge Animation States</div>
+      <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+        <div>
+          <div>Idle Edge</div>
+          <div style={{ width: '150px', height: '100px', border: '1px solid #333' }}>
+            <BreathingEdge state="idle" />
+          </div>
+        </div>
+        <div>
+          <div>Executing Edge</div>
+          <div style={{ width: '150px', height: '100px', border: '1px solid #333' }}>
+            <BreathingEdge state="executing" />
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const EXE12BorderAnimationEventual: Story = {
+  name: 'EXE-12 border animation eventual',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Border-Beam Effect (Polish Tier)</div>
+      <div style={{ marginTop: '8px', position: 'relative', width: '200px', height: '120px', border: '2px solid #007ACC' }}>
+        <div style={{ position: 'absolute', inset: '4px', border: '1px dashed rgba(0, 122, 204, 0.5)' }} />
+        <BreathingEdge state="executing" />
+      </div>
+      <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
+        Border-beam class present while executing
+      </div>
+    </div>
+  ),
+}
+
+export const EXE14MorphLoader: Story = {
+  name: 'EXE-14 morph loader',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Morphing Loader</div>
+      <div style={{ marginTop: '8px' }}>
+        <MorphLoader isActive={true} />
+      </div>
+      <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
+        Icon cycles ~1.2s, transform/opacity crossfade only
+      </div>
+    </div>
+  ),
+}
+
+export const LGT04MorphCadence: Story = {
+  name: 'LGT-04 morph cadence',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Extended Loader Run (4s)</div>
+      <div style={{ marginTop: '8px' }}>
+        <MorphLoader isActive={true} />
+      </div>
+      <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
+        ~3-4 icon steps over 4s, ~1.2s per step
+      </div>
+    </div>
+  ),
+}
+
+export const LGT07ReducedMotion: Story = {
+  name: 'LGT-07 reduced motion',
+  render: () => (
+    <div style={{ padding: '16px' }}>
+      <div>Reduced Motion Mode</div>
+      <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+        <div>
+          <div>Normal Animation</div>
+          <GlowBall state="recording" size={48} reducedMotion={false} />
+        </div>
+        <div>
+          <div>Reduced Motion (Static)</div>
+          <GlowBall state="recording" size={48} reducedMotion={true} />
+        </div>
+      </div>
+      <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
+        Reduced-motion: animations off, static glow retained
       </div>
     </div>
   ),
