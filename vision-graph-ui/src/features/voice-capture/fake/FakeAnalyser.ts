@@ -2,7 +2,7 @@ import { log } from '../../../shared/logger'
 
 const logger = log('FakeAnalyser')
 
-interface FakeAnalyserNode {
+export interface FakeAnalyserNode {
   fftSize: number
   frequencyBinCount: number
   getByteFrequencyData: (array: Uint8Array) => void
