@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/10-canvas-manipulation.md` (cases: GRP-01..11, GRPC-01..10, GRPX-01..13)
 > Validation spec: `docs/feature-requirements/validation/slice-10.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-16). All 17 tasks + 23-case GRPX/NAVX-era expansion executed. Commits c29eba3..f20578b (selection, grouping, link-draw, edge-delete, drag coherence, physics, delete guard, hard-group promote, GRPX-01..13: dual-persist, pan/lasso, halo+menu, Make Folder, detail panel+mini-window, titles, debounce, dbl-gestures, Flatten). Gate: scoped 86/86, full 513 pass / 5 fail = exact baseline, tsc 0, SB build 0. 32 stories `slice10 -- ` named. Manifest: slice-10 rows pass (GRP-06/GRPC-03/GRPC-04 ready — tests green, stories pending; GRP-11 deferred).
 > Depends on: E4-react-flow-upgrade, E3-fs-graph-sync (Task 10.8 hard-group promotion calls FsPort.moveFiles)
 
 ## 1. Objective

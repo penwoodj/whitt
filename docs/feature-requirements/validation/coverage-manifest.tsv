@@ -114,27 +114,27 @@ GITC-01	09	-	todo
 GITC-02	09	-	todo
 GITC-03	09	-	todo
 GITC-04	09	-	todo
-GRP-01	10	-	todo
-GRP-02	10	-	todo
-GRP-03	10	-	todo
-GRP-04	10	-	todo
-GRP-05	10	-	todo
-GRP-06	10	-	todo
-GRP-07	10	(covered-by GRPC-10)	todo-functional	todo
+GRP-01	10	slice10 -- GRP-01 multi-select	pass
+GRP-02	10	slice10 -- GRP-02 selection surround	pass
+GRP-03	10	slice10 -- GRP-03 right-click box	pass
+GRP-04	10	slice10 -- GRP-04 connected pull	pass
+GRP-05	10	slice10 -- GRP-05 standalone node	pass
+GRP-06	10	-	ready
+GRP-07	10	(covered-by GRPC-10)	pass	todo
 GRP-08	10	slice03 -- GRP-08 grouping halo	pass
-GRP-09	10	-	todo
-GRP-10	10	-	todo
+GRP-09	10	slice10 -- GRP-09 group prompt context	pass
+GRP-10	10	slice10 -- GRP-10 group node-like	pass
 GRP-11	10	(nested graph - future)	deferred	todo
-GRPC-01	10	-	todo
-GRPC-02	10	-	todo
-GRPC-03	10	-	todo
-GRPC-04	10	-	todo
-GRPC-05	10	-	todo
-GRPC-06	10	-	todo
-GRPC-07	10	-	todo
-GRPC-08	10	-	todo
-GRPC-09	10	-	todo
-GRPC-10	10	-	todo
+GRPC-01	10	slice10 -- GRPC-01 click vs drag	pass
+GRPC-02	10	slice10 -- GRPC-02 esc cancels drag	pass
+GRPC-03	10	-	ready
+GRPC-04	10	-	ready
+GRPC-05	10	slice10 -- GRPC-05 edge delete	pass
+GRPC-06	10	slice10 -- GRPC-06 selection model - click	pass
+GRPC-07	10	slice10 -- GRPC-07 delete guard	pass
+GRPC-08	10	slice10 -- GRPC-08 multi-drag coherence	pass
+GRPC-09	10	slice10 -- GRPC-09 reheat settle	pass
+GRPC-10	10	slice10 -- GRPC-10 hard group	pass
 NAV-01	11	-	todo
 NAV-02	11	-	todo
 NAV-03	11	-	todo
@@ -144,19 +144,19 @@ NAV-06	11	-	todo
 NAV-07	11	-	todo
 NAV-08	11	-	todo
 FIL-03	07	(non-markdown types - future)	deferred
-GRPX-01	10	slice10 -- GRPX-01 soft group dual persistence	todo
-GRPX-02	10	slice10 -- GRPX-02 left-click pan vs right-click lasso	todo
-GRPX-03	10	slice10 -- GRPX-03 selection halo + icon outside border	todo
-GRPX-04	10	slice10 -- GRPX-04 + icon tooltip menu actions	todo
-GRPX-05	10	slice10 -- GRPX-05 Make Folder visual transformation	todo
-GRPX-06	10	slice10 -- GRPX-06 Make Folder file system action	todo
-GRPX-07	10	slice10 -- GRPX-07 group detail panel with full graph view	todo
-GRPX-08	10	slice10 -- GRPX-08 unfocused group bubble + halo + mini-window	todo
-GRPX-09	10	slice10 -- GRPX-09 editable deterministic group titles	todo
-GRPX-10	10	slice10 -- GRPX-10 debounced file system reflection	todo
-GRPX-11	10	slice10 -- GRPX-11 double-right-click expand group	todo
-GRPX-12	10	slice10 -- GRPX-12 double-left-click expand + record	todo
-GRPX-13	10	slice10 -- GRPX-13 Flatten Folder action	todo
+GRPX-01	10	slice10 -- GRPX-01 soft group dual persistence	pass
+GRPX-02	10	slice10 -- GRPX-02 left-click pan vs right-click lasso	pass
+GRPX-03	10	slice10 -- GRPX-03 selection halo + icon outside border	pass
+GRPX-04	10	slice10 -- GRPX-04 + icon tooltip menu actions	pass
+GRPX-05	10	slice10 -- GRPX-05 Make Folder visual transformation	pass
+GRPX-06	10	slice10 -- GRPX-06 Make Folder file system action	pass
+GRPX-07	10	slice10 -- GRPX-07 group detail panel with full graph view	pass
+GRPX-08	10	slice10 -- GRPX-08 unfocused group bubble + halo + mini-window	pass
+GRPX-09	10	slice10 -- GRPX-09 editable deterministic group titles	pass
+GRPX-10	10	slice10 -- GRPX-10 debounced file system reflection	pass
+GRPX-11	10	slice10 -- GRPX-11 double-right-click expand group	pass
+GRPX-12	10	slice10 -- GRPX-12 double-left-click expand + record	pass
+GRPX-13	10	slice10 -- GRPX-13 Flatten Folder action	pass
 NAVX-01	11	slice11 -- NAVX-01 ctrl-accelerated pan	todo
 NAVX-02	11	slice11 -- NAVX-02 arrow keys pan	todo
 NAVX-03	11	slice11 -- NAVX-03 WASD pan	todo

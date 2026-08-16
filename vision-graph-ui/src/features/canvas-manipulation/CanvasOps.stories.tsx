@@ -32,7 +32,7 @@ const mockNodes: FlowNode[] = [
 const mockEdges: Edge[] = []
 
 export const GRP_01_MultiSelect: Story = {
-  name: 'GRP-01 multi-select',
+  name: 'slice10 -- GRP-01 multi-select',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -47,7 +47,7 @@ export const GRP_01_MultiSelect: Story = {
 }
 
 export const GRP_02_SelectionSurround: Story = {
-  name: 'GRP-02 selection surround',
+  name: 'slice10 -- GRP-02 selection surround',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -62,7 +62,7 @@ export const GRP_02_SelectionSurround: Story = {
 }
 
 export const GRPC_06_SelectionModel_Click: Story = {
-  name: 'GRPC-06 selection model - click',
+  name: 'slice10 -- GRPC-06 selection model - click',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -77,7 +77,7 @@ export const GRPC_06_SelectionModel_Click: Story = {
 }
 
 export const GRPC_06_SelectionModel_CtrlClick: Story = {
-  name: 'GRPC-06 selection model - ctrl+click',
+  name: 'slice10 -- GRPC-06 selection model - ctrl+click',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -92,7 +92,7 @@ export const GRPC_06_SelectionModel_CtrlClick: Story = {
 }
 
 export const GRPC_06_SelectionModel_Lasso: Story = {
-  name: 'GRPC-06 selection model - lasso',
+  name: 'slice10 -- GRPC-06 selection model - lasso',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -107,7 +107,7 @@ export const GRPC_06_SelectionModel_Lasso: Story = {
 }
 
 export const GRPC_06_SelectionModel_Clear: Story = {
-  name: 'GRPC-06 selection model - clear',
+  name: 'slice10 -- GRPC-06 selection model - clear',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -122,7 +122,7 @@ export const GRPC_06_SelectionModel_Clear: Story = {
 }
 
 export const GRP_03_RightClickBox: Story = {
-  name: 'GRP-03 right-click box',
+  name: 'slice10 -- GRP-03 right-click box',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -137,7 +137,7 @@ export const GRP_03_RightClickBox: Story = {
 }
 
 export const GRP_09_GroupPromptContext: Story = {
-  name: 'GRP-09 group prompt context',
+  name: 'slice10 -- GRP-09 group prompt context',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -152,7 +152,7 @@ export const GRP_09_GroupPromptContext: Story = {
 }
 
 export const GRP_10_GroupNodeLike: Story = {
-  name: 'GRP-10 group node-like',
+  name: 'slice10 -- GRP-10 group node-like',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -172,7 +172,7 @@ const mockEdgesWithConnection: Edge[] = [
 ]
 
 export const GRPC_05_EdgeDelete: Story = {
-  name: 'GRPC-05 edge delete',
+  name: 'slice10 -- GRPC-05 edge delete',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdgesWithConnection,
@@ -196,7 +196,7 @@ const mockEdgesSingle: Edge[] = [
 ]
 
 export const GRP_04_ConnectedPull: Story = {
-  name: 'GRP-04 connected pull',
+  name: 'slice10 -- GRP-04 connected pull',
   args: {
     initialNodes: mockNodesWithEdges,
     initialEdges: mockEdgesSingle,
@@ -211,7 +211,7 @@ export const GRP_04_ConnectedPull: Story = {
 }
 
 export const GRPC_01_ClickVsDrag: Story = {
-  name: 'GRPC-01 click vs drag',
+  name: 'slice10 -- GRPC-01 click vs drag',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -226,7 +226,7 @@ export const GRPC_01_ClickVsDrag: Story = {
 }
 
 export const GRPC_02_EscCancelsDrag: Story = {
-  name: 'GRPC-02 esc cancels drag',
+  name: 'slice10 -- GRPC-02 esc cancels drag',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -252,7 +252,7 @@ const mockEdgesMulti: Edge[] = [
 ]
 
 export const GRPC_08_MultiDragCoherence: Story = {
-  name: 'GRPC-08 multi-drag coherence',
+  name: 'slice10 -- GRPC-08 multi-drag coherence',
   args: {
     initialNodes: mockNodesMulti,
     initialEdges: mockEdgesMulti,
@@ -274,7 +274,7 @@ const mockNodesPhysics: FlowNode[] = [
 ]
 
 export const GRPC_09_ReheatSettle: Story = {
-  name: 'GRPC-09 reheat settle',
+  name: 'slice10 -- GRPC-09 reheat settle',
   args: {
     initialNodes: mockNodesPhysics,
     initialEdges: mockEdges,
@@ -289,7 +289,7 @@ export const GRPC_09_ReheatSettle: Story = {
 }
 
 export const GRPC_07_DeleteGuard: Story = {
-  name: 'GRPC-07 delete guard',
+  name: 'slice10 -- GRPC-07 delete guard',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -304,7 +304,7 @@ export const GRPC_07_DeleteGuard: Story = {
 }
 
 export const GRP_05_StandaloneNode: Story = {
-  name: 'GRP-05 standalone node',
+  name: 'slice10 -- GRP-05 standalone node',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -319,7 +319,7 @@ export const GRP_05_StandaloneNode: Story = {
 }
 
 export const GRP_07_SoftVsHardGrouping: Story = {
-  name: 'GRP-07 soft vs hard grouping',
+  name: 'slice10 -- GRP-07 soft vs hard grouping',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -334,7 +334,7 @@ export const GRP_07_SoftVsHardGrouping: Story = {
 }
 
 export const GRPC_10_HardGroup: Story = {
-  name: 'GRPC-10 hard group',
+  name: 'slice10 -- GRPC-10 hard group',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -349,7 +349,7 @@ export const GRPC_10_HardGroup: Story = {
 }
 
 export const GRPX_01_SoftGroupDualPersistence: Story = {
-  name: 'GRPX-01 soft group dual persistence',
+  name: 'slice10 -- GRPX-01 soft group dual persistence',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -364,7 +364,7 @@ export const GRPX_01_SoftGroupDualPersistence: Story = {
 }
 
 export const GRPX_02_LeftClickPanVsRightClickLasso: Story = {
-  name: 'GRPX-02 left-click pan vs right-click lasso',
+  name: 'slice10 -- GRPX-02 left-click pan vs right-click lasso',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -379,7 +379,7 @@ export const GRPX_02_LeftClickPanVsRightClickLasso: Story = {
 }
 
 export const GRPX_03_SelectionHaloIconOutsideBorder: Story = {
-  name: 'GRPX-03 selection halo + icon outside border',
+  name: 'slice10 -- GRPX-03 selection halo + icon outside border',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -394,7 +394,7 @@ export const GRPX_03_SelectionHaloIconOutsideBorder: Story = {
 }
 
 export const GRPX_04_PlusIconTooltipMenuActions: Story = {
-  name: 'GRPX-04 + icon tooltip menu actions',
+  name: 'slice10 -- GRPX-04 + icon tooltip menu actions',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -409,7 +409,7 @@ export const GRPX_04_PlusIconTooltipMenuActions: Story = {
 }
 
 export const GRPX_05_MakeFolderVisualTransformation: Story = {
-  name: 'GRPX-05 Make Folder visual transformation',
+  name: 'slice10 -- GRPX-05 Make Folder visual transformation',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -424,7 +424,7 @@ export const GRPX_05_MakeFolderVisualTransformation: Story = {
 }
 
 export const GRPX_06_MakeFolderFileSystemAction: Story = {
-  name: 'GRPX-06 Make Folder file system action',
+  name: 'slice10 -- GRPX-06 Make Folder file system action',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -439,7 +439,7 @@ export const GRPX_06_MakeFolderFileSystemAction: Story = {
 }
 
 export const GRPX_07_GroupDetailPanelWithFullGraphView: Story = {
-  name: 'GRPX-07 group detail panel with full graph view',
+  name: 'slice10 -- GRPX-07 group detail panel with full graph view',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -454,7 +454,7 @@ export const GRPX_07_GroupDetailPanelWithFullGraphView: Story = {
 }
 
 export const GRPX_08_UnfocusedGroupBubbleHaloMiniWindow: Story = {
-  name: 'GRPX-08 unfocused group bubble + halo + mini-window',
+  name: 'slice10 -- GRPX-08 unfocused group bubble + halo + mini-window',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -469,7 +469,7 @@ export const GRPX_08_UnfocusedGroupBubbleHaloMiniWindow: Story = {
 }
 
 export const GRPX_09_EditableDeterministicGroupTitles: Story = {
-  name: 'GRPX-09 editable deterministic group titles',
+  name: 'slice10 -- GRPX-09 editable deterministic group titles',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -484,7 +484,7 @@ export const GRPX_09_EditableDeterministicGroupTitles: Story = {
 }
 
 export const GRPX_10_DebouncedFileSystemReflection: Story = {
-  name: 'GRPX-10 debounced file system reflection',
+  name: 'slice10 -- GRPX-10 debounced file system reflection',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -499,7 +499,7 @@ export const GRPX_10_DebouncedFileSystemReflection: Story = {
 }
 
 export const GRPX_11_DoubleRightClickExpandGroup: Story = {
-  name: 'GRPX-11 double-right-click expand group',
+  name: 'slice10 -- GRPX-11 double-right-click expand group',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -514,7 +514,7 @@ export const GRPX_11_DoubleRightClickExpandGroup: Story = {
 }
 
 export const GRPX_12_DoubleLeftClickExpandAndRecord: Story = {
-  name: 'GRPX-12 double-left-click expand + record',
+  name: 'slice10 -- GRPX-12 double-left-click expand + record',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
@@ -529,7 +529,7 @@ export const GRPX_12_DoubleLeftClickExpandAndRecord: Story = {
 }
 
 export const GRPX_13_FlattenFolderAction: Story = {
-  name: 'GRPX-13 Flatten Folder action',
+  name: 'slice10 -- GRPX-13 Flatten Folder action',
   args: {
     initialNodes: mockNodes,
     initialEdges: mockEdges,
