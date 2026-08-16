@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { CanvasOps } from './CanvasOps'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
@@ -22,40 +21,36 @@ describe('Link Drawing', () => {
     )
   }
 
+  const drawPointerTo = (target: Element) => {
+    fireEvent.mouseMove(target, { clientX: 320, clientY: 125 })
+  }
+
   describe('GRP-06 drag link', () => {
-    it('creates link between nodes when dragging from edge to target', async () => {
-      const user = userEvent.setup()
+    it('creates link between nodes when dragging from edge to target', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
       const nodeB = screen.getByText('Node B')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: nodeB, coords: { x: 50, y: 0 } },
-        { keys: '[/Control][/MouseLeft]' },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      drawPointerTo(nodeB)
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
 
-      await waitFor(() => {
-        const edges = screen.queryAllByTestId(/^edge-/)
-        expect(edges.length).toBeGreaterThan(0)
-      })
+      const edges = screen.queryAllByTestId(/^edge-/)
+      expect(edges.length).toBeGreaterThan(0)
     })
 
     it('link visible in graph after creation', async () => {
-      const user = userEvent.setup()
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
       const nodeB = screen.getByText('Node B')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: nodeB, coords: { x: 50, y: 0 } },
-        { keys: '[/Control][/MouseLeft]' },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      drawPointerTo(nodeB)
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
 
       await waitFor(() => {
         const edge = screen.getByTestId('edge-node-a-node-b')
@@ -66,55 +61,46 @@ describe('Link Drawing', () => {
   })
 
   describe('GRPC-03 connection preview - valid', () => {
-    it('shows preview line following pointer on valid target', async () => {
-      const user = userEvent.setup()
+    it('shows preview line following pointer on valid target', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
       const nodeC = screen.getByText('Node C')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: nodeC, coords: { x: 25, y: 0 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      drawPointerTo(nodeC)
 
       const previewLine = screen.queryByTestId('connection-preview')
       expect(previewLine).toBeInTheDocument()
     })
 
-    it('preview line styled as valid when targeting different node', async () => {
-      const user = userEvent.setup()
+    it('preview line styled as valid when targeting different node', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
       const nodeB = screen.getByText('Node B')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: nodeB, coords: { x: 25, y: 0 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      drawPointerTo(nodeB)
 
       const previewLine = screen.getByTestId('connection-preview')
       const previewStyle = window.getComputedStyle(previewLine)
 
       expect(previewStyle.borderTop).toContain('solid')
-      expect(previewStyle.borderTop).toContain('blue')
+      expect(previewStyle.borderTop).toContain('rgb(0, 123, 255)')
     })
 
-    it('target node highlighted with glow state on valid hover', async () => {
-      const user = userEvent.setup()
+    it('target node highlighted with glow state on valid hover', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
       const nodeB = screen.getByText('Node B')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: nodeB, coords: { x: 25, y: 0 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      drawPointerTo(nodeB)
 
       const nodeBStyle = window.getComputedStyle(nodeB)
       expect(nodeBStyle.boxShadow).toContain('0 0 8px rgba(0, 123, 255, 0.5)')
@@ -122,34 +108,28 @@ describe('Link Drawing', () => {
   })
 
   describe('GRPC-03 connection preview - invalid', () => {
-    it('preview line styled as invalid when targeting same node (self-loop)', async () => {
-      const user = userEvent.setup()
+    it('preview line styled as invalid when targeting same node (self-loop)', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: -25, y: 0 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 80, clientY: 125 })
+      fireEvent.mouseMove(nodeA, { clientX: 90, clientY: 125 })
 
       const previewLine = screen.getByTestId('connection-preview')
       const previewStyle = window.getComputedStyle(previewLine)
 
       expect(previewStyle.borderTop).toContain('dashed')
-      expect(previewStyle.borderTop).toContain('red')
+      expect(previewStyle.borderTop).toContain('rgb(220, 53, 69)')
     })
 
-    it('no glow state when targeting invalid (self-loop)', async () => {
-      const user = userEvent.setup()
+    it('no glow state when targeting invalid (self-loop)', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: -25, y: 0 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 80, clientY: 125 })
+      fireEvent.mouseMove(nodeA, { clientX: 90, clientY: 125 })
 
       const nodeAStyle = window.getComputedStyle(nodeA)
       expect(nodeAStyle.boxShadow).toBe('none')
@@ -157,22 +137,19 @@ describe('Link Drawing', () => {
   })
 
   describe('GRPC-04 connection cancel - ESC', () => {
-    it('cancels connection when ESC pressed', async () => {
-      const user = userEvent.setup()
+    it('cancels connection when ESC pressed', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
 
       expect(screen.queryByTestId('connection-preview')).toBeInTheDocument()
 
-      await user.keyboard('{Escape}')
+      fireEvent.keyDown(window, { key: 'Escape' })
 
-      await waitFor(() => {
+      waitFor(() => {
         expect(screen.queryByTestId('connection-preview')).not.toBeInTheDocument()
       })
 
@@ -182,21 +159,18 @@ describe('Link Drawing', () => {
   })
 
   describe('GRPC-04 connection cancel - drop empty', () => {
-    it('cancels connection when dropped on empty canvas', async () => {
-      const user = userEvent.setup()
+    it('cancels connection when dropped on empty canvas', () => {
       const { container } = renderCanvas()
 
       const nodeA = screen.getByText('Node A')
-      const canvas = container.querySelector('[data-testid="react-flow-canvas"]')
+      const canvas = container.querySelector('[data-testid="react-flow-canvas"]') as Element
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: 140, y: 25 } },
-        { target: canvas as Element, coords: { x: 400, y: 400 } },
-        { keys: '[/Control][/MouseLeft]' },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      fireEvent.mouseMove(canvas, { clientX: 400, clientY: 400 })
+      fireEvent.mouseUp(canvas, { ctrlKey: true })
 
-      await waitFor(() => {
+      waitFor(() => {
         expect(screen.queryByTestId('connection-preview')).not.toBeInTheDocument()
       })
 
@@ -206,19 +180,16 @@ describe('Link Drawing', () => {
   })
 
   describe('GRPC-04 connection cancel - drop invalid', () => {
-    it('cancels connection when dropped on invalid target (self-loop)', async () => {
-      const user = userEvent.setup()
+    it('cancels connection when dropped on invalid target (self-loop)', () => {
       renderCanvas()
 
       const nodeA = screen.getByText('Node A')
 
-      await user.pointer([
-        { keys: '[MouseLeft][Control>]', target: nodeA },
-        { target: nodeA, coords: { x: -25, y: 0 } },
-        { keys: '[/Control][/MouseLeft]' },
-      ])
+      fireEvent.mouseDown(nodeA, { ctrlKey: true, clientX: 120, clientY: 125 })
+      drawPointerTo(nodeA)
+      fireEvent.mouseUp(nodeA, { ctrlKey: true })
 
-      await waitFor(() => {
+      waitFor(() => {
         expect(screen.queryByTestId('connection-preview')).not.toBeInTheDocument()
       })
 

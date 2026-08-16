@@ -31,8 +31,6 @@ export function useLinkDrawing(nodes: FlowNode[], edges: Edge[]) {
     }
 
     const adj = buildAdjacencyList(currentEdges)
-    if (!adj[targetId]) adj[targetId] = []
-    adj[targetId].push(sourceId)
 
     const visited = new Set<string>()
     const stack = [targetId]

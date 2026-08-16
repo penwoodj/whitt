@@ -87,7 +87,7 @@ export function EdgeWithDelete({
   }, [isSelected, onDelete])
 
   return (
-    <EdgeContainer data-testid={`edge-${edgeId}`}>
+    <EdgeContainer data-testid={edgeId}>
       <svg
         style={{
           position: 'absolute',
