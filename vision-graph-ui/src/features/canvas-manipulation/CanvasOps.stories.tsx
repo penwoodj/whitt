@@ -482,3 +482,18 @@ export const GRPX_09_EditableDeterministicGroupTitles: Story = {
     },
   },
 }
+
+export const GRPX_10_DebouncedFileSystemReflection: Story = {
+  name: 'GRPX-10 debounced file system reflection',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create and modify groups. Notice that localStorage updates immediately for fast UI response, while file system operations are debounced by 2 seconds (ADR-0011). Multiple rapid changes within the debounce window batch into a single file system sync. Live active memory in localStorage provides speed while FS reflection happens on debounce. Changes persist across page reloads from live memory.',
+      },
+    },
+  },
+}

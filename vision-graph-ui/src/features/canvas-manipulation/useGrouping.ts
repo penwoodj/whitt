@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import type { Node as FlowNode } from '@xyflow/react'
 import type { FsPort } from '../../shared/fs/FsPort'
 
@@ -6,6 +6,7 @@ export type GroupType = 'soft' | 'hard'
 
 const LOCAL_STORAGE_KEY = 'softGroups'
 const WHITT_GROUPS_FILE = '.whitt/groups.json'
+const DEBOUNCE_DELAY_MS = 2000
 
 const toDashCase = (str: string): string => {
   return str
@@ -40,6 +41,8 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   const [groups, setGroups] = useState<Group[]>([])
   const [activeGroupIds, setActiveGroupIds] = useState<Set<string>>(new Set())
   const [fsOps, setFsOps] = useState<FsOps>({ folderCreated: false, movedNames: [] })
+  
+  const writeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const serializeGroup = useCallback((group: Group) => ({
     id: group.id,
@@ -110,10 +113,24 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     } catch {}
 
     if (fsPort) {
-      try {
-        const serializedGroups = groups.map(serializeGroup)
-        fsPort.writeFile(WHITT_GROUPS_FILE, JSON.stringify(serializedGroups, null, 2))
-      } catch {}
+      if (writeTimeoutRef.current) {
+        clearTimeout(writeTimeoutRef.current)
+      }
+
+      const serializedGroups = groups.map(serializeGroup)
+      
+      writeTimeoutRef.current = setTimeout(async () => {
+        try {
+          await fsPort.writeFile(WHITT_GROUPS_FILE, JSON.stringify(serializedGroups, null, 2))
+        } catch {}
+        writeTimeoutRef.current = null
+      }, DEBOUNCE_DELAY_MS)
+    }
+    
+    return () => {
+      if (writeTimeoutRef.current) {
+        clearTimeout(writeTimeoutRef.current)
+      }
     }
   }, [groups, fsPort, serializeGroup])
 
