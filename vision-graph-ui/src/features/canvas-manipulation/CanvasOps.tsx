@@ -548,6 +548,7 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           onMouseEnter={() => setHoveredGroupId(group.id)}
           onMouseLeave={() => setHoveredGroupId(null)}
           onPromoteToHard={() => handlePromoteToHard(group)}
+          onFlattenFolder={() => groupingData.flattenGroup(group.id)}
           onFocus={() => handleFocusGroup(group.id)}
           onTitleUpdate={groupingData.updateGroupTitle}
         />

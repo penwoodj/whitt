@@ -15,6 +15,7 @@ type GroupBoxProps = {
   onMouseEnter: () => void
   onMouseLeave: () => void
   onPromoteToHard: () => void
+  onFlattenFolder?: (groupId: string) => void
   onFocus?: () => void
   onTitleUpdate?: (groupId: string, newTitle: string) => void
 }
@@ -221,6 +222,7 @@ export function GroupBox({
   onMouseEnter,
   onMouseLeave,
   onPromoteToHard,
+  onFlattenFolder,
   onFocus,
   onTitleUpdate,
 }: GroupBoxProps) {
@@ -289,6 +291,14 @@ export function GroupBox({
 
   const handleOtherAction = (e: React.MouseEvent) => {
     e.stopPropagation()
+    setShowMenu(false)
+  }
+
+  const handleFlattenFolder = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (onFlattenFolder) {
+      onFlattenFolder(group.id)
+    }
     setShowMenu(false)
   }
 
@@ -458,6 +468,14 @@ export function GroupBox({
                 >
                   Other Action
                 </MenuItem>
+                {group.groupType === 'hard' && (
+                  <MenuItem
+                    data-testid="menu-flatten-folder"
+                    onClick={handleFlattenFolder}
+                  >
+                    Flatten Folder
+                  </MenuItem>
+                )}
               </TooltipMenu>
             </>
           )}

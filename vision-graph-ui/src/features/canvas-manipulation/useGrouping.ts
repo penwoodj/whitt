@@ -220,6 +220,36 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     ))
   }, [groups, fsPort])
 
+  const flattenGroup = useCallback(async (groupId: string) => {
+    const group = groups.find(g => g.id === groupId)
+    
+    if (!group || group.groupType !== 'hard' || !fsPort) return
+
+    const memberNodes = nodes.filter(n => group.memberIds.has(n.id))
+    if (memberNodes.length === 0) return
+
+    const folderName = group.title || `group-${group.id}`
+
+    for (const node of memberNodes) {
+      const oldPath = `/${folderName}/${node.data.title as string}.md`
+      const newPath = `/${node.data.title as string}.md`
+      try {
+        await fsPort.atomicRename(oldPath, newPath)
+      } catch {}
+    }
+
+    await fsPort.atomicRename(`/${folderName}`, `/${folderName}.flattened-backup`)
+
+    setGroups(prev => prev.map(g =>
+      g.id === groupId ? { ...g, groupType: 'soft' as GroupType } : g
+    ))
+
+    setFsOps({
+      folderCreated: false,
+      movedNames: memberNodes.map(n => `${n.data.title} moved to parent`),
+    })
+  }, [groups, nodes, fsPort])
+
   const clearGroupSelection = useCallback(() => {
     setActiveGroupIds(new Set())
   }, [])
@@ -294,6 +324,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     focusGroup,
     unfocusGroup,
     updateGroupTitle,
+    flattenGroup,
   }), [
     groups,
     activeGroupIds,
@@ -310,6 +341,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     focusGroup,
     unfocusGroup,
     updateGroupTitle,
+    flattenGroup,
   ])
 
   return groupData

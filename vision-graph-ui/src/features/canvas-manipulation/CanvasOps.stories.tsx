@@ -527,3 +527,18 @@ export const GRPX_12_DoubleLeftClickExpandAndRecord: Story = {
     },
   },
 }
+
+export const GRPX_13_FlattenFolderAction: Story = {
+  name: 'GRPX-13 Flatten Folder action',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create hard group by clicking "Make Folder" in the + icon menu. Hover over group to see + icon, click to open menu. Click "Flatten Folder" action. Folder structure removed, all member files moved to parent level, group converted back to soft group (halo + border persist). If group has only one member, group dissolves completely.',
+      },
+    },
+  },
+}
