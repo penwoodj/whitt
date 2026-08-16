@@ -407,3 +407,33 @@ export const GRPX_04_PlusIconTooltipMenuActions: Story = {
     },
   },
 }
+
+export const GRPX_05_MakeFolderVisualTransformation: Story = {
+  name: 'GRPX-05 Make Folder visual transformation',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group, hover to show + icon, click to open menu, select "Make Folder". Group border transforms from 2px dashed (soft) to 3px solid (hard). Background changes from transparent to semi-transparent blue. Center glow becomes more solid and less opaque.',
+      },
+    },
+  },
+}
+
+export const GRPX_06_MakeFolderFileSystemAction: Story = {
+  name: 'GRPX-06 Make Folder file system action',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Invoke "Make Folder" on soft group. New folder created in filesystem, member files moved into folder, new blank .md node created at top level with selection. Group becomes hard (folder-based) with persistent box+halo. FS actions visible via spy divs.',
+      },
+    },
+  },
+}

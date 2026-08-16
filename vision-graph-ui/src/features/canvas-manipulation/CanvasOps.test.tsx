@@ -1,8 +1,17 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CanvasOps } from './CanvasOps'
 import { ThemeProvider } from '../../shared/ThemeProvider'
+import type { FsPort } from '../../shared/fs/FsPort'
+
+const mockFsPort: FsPort = {
+  readFile: vi.fn().mockImplementation(async () => 'content'),
+  writeFile: vi.fn().mockImplementation(async () => {}),
+  listDir: vi.fn().mockImplementation(async () => []),
+  watch: vi.fn(),
+  atomicRename: vi.fn().mockImplementation(async () => {}),
+}
 
 describe('CanvasOps - Delete Guard', () => {
   const mockNodes = [
@@ -603,6 +612,195 @@ describe('CanvasOps - Drag Coherence', () => {
         expect(makeFolderMenuItem).toBeInTheDocument()
         expect(speakToSelectedMenuItem).toBeInTheDocument()
         expect(otherActionMenuItem).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('GRPX-05 Make Folder visual transformation', () => {
+    it('Make Folder transforms group visual style', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      // Click Make Folder in menu
+      await waitFor(() => {
+        const makeFolderMenuItem = screen.queryByTestId('menu-make-folder')
+        expect(makeFolderMenuItem).toBeInTheDocument()
+      })
+      
+      const makeFolderMenuItem = screen.getByTestId('menu-make-folder')
+      await userEvent.click(makeFolderMenuItem)
+      
+      // Verify group transformed to hard style
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+      })
+    })
+
+    it('hard group has pronounced border and solid background', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Create group and promote to hard
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      await waitFor(() => {
+        const makeFolderMenuItem = screen.queryByTestId('menu-make-folder')
+        expect(makeFolderMenuItem).toBeInTheDocument()
+      })
+      
+      const makeFolderMenuItem = screen.getByTestId('menu-make-folder')
+      await userEvent.click(makeFolderMenuItem)
+      
+      // Verify hard group styling
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+        expect(groupBox).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('GRPX-06 Make Folder file system action', () => {
+    it('Make Folder creates folder and moves files', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} fsPort={mockFsPort} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      // Click Make Folder in menu
+      await waitFor(() => {
+        const makeFolderMenuItem = screen.queryByTestId('menu-make-folder')
+        expect(makeFolderMenuItem).toBeInTheDocument()
+      })
+      
+      const makeFolderMenuItem = screen.getByTestId('menu-make-folder')
+      await userEvent.click(makeFolderMenuItem)
+      
+      // Verify FS actions via spy divs
+      await waitFor(() => {
+        const folderSpy = screen.queryByTestId('folder-create-spy')
+        expect(folderSpy).toBeInTheDocument()
+        expect(folderSpy).toHaveTextContent('folder created')
+      })
+      
+      await waitFor(() => {
+        const moveSpies = screen.queryAllByTestId('file-move-spy')
+        expect(moveSpies.length).toBeGreaterThan(0)
+      })
+    })
+
+    it('Make Folder creates new blank node at top level', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} fsPort={mockFsPort} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      // Click Make Folder in menu
+      await waitFor(() => {
+        const makeFolderMenuItem = screen.queryByTestId('menu-make-folder')
+        expect(makeFolderMenuItem).toBeInTheDocument()
+      })
+      
+      const makeFolderMenuItem = screen.getByTestId('menu-make-folder')
+      await userEvent.click(makeFolderMenuItem)
+      
+      // Verify new blank node created
+      await waitFor(() => {
+        const newNodes = screen.queryAllByText(/New Group/i)
+        expect(newNodes.length).toBeGreaterThan(0)
       })
     })
   })
