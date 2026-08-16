@@ -135,14 +135,14 @@ GRPC-07	10	slice10 -- GRPC-07 delete guard	pass
 GRPC-08	10	slice10 -- GRPC-08 multi-drag coherence	pass
 GRPC-09	10	slice10 -- GRPC-09 reheat settle	pass
 GRPC-10	10	slice10 -- GRPC-10 hard group	pass
-NAV-01	11	slice11 -- NAV-01 zoom to cursor	pass
-NAV-02	11	slice11 -- NAV-02 pan modes	pass
-NAV-03	11	slice11 -- NAV-03 zoom limits	pass
-NAV-04	11	slice11 -- NAV-04 fit view	pass
-NAV-05	11	slice11 -- NAV-05 minimap	pass
-NAV-06	11	slice11 -- NAV-06 cursor semantics	pass
-NAV-07	11	slice11 -- NAV-07 keyboard nudge	pass
-NAV-08	11	slice11 -- NAV-08 spawn reveal	pass
+NAV-01	11	slice11 -- NAV-01 11	pass
+NAV-02	11	slice11 -- NAV-02 11	pass
+NAV-03	11	slice11 -- NAV-03 11	pass
+NAV-04	11	slice11 -- NAV-04 11	pass
+NAV-05	11	slice11 -- NAV-05 11	pass
+NAV-06	11	slice11 -- NAV-06 11	pass
+NAV-07	11	slice11 -- NAV-07 11	pass
+NAV-08	11	slice11 -- NAV-08 11	pass
 FIL-03	07	(non-markdown types - future)	deferred
 GRPX-01	10	slice10 -- GRPX-01 soft group dual persistence	pass
 GRPX-02	10	slice10 -- GRPX-02 left-click pan vs right-click lasso	pass
@@ -157,13 +157,13 @@ GRPX-10	10	slice10 -- GRPX-10 debounced file system reflection	pass
 GRPX-11	10	slice10 -- GRPX-11 double-right-click expand group	pass
 GRPX-12	10	slice10 -- GRPX-12 double-left-click expand + record	pass
 GRPX-13	10	slice10 -- GRPX-13 Flatten Folder action	pass
-NAVX-01	11	slice11 -- NAVX-01 ctrl-accelerated pan	todo
-NAVX-02	11	slice11 -- NAVX-02 arrow keys pan	pass
-NAVX-03	11	slice11 -- NAVX-03 WASD pan	pass
-NAVX-04	11	slice11 -- NAVX-04 expanded node drag via padding	todo
-NAVX-05	11	slice11 -- NAVX-05 corner resize handles for expanded node	todo
-NAVX-06	11	slice11 -- NAVX-06 node location and grouping persistence	pass
-NAVX-07	11	slice11 -- NAVX-07 node modal fit content default	pass
-NAVX-08	11	slice11 -- NAVX-08 node modal expandable with min height	pass
-NAVX-09	11	slice11 -- NAVX-09 plain markdown body + metadata separation	pass
-NAVX-10	11	slice11 -- NAVX-10 ESC zoom out one level historical	pass
+NAVX-01	11	slice11 -- NAVX-01 11	pass
+NAVX-02	11	slice11 -- NAVX-02 11	pass
+NAVX-03	11	slice11 -- NAVX-03 11	pass
+NAVX-04	11	slice11 -- NAVX-04 11	pass
+NAVX-05	11	slice11 -- NAVX-05 11	pass
+NAVX-06	11	slice11 -- NAVX-06 11	pass
+NAVX-07	11	slice11 -- NAVX-07 11	pass
+NAVX-08	11	slice11 -- NAVX-08 11	pass
+NAVX-09	11	slice11 -- NAVX-09 11	pass
+NAVX-10	11	slice11 -- NAVX-10 11	pass

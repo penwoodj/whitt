@@ -21,7 +21,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const NAV01ZoomToCursor: Story = {
-  name: 'NAV-01 zoom to cursor',
+  name: 'slice11 -- NAV-01 zoom to cursor',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -40,7 +40,7 @@ export const NAV01ZoomToCursor: Story = {
 }
 
 export const NAV03ZoomLimits: Story = {
-  name: 'NAV-03 zoom limits',
+  name: 'slice11 -- NAV-03 zoom limits',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -70,7 +70,7 @@ export const NAV03ZoomLimits: Story = {
 }
 
 export const NAV02PanModes: Story = {
-  name: 'NAV-02 pan modes',
+  name: 'slice11 -- NAV-02 pan modes',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -100,7 +100,7 @@ export const NAV02PanModes: Story = {
 }
 
 export const NAV04FitView: Story = {
-  name: 'NAV-04 fit view',
+  name: 'slice11 -- NAV-04 fit view',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -110,7 +110,7 @@ export const NAV04FitView: Story = {
 }
 
 export const NAV05Minimap: Story = {
-  name: 'NAV-05 minimap',
+  name: 'slice11 -- NAV-05 minimap',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -120,7 +120,7 @@ export const NAV05Minimap: Story = {
 }
 
 export const NAV08SpawnReveal: Story = {
-  name: 'NAV-08 spawn reveal',
+  name: 'slice11 -- NAV-08 spawn reveal',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -130,7 +130,7 @@ export const NAV08SpawnReveal: Story = {
 }
 
 export const NAV06CursorSemantics: Story = {
-  name: 'NAV-06 cursor semantics',
+  name: 'slice11 -- NAV-06 cursor semantics',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -140,7 +140,7 @@ export const NAV06CursorSemantics: Story = {
 }
 
 export const NAV07KeyboardNudge: Story = {
-  name: 'NAV-07 keyboard nudge',
+  name: 'slice11 -- NAV-07 keyboard nudge',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -157,7 +157,7 @@ export const NAV07KeyboardNudge: Story = {
 }
 
 export const NAVX01CtrlAcceleratedPan: Story = {
-  name: 'NAVX-01 ctrl-accelerated pan',
+  name: 'slice11 -- NAVX-01 ctrl-accelerated pan',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -189,7 +189,7 @@ export const NAVX01CtrlAcceleratedPan: Story = {
 }
 
 export const NAVX02ArrowKeysPan: Story = {
-  name: 'NAVX-02 arrow keys pan',
+  name: 'slice11 -- NAVX-02 arrow keys pan',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -206,7 +206,7 @@ export const NAVX02ArrowKeysPan: Story = {
 }
 
 export const NAVX03WASDPan: Story = {
-  name: 'NAVX-03 WASD pan',
+  name: 'slice11 -- NAVX-03 WASD pan',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -223,7 +223,7 @@ export const NAVX03WASDPan: Story = {
 }
 
 export const NAVX04ExpandedNodeDragPadding: Story = {
-  name: 'NAVX-04 expanded node drag via padding',
+  name: 'slice11 -- NAVX-04 expanded node drag via padding',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -233,7 +233,7 @@ export const NAVX04ExpandedNodeDragPadding: Story = {
 }
 
 export const NAVX05CornerResizeHandles: Story = {
-  name: 'NAVX-05 corner resize handles for expanded node',
+  name: 'slice11 -- NAVX-05 corner resize handles for expanded node',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -243,7 +243,7 @@ export const NAVX05CornerResizeHandles: Story = {
 }
 
 export const NAVX06NodeLocationGroupingPersistence: Story = {
-  name: 'NAVX-06 node location and grouping persistence',
+  name: 'slice11 -- NAVX-06 node location and grouping persistence',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -253,7 +253,7 @@ export const NAVX06NodeLocationGroupingPersistence: Story = {
 }
 
 export const NAVX07NodeModalFitContentDefault: Story = {
-  name: 'NAVX-07 node modal fit content default',
+  name: 'slice11 -- NAVX-07 node modal fit content default',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -263,7 +263,7 @@ export const NAVX07NodeModalFitContentDefault: Story = {
 }
 
 export const NAVX08NodeModalExpandableMinHeight: Story = {
-  name: 'NAVX-08 node modal expandable with min height',
+  name: 'slice11 -- NAVX-08 node modal expandable with min height',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -273,7 +273,7 @@ export const NAVX08NodeModalExpandableMinHeight: Story = {
 }
 
 export const NAVX09PlainMarkdownMetadataSeparation: Story = {
-  name: 'NAVX-09 plain markdown body + metadata separation',
+  name: 'slice11 -- NAVX-09 plain markdown body + metadata separation',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')
@@ -283,7 +283,7 @@ export const NAVX09PlainMarkdownMetadataSeparation: Story = {
 }
 
 export const NAVX10ESCHistoricalZoomOut: Story = {
-  name: 'NAVX-10 ESC zoom out one level historical',
+  name: 'slice11 -- NAVX-10 ESC zoom out one level historical',
   play: async ({ canvasElement }) => {
     const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
     if (!canvas) throw new Error('Canvas not found')

@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/11-viewport-navigation.md` (cases: NAV-01..08, NAVX-01..10)
 > Validation spec: `docs/feature-requirements/validation/slice-11.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-16). All 14 tasks + repairs: commits 0482709..69f76d4, a990ec9 (provider restructure GraphSimFlow + ReactFlowProvider), 213b710 (graph-ready harness: project-click + canvas testid). Gate: viewport 20/20, GraphSim 3f/11p = baseline trio, full 5 failed/533 pass EXACT baseline, tsc 0, SB 0. Manifest NAV+NAVX 18 rows pass w/ slice11 story names.
 > Depends on: E4
 
 ## 1. Objective
