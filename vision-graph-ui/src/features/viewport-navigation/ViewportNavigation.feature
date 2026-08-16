@@ -28,3 +28,10 @@ Feature: Viewport Navigation Zoom
     When usr drags on node without space
     Then node moves
     And canvas does not pan
+
+  Scenario: NAV-04 fit view control
+    Given canvas w/ spread nodes
+    When usr clicks fit view button
+    Then camera animates to bound all nodes
+    And nodes have padding around edges
+    And animation is smooth

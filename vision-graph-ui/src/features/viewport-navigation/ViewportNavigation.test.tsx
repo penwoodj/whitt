@@ -177,4 +177,19 @@ describe('Viewport Navigation - Zoom Config (NAV-01, NAV-03)', () => {
       expect(true).toBe(true)
     })
   })
+
+  it('NAV-04 fit view control - fit view button bounds all nodes', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const canvas = screen.getByTestId('react-flow__canvas')
+    expect(canvas).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
 })

@@ -474,7 +474,7 @@ const nodeTypes = useMemo(() => ({
           selectionOnDrag={true}
         >
           <Background color="#A6A6A6" gap={20} />
-          <Controls />
+          <Controls showFitView={true} />
         </ReactFlow>
         <MarkdownHighlightMenu
           selectedText={selectedText}

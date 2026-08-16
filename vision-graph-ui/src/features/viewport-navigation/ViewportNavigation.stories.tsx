@@ -98,3 +98,13 @@ export const NAV02PanModes: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAV04FitView: Story = {
+  name: 'NAV-04 fit view',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
