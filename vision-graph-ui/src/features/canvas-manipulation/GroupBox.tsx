@@ -15,7 +15,6 @@ type GroupBoxProps = {
   onMouseLeave: () => void
   onPromoteToHard: () => void
   onFocus?: () => void
-  onUnfocus?: () => void
 }
 
 const GroupBoxContainer = styled.div<{
@@ -158,11 +157,15 @@ export function GroupBox({
   onMouseLeave,
   onPromoteToHard,
   onFocus,
-  onUnfocus,
 }: GroupBoxProps) {
   const memberTitles = memberNodes.map(n => n.data.title as string)
   const [showMenu, setShowMenu] = useState(false)
   const [menuHovered, setMenuHovered] = useState(false)
+
+  const handleMakeFolderBtnClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onPromoteToHard()
+  }
 
   const handleMakeFolderClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -175,13 +178,11 @@ export function GroupBox({
     if (onFocus) {
       onFocus()
     }
-    console.log('Speak to selected:', memberTitles)
     setShowMenu(false)
   }
 
   const handleOtherAction = (e: React.MouseEvent) => {
     e.stopPropagation()
-    console.log('Other action')
     setShowMenu(false)
   }
 
@@ -258,6 +259,13 @@ export function GroupBox({
         </div>
       ) : (
         <>
+          {group.isExpanded && (
+            <ExpansionSurface data-testid="group-expansion-surface">
+              {memberTitles.map(title => (
+                <div key={title}>{title}</div>
+              ))}
+            </ExpansionSurface>
+          )}
           {isHovered && !showMenu && (
             <GroupTooltip data-testid="group-tooltip">
               <div>{memberNodes.length} nodes</div>
@@ -289,10 +297,7 @@ export function GroupBox({
                 type="button"
                 $isHovered={isHovered || showMenu || menuHovered}
                 aria-label="Make Folder"
-                onClick={e => {
-                  e.stopPropagation()
-                  setShowMenu(!showMenu)
-                }}
+                onClick={handleMakeFolderBtnClick}
                 onMouseEnter={() => setMenuHovered(true)}
                 onMouseLeave={() => setMenuHovered(false)}
               >

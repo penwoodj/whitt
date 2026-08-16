@@ -36,6 +36,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     memberIds: Array.from(group.memberIds),
     bounds: group.bounds,
     isExpanded: group.isExpanded,
+    isFocused: group.isFocused,
     groupType: group.groupType
   }), [])
 
@@ -61,9 +62,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
             .map(deserializeGroup)
           loadedGroups.push(...localGroups)
         }
-      } catch (error) {
-        console.warn('Failed to load groups from localStorage:', error)
-      }
+      } catch {}
 
       if (fsPort) {
         try {
@@ -81,9 +80,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
               }
             })
           }
-        } catch (error) {
-          console.warn('Failed to load groups from .whitt folder:', error)
-        }
+        } catch {}
       }
 
       if (loadedGroups.length > 0) {
@@ -101,17 +98,13 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     try {
       const serializedGroups = softGroups.map(serializeGroup)
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializedGroups))
-    } catch (error) {
-      console.warn('Failed to save groups to localStorage:', error)
-    }
+    } catch {}
 
     if (fsPort) {
       try {
         const serializedGroups = softGroups.map(serializeGroup)
         fsPort.writeFile(WHITT_GROUPS_FILE, JSON.stringify(serializedGroups, null, 2))
-      } catch (error) {
-        console.warn('Failed to save groups to .whitt folder:', error)
-      }
+      } catch {}
     }
   }, [groups, fsPort, serializeGroup])
 
