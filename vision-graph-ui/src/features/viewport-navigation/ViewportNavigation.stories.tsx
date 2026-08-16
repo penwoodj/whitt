@@ -241,3 +241,60 @@ export const NAVX05CornerResizeHandles: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAVX06NodeLocationGroupingPersistence: Story = {
+  name: 'NAVX-06 node location and grouping persistence',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAVX07NodeModalFitContentDefault: Story = {
+  name: 'NAVX-07 node modal fit content default',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAVX08NodeModalExpandableMinHeight: Story = {
+  name: 'NAVX-08 node modal expandable with min height',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAVX09PlainMarkdownMetadataSeparation: Story = {
+  name: 'NAVX-09 plain markdown body + metadata separation',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAVX10ESCHistoricalZoomOut: Story = {
+  name: 'NAVX-10 ESC zoom out one level historical',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const escEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(escEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

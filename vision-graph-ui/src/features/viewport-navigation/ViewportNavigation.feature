@@ -107,3 +107,38 @@ Feature: Viewport Navigation Zoom
     When usr drags corner resize handle
     Then expanded node size changes
     And new size persists across loading sessions
+
+  Scenario: NAVX-06 node location and grouping persistence
+    Given node w/ position and group membership
+    When usr changes node location or grouping
+    Then node location stored to file system
+    And node grouping stored to file system
+    And both location and grouping persist across loading sessions
+
+  Scenario: NAVX-07 node modal fit content default
+    Given node modal opened for first time
+    Then modal size fits content
+    And modal displays all content without scrolling
+    And modal height adapts to content length
+
+  Scenario: NAVX-08 node modal expandable with min height
+    Given node modal w/ content
+    When usr expands or contracts modal size
+    Then modal has minimum height constraint
+    And minimum height includes content display plus minimum display area
+    And faded shadow appears over text when content exceeds modal height
+    And soft-edge scrollbar appears when content overflows
+
+  Scenario: NAVX-09 plain markdown body + metadata separation
+    Given node document w/ content and metadata
+    When node renders
+    Then document body always displays as plain markdown
+    And metadata always stored in appropriate .whitt folder
+    And metadata not mixed w/ markdown content
+
+  Scenario: NAVX-10 ESC zoom out one level historical
+    Given usr zoomed into nested graph or group view
+    When usr presses ESC
+    Then canvas zooms out one level
+    And view shows historical parent level of graph
+    And current grouping contracts to smaller view

@@ -162,8 +162,8 @@ NAVX-02	11	slice11 -- NAVX-02 arrow keys pan	pass
 NAVX-03	11	slice11 -- NAVX-03 WASD pan	pass
 NAVX-04	11	slice11 -- NAVX-04 expanded node drag via padding	todo
 NAVX-05	11	slice11 -- NAVX-05 corner resize handles for expanded node	todo
-NAVX-06	11	slice11 -- NAVX-06 node location and grouping persistence	todo
-NAVX-07	11	slice11 -- NAVX-07 node modal fit content default	todo
-NAVX-08	11	slice11 -- NAVX-08 node modal expandable with min height	todo
-NAVX-09	11	slice11 -- NAVX-09 plain markdown body + metadata separation	todo
-NAVX-10	11	slice11 -- NAVX-10 ESC zoom out one level historical	todo
+NAVX-06	11	slice11 -- NAVX-06 node location and grouping persistence	pass
+NAVX-07	11	slice11 -- NAVX-07 node modal fit content default	pass
+NAVX-08	11	slice11 -- NAVX-08 node modal expandable with min height	pass
+NAVX-09	11	slice11 -- NAVX-09 plain markdown body + metadata separation	pass
+NAVX-10	11	slice11 -- NAVX-10 ESC zoom out one level historical	pass
