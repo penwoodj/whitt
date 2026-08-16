@@ -377,3 +377,33 @@ export const GRPX_02_LeftClickPanVsRightClickLasso: Story = {
     },
   },
 }
+
+export const GRPX_03_SelectionHaloIconOutsideBorder: Story = {
+  name: 'GRPX-03 selection halo + icon outside border',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Multi-select 3+ nodes, then right-click to create group. Selection halo border surrounds all selected nodes with dashed border. + icon appears in upper-right corner OUTSIDE of halo border on hover/click. Icon has blue border and white background.',
+      },
+    },
+  },
+}
+
+export const GRPX_04_PlusIconTooltipMenuActions: Story = {
+  name: 'GRPX-04 + icon tooltip menu actions',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hover or click the + icon on a group to see tooltip menu with actions. Menu includes "Make Folder" to promote group to hard, "Speak to Selected" for voice interaction, and other selection actions. Menu appears with smooth fade-in animation.',
+      },
+    },
+  },
+}

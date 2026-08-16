@@ -409,4 +409,201 @@ describe('CanvasOps - Drag Coherence', () => {
       })
     })
   })
+
+  describe('GRPX-03 selection halo + icon outside border', () => {
+    it('selection halo surrounds selected nodes', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      const nodeC = screen.getByTestId('node-node-c')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.click(nodeC, { ctrlKey: true })
+      
+      // Verify selection halo appears
+      await waitFor(() => {
+        const selectionHalo = screen.queryByTestId('selection-halo')
+        expect(selectionHalo).toBeInTheDocument()
+      })
+    })
+
+    it('+ icon appears outside halo border on hover', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      
+      // Hover over group box
+      await userEvent.hover(groupBox)
+      
+      // Verify + icon appears
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+    })
+
+    it('+ icon appears outside halo border on click', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      
+      // Click on group box
+      await userEvent.click(groupBox)
+      
+      // Verify + icon appears
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('GRPX-04 + icon tooltip menu actions', () => {
+    it('+ icon tooltip menu appears on hover', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      
+      // Hover over + icon
+      await userEvent.hover(makeFolderBtn)
+      
+      // Verify tooltip menu appears
+      await waitFor(() => {
+        const tooltipMenu = screen.queryByTestId('group-action-menu')
+        expect(tooltipMenu).toBeInTheDocument()
+      })
+    })
+
+    it('+ icon tooltip menu appears on click', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      
+      // Click on + icon
+      await userEvent.click(makeFolderBtn)
+      
+      // Verify tooltip menu appears
+      await waitFor(() => {
+        const tooltipMenu = screen.queryByTestId('group-action-menu')
+        expect(tooltipMenu).toBeInTheDocument()
+      })
+    })
+
+    it('menu includes Make Folder and Speak to Selected actions', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      // Verify menu items appear
+      await waitFor(() => {
+        const makeFolderMenuItem = screen.queryByTestId('menu-make-folder')
+        const speakToSelectedMenuItem = screen.queryByTestId('menu-speak-to-selected')
+        const otherActionMenuItem = screen.queryByTestId('menu-other-action')
+        
+        expect(makeFolderMenuItem).toBeInTheDocument()
+        expect(speakToSelectedMenuItem).toBeInTheDocument()
+        expect(otherActionMenuItem).toBeInTheDocument()
+      })
+    })
+  })
 })

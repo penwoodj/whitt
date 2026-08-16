@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 import type { Group } from './useGrouping'
 import type { Node as FlowNode } from '@xyflow/react'
@@ -74,6 +75,47 @@ const ExpansionSurface = styled.div`
   overflow: hidden;
 `
 
+const TooltipMenu = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  top: 20px;
+  right: -12px;
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 1000;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: opacity 150ms ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+`
+
+const MenuItem = styled.button`
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 150ms ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  &:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+  
+  &:last-child {
+    border-radius: 0 0 8px 8px;
+  }
+`
+
 export function GroupBox({
   group,
   memberNodes,
@@ -87,6 +129,26 @@ export function GroupBox({
   onPromoteToHard,
 }: GroupBoxProps) {
   const memberTitles = memberNodes.map(n => n.data.title as string)
+  const [showMenu, setShowMenu] = useState(false)
+  const [menuHovered, setMenuHovered] = useState(false)
+
+  const handleMakeFolderClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onPromoteToHard()
+    setShowMenu(false)
+  }
+
+  const handleSpeakToSelected = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    console.log('Speak to selected:', memberTitles)
+    setShowMenu(false)
+  }
+
+  const handleOtherAction = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    console.log('Other action')
+    setShowMenu(false)
+  }
 
   return (
     <GroupBoxContainer
@@ -120,7 +182,7 @@ export function GroupBox({
         </ExpansionSurface>
       ) : (
         <>
-          {isHovered && (
+          {isHovered && !showMenu && (
             <GroupTooltip data-testid="group-tooltip">
               <div>{memberNodes.length} nodes</div>
               <div>
@@ -130,18 +192,50 @@ export function GroupBox({
             </GroupTooltip>
           )}
           {group.groupType === 'soft' && (
-            <MakeFolderBtn
-              data-testid="make-folder-action"
-              type="button"
-              $isHovered={isHovered}
-              aria-label="Make Folder"
-              onClick={e => {
-                e.stopPropagation()
-                onPromoteToHard()
-              }}
-            >
-              +
-            </MakeFolderBtn>
+            <>
+              <MakeFolderBtn
+                data-testid="make-folder-action"
+                type="button"
+                $isHovered={isHovered || showMenu || menuHovered}
+                aria-label="Make Folder"
+                onClick={e => {
+                  e.stopPropagation()
+                  setShowMenu(!showMenu)
+                }}
+                onMouseEnter={() => setMenuHovered(true)}
+                onMouseLeave={() => setMenuHovered(false)}
+              >
+                +
+              </MakeFolderBtn>
+              <TooltipMenu
+                data-testid="group-action-menu"
+                $visible={showMenu || menuHovered}
+                onMouseEnter={() => setMenuHovered(true)}
+                onMouseLeave={() => {
+                  setMenuHovered(false)
+                  setShowMenu(false)
+                }}
+              >
+                <MenuItem
+                  data-testid="menu-make-folder"
+                  onClick={handleMakeFolderClick}
+                >
+                  Make Folder
+                </MenuItem>
+                <MenuItem
+                  data-testid="menu-speak-to-selected"
+                  onClick={handleSpeakToSelected}
+                >
+                  Speak to Selected
+                </MenuItem>
+                <MenuItem
+                  data-testid="menu-other-action"
+                  onClick={handleOtherAction}
+                >
+                  Other Action
+                </MenuItem>
+              </TooltipMenu>
+            </>
           )}
         </>
       )}
