@@ -31,3 +31,9 @@ export const isStepError = (evt: AgentEvt): evt is Extract<AgentEvt, { kind: 'st
 
 export const isGraphMutation = (evt: AgentEvt): evt is Extract<AgentEvt, { kind: 'graph-mutation' }> =>
   evt.kind === 'graph-mutation'
+
+export const isRunDone = (evt: AgentEvt): evt is Extract<AgentEvt, { kind: 'run-done' }> =>
+  evt.kind === 'run-done'
+
+export const isFileWrite = (evt: AgentEvt): evt is Extract<AgentEvt, { kind: 'file-write' }> =>
+  evt.kind === 'file-write'

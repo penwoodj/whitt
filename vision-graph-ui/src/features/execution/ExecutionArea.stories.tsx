@@ -4,7 +4,7 @@ import { ThemeProvider } from '../../shared/ThemeProvider'
 import { fn } from 'storybook/test'
 
 const meta = {
-  title: 'slice05 -- EXE-01 area present',
+  title: 'Features/Execution/ExecutionArea',
   component: ExecutionArea,
   decorators: [
     (Story) => (
@@ -28,7 +28,7 @@ steps:
     action: output`
 
 export const Exe01AreaPresent: Story = {
-  name: 'EXE-01 area present',
+  name: 'slice05 -- EXE-01 area present',
   args: {
     workflow: mockWorkflow,
     onExecute: fn(),
@@ -38,7 +38,7 @@ export const Exe01AreaPresent: Story = {
 }
 
 export const Exe02DblLeftExecutes: Story = {
-  name: 'EXE-02 dbl-left executes',
+  name: 'slice05 -- EXE-02 dbl-left executes',
   args: {
     workflow: mockWorkflow,
     onExecute: fn(),
@@ -48,41 +48,11 @@ export const Exe02DblLeftExecutes: Story = {
 }
 
 export const Exe03DblRightConfirms: Story = {
-  name: 'EXE-03 dbl-right confirms',
+  name: 'slice05 -- EXE-03 dbl-right confirms',
   args: {
     workflow: mockWorkflow,
     onExecute: fn(),
     status: 'idle',
     stepTitle: 'Confirm execution',
-  },
-}
-
-export const RunningState: Story = {
-  name: 'Running state',
-  args: {
-    workflow: mockWorkflow,
-    onExecute: fn(),
-    status: 'running',
-    stepTitle: 'Processing data',
-  },
-}
-
-export const DoneState: Story = {
-  name: 'Done state',
-  args: {
-    workflow: mockWorkflow,
-    onExecute: fn(),
-    status: 'done',
-    stepTitle: 'Workflow completed',
-  },
-}
-
-export const ErrorState: Story = {
-  name: 'Error state',
-  args: {
-    workflow: mockWorkflow,
-    onExecute: fn(),
-    status: 'error',
-    stepTitle: 'Execution failed',
   },
 }
