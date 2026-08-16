@@ -99,3 +99,11 @@ Feature: Viewport Navigation Zoom
     Then node moves w/ drag
     And all connections move w/ node
     And drag works same as non-expanded node drag
+
+  Scenario: NAVX-05 corner resize handles for expanded node
+    Given expanded node w/ rounded border
+    When usr hovers over corners of rounded border
+    Then resize handles appear at corners
+    When usr drags corner resize handle
+    Then expanded node size changes
+    And new size persists across loading sessions

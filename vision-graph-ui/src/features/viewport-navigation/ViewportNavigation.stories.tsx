@@ -231,3 +231,13 @@ export const NAVX04ExpandedNodeDragPadding: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAVX05CornerResizeHandles: Story = {
+  name: 'NAVX-05 corner resize handles for expanded node',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
