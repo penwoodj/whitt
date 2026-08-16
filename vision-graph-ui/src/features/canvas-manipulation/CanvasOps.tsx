@@ -1,10 +1,11 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import styled from 'styled-components'
 import { useGrouping } from './useGrouping'
 import { useLinkDrawing } from './useLinkDrawing'
 import { GroupBox } from './GroupBox'
 import { ConnectionLineComponent } from './ConnectionLine'
+import { EdgeWithDelete } from './EdgeWithDelete'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -58,12 +59,41 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const [nodes] = useState<FlowNode[]>(initialNodes)
   const [edges, setEdges] = useState<Edge[]>([])
   const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
+  const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null)
   const [lassoStart, setLassoStart] = useState<{ x: number; y: number } | null>(null)
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
   const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
 
   const groupingData = useGrouping(nodes)
   const linkDrawingData = useLinkDrawing(nodes, edges)
+
+  const handleEdgeDelete = useCallback((edgeId: string) => {
+    setEdges(prev => prev.filter(e => e.id !== edgeId))
+    setSelectedEdgeId(null)
+    setHoveredEdgeId(null)
+  }, [])
+
+  const isValidConnection = useCallback((connection: { source: string; target: string }) => {
+    if (connection.source === connection.target) return false
+    const existingEdge = edges.find(e => e.source === connection.source && e.target === connection.target)
+    return !existingEdge
+  }, [edges])
+
+  const onBeforeDelete = useCallback((edge: Edge) => {
+    return true
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedEdgeId) {
+        handleEdgeDelete(selectedEdgeId)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedEdgeId, handleEdgeDelete])
 
   const handleNodeClick = useCallback((nodeId: string, isCtrlClick: boolean = false) => {
     setSelectedNodeIds(prev => {
@@ -125,7 +155,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
         setEdges(prev => [...prev, newEdge])
       }
     }
-  }, [linkDrawingData])
+  }, [linkDrawingData, setEdges])
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
     if (linkDrawingData.connectionState.isDrawing && linkDrawingData.connectionState.sourceNodeId) {
@@ -291,40 +321,20 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
         if (!sourceNode || !targetNode) return null
 
         return (
-          <svg
+          <EdgeWithDelete
             key={edge.id}
-            data-testid={edge.id}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              pointerEvents: 'none',
-              zIndex: 0,
-            }}
-            aria-hidden="true"
-          >
-            <line
-              x1={sourceNode.position.x + 150}
-              y1={sourceNode.position.y + 25}
-              x2={targetNode.position.x}
-              y2={targetNode.position.y + 25}
-              stroke="#999"
-              strokeWidth={2}
-              markerEnd="url(#arrowhead)"
-            />
-          </svg>
+            edgeId={edge.id}
+            sourcePosition={{ x: sourceNode.position.x + 150, y: sourceNode.position.y + 25 }}
+            targetPosition={{ x: targetNode.position.x, y: targetNode.position.y + 25 }}
+            isHovered={hoveredEdgeId === edge.id}
+            isSelected={selectedEdgeId === edge.id}
+            onDelete={() => handleEdgeDelete(edge.id)}
+            onClick={() => setSelectedEdgeId(edge.id)}
+            onMouseEnter={() => setHoveredEdgeId(edge.id)}
+            onMouseLeave={() => setHoveredEdgeId(null)}
+          />
         )
       })}
-
-      <svg style={{ position: 'absolute', width: 0, height: 0' }} aria-hidden="true">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#999" />
-          </marker>
-        </defs>
-      </svg>
 
       <CanvasClickArea
         onClick={handleCanvasClick}

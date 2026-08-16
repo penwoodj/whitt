@@ -165,3 +165,23 @@ export const GRP_10_GroupNodeLike: Story = {
     },
   },
 }
+
+const mockEdgesWithConnection: Edge[] = [
+  { id: 'edge-a-b', source: 'node-a', target: 'node-b' },
+  { id: 'edge-b-c', source: 'node-b', target: 'node-c' },
+]
+
+export const GRPC_05_EdgeDelete: Story = {
+  name: 'GRPC-05 edge delete',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdgesWithConnection,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Hover over edge to see delete button (X) at midpoint. Click X to remove edge. Select edge and press Delete/Backspace to remove.',
+      },
+    },
+  },
+}
