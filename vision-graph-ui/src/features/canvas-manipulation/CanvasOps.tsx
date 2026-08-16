@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import styled from 'styled-components'
+import { useGrouping } from './useGrouping'
+import { GroupBox } from './GroupBox'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -42,6 +44,9 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
   const [lassoStart, setLassoStart] = useState<{ x: number; y: number } | null>(null)
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
+  const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
+
+  const groupingData = useGrouping(nodes)
 
   const handleNodeClick = useCallback((nodeId: string, isCtrlClick: boolean = false) => {
     setSelectedNodeIds(prev => {
@@ -58,20 +63,26 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
       }
       return next
     })
-  }, [])
+    groupingData.clearGroupSelection()
+  }, [groupingData])
 
   const handleCanvasClick = useCallback(() => {
     setSelectedNodeIds(new Set())
     setLassoStart(null)
     setLassoEnd(null)
-  }, [])
+    groupingData.clearGroupSelection()
+  }, [groupingData])
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 2) {
-      setLassoStart({ x: e.clientX, y: e.clientY })
-      setLassoEnd({ x: e.clientX, y: e.clientY })
+      if (selectedNodeIds.size >= 2) {
+        groupingData.createGroup(selectedNodeIds)
+      } else {
+        setLassoStart({ x: e.clientX, y: e.clientY })
+        setLassoEnd({ x: e.clientX, y: e.clientY })
+      }
     }
-  }, [])
+  }, [selectedNodeIds, groupingData])
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
     if (lassoStart) {
@@ -93,11 +104,12 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
       })
 
       setSelectedNodeIds(new Set(enclosedNodes.map(n => n.id)))
+      groupingData.clearGroupSelection()
     }
 
     setLassoStart(null)
     setLassoEnd(null)
-  }, [lassoStart, lassoEnd, nodes])
+  }, [lassoStart, lassoEnd, nodes, groupingData])
 
   const selectionBounds = selectedNodeIds.size > 0 ? (() => {
     const selectedNodes = nodes.filter(n => selectedNodeIds.has(n.id))
@@ -175,6 +187,21 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
           }}
         />
       )}
+
+      {groupingData.groups.map(group => (
+        <GroupBox
+          key={group.id}
+          group={group}
+          nodes={nodes.map(n => ({ id: n.id, data: { title: n.data.title as string } }))}
+          isSelected={groupingData.activeGroupIds.has(group.id)}
+          isHovered={hoveredGroupId === group.id}
+          onClick={() => groupingData.selectGroup(group.id)}
+          onRightClick={() => groupingData.removeGroup(group.id)}
+          onDoubleClick={() => groupingData.toggleGroupExpansion(group.id)}
+          onMouseEnter={() => setHoveredGroupId(group.id)}
+          onMouseLeave={() => setHoveredGroupId(null)}
+        />
+      ))}
 
       <CanvasClickArea
         onClick={handleCanvasClick}

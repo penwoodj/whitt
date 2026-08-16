@@ -120,3 +120,48 @@ export const GRPC_06_SelectionModel_Clear: Story = {
     },
   },
 }
+
+export const GRP_03_RightClickBox: Story = {
+  name: 'GRP-03 right-click box',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Multi-select 2+ nodes, then right-click on selection to create group box around selected nodes.',
+      },
+    },
+  },
+}
+
+export const GRP_09_GroupPromptContext: Story = {
+  name: 'GRP-09 group prompt context',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create a group, then hover over it to see STT tooltip at group side with member count and refs.',
+      },
+    },
+  },
+}
+
+export const GRP_10_GroupNodeLike: Story = {
+  name: 'GRP-10 group node-like',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Double-click on group box to open it as unit with expansion surface showing group contents.',
+      },
+    },
+  },
+}
