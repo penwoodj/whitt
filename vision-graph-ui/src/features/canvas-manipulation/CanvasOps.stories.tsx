@@ -287,3 +287,33 @@ export const GRPC_09_ReheatSettle: Story = {
     },
   },
 }
+
+export const GRPC_07_DeleteGuard: Story = {
+  name: 'GRPC-07 delete guard',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Select one or more nodes, then press Delete or Backspace. A confirmation dialog appears asking "Delete N nodes?". Click Cancel to keep nodes, or Delete to remove them.',
+      },
+    },
+  },
+}
+
+export const GRP_05_StandaloneNode: Story = {
+  name: 'GRP-05 standalone node',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click "+ New Node" button in top-right corner. A new unconnected node appears with title "New Node". It can be dragged freely and has no edges.',
+      },
+    },
+  },
+}

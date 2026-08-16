@@ -4,6 +4,167 @@ import userEvent from '@testing-library/user-event'
 import { CanvasOps } from './CanvasOps'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 
+describe('CanvasOps - Delete Guard', () => {
+  const mockNodes = [
+    { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
+    { id: 'node-b', position: { x: 300, y: 100 }, data: { title: 'Node B' } },
+    { id: 'node-c', position: { x: 500, y: 100 }, data: { title: 'Node C' } },
+  ]
+
+  const renderWithTheme = (component: React.ReactElement) => {
+    return render(
+      <ThemeProvider>
+        {component}
+      </ThemeProvider>
+    )
+  }
+
+  describe('GRPC-07 delete guard', () => {
+    it('shows confirm dialog when deleting 3 nodes', async () => {
+      renderWithTheme(
+        <CanvasOps initialNodes={mockNodes} />
+      )
+
+      const nodeA = screen.getByTestId('node-node-a')
+
+      await userEvent.click(nodeA)
+
+      fireEvent.keyDown(window, { key: 'Delete' })
+
+      await waitFor(() => {
+        const confirmDialog = screen.queryByText(/delete 1 node/i)
+        expect(confirmDialog).toBeInTheDocument()
+      })
+    })
+
+    it('keeps nodes after canceling delete', async () => {
+      renderWithTheme(
+        <CanvasOps initialNodes={mockNodes} />
+      )
+
+      const nodeA = screen.getByTestId('node-node-a')
+
+      await userEvent.click(nodeA)
+
+      fireEvent.keyDown(window, { key: 'Delete' })
+
+      const cancelButton = await screen.findByText(/cancel/i)
+      await userEvent.click(cancelButton)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('node-node-a')).toBeInTheDocument()
+      })
+    })
+
+    it('deletes nodes after confirming', async () => {
+      const twoNodes = [
+        { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
+        { id: 'node-b', position: { x: 300, y: 100 }, data: { title: 'Node B' } },
+      ]
+
+      renderWithTheme(
+        <CanvasOps initialNodes={twoNodes} />
+      )
+
+      const nodeA = screen.getByTestId('node-node-a')
+
+      await userEvent.click(nodeA)
+
+      fireEvent.keyDown(window, { key: 'Delete' })
+
+      const confirmButton = await screen.findByTestId('delete-confirm-btn')
+      await userEvent.click(confirmButton)
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('node-node-a')).not.toBeInTheDocument()
+      })
+    })
+  })
+})
+
+describe('CanvasOps - Standalone Node', () => {
+  const existingNodes = [
+    { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
+  ]
+
+  const renderWithTheme = (component: React.ReactElement) => {
+    return render(
+      <ThemeProvider>
+        {component}
+      </ThemeProvider>
+    )
+  }
+
+  describe('GRP-05 standalone node', () => {
+    it('creates unconnected node with default title', async () => {
+      renderWithTheme(
+        <CanvasOps initialNodes={existingNodes} />
+      )
+
+      const createNodeAction = screen.queryByTestId('create-node-action')
+      if (createNodeAction) {
+        await userEvent.click(createNodeAction)
+      }
+
+      await waitFor(() => {
+        const newNodes = screen.getAllByTestId(/node-/)
+        expect(newNodes.length).toBeGreaterThan(1)
+
+        const standaloneNode = newNodes.find(n => n.textContent === 'New Node')
+        expect(standaloneNode).toBeInTheDocument()
+      })
+    })
+
+    it('standalone node has no edges', async () => {
+      renderWithTheme(
+        <CanvasOps initialNodes={existingNodes} />
+      )
+
+      const createNodeAction = screen.queryByTestId('create-node-action')
+      if (createNodeAction) {
+        await userEvent.click(createNodeAction)
+      }
+
+      await waitFor(() => {
+        const edges = screen.queryAllByTestId(/edge-/)
+        expect(edges.length).toBe(0)
+      })
+    })
+
+    it('standalone node can be dragged freely', async () => {
+      renderWithTheme(
+        <CanvasOps initialNodes={existingNodes} />
+      )
+
+      const createNodeAction = screen.queryByTestId('create-node-action')
+      if (createNodeAction) {
+        await userEvent.click(createNodeAction)
+      }
+
+      await waitFor(() => {
+        const newNodes = screen.getAllByTestId(/node-/)
+        const standaloneNode = newNodes.find(n => n.textContent === 'New Node')
+        expect(standaloneNode).toBeInTheDocument()
+      })
+
+      const newNodes = screen.getAllByTestId(/node-/)
+      const standaloneNode = newNodes.find(n => n.textContent === 'New Node')
+
+      if (standaloneNode) {
+        await userEvent.pointer([
+          { keys: '[MouseLeft]', target: standaloneNode },
+          { coords: { x: 200, y: 200 } },
+          { keys: '[/MouseLeft]' },
+        ])
+
+        await waitFor(() => {
+          expect(standaloneNode).toBeInTheDocument()
+        })
+      }
+    })
+  })
+})
+
 describe('CanvasOps - Drag Coherence', () => {
   const mockNodes = [
     { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },

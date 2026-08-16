@@ -80,6 +80,15 @@ export function useGrouping(nodes: FlowNode[]) {
     return groups.filter(g => g.memberIds.has(nodeId))
   }, [groups])
 
+  const createStandaloneNode = useCallback(() => {
+    const newNodeId = `node-${Date.now()}`
+    return {
+      id: newNodeId,
+      position: { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
+      data: { title: 'New Node' }
+    }
+  }, [])
+
   const groupData = useMemo(() => ({
     groups,
     activeGroupIds,
@@ -90,6 +99,7 @@ export function useGrouping(nodes: FlowNode[]) {
     clearGroupSelection,
     getGroupById,
     getGroupsForNode,
+    createStandaloneNode,
   }), [
     groups,
     activeGroupIds,
@@ -100,6 +110,7 @@ export function useGrouping(nodes: FlowNode[]) {
     clearGroupSelection,
     getGroupById,
     getGroupsForNode,
+    createStandaloneNode,
   ])
 
   return groupData

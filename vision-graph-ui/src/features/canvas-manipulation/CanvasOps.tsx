@@ -65,6 +65,10 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
   const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    show: boolean
+    nodeIds: string[]
+  }>({ show: false, nodeIds: [] })
 
   const [dragState, setDragState] = useState<{
     isDragging: boolean
@@ -85,16 +89,33 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const groupingData = useGrouping(nodes)
   const linkDrawingData = useLinkDrawing(nodes, edges)
 
+  const handleCreateNode = useCallback(() => {
+    const newNode = groupingData.createStandaloneNode()
+    setNodes(prev => [...prev, newNode])
+  }, [groupingData])
+
   const handleEdgeDelete = useCallback((edgeId: string) => {
     setEdges(prev => prev.filter(e => e.id !== edgeId))
     setSelectedEdgeId(null)
     setHoveredEdgeId(null)
-  }, [setEdges])
+  }, [])
+
+  const handleConfirmDelete = useCallback(() => {
+    setNodes(prev => prev.filter(n => !deleteConfirm.nodeIds.includes(n.id)))
+    setDeleteConfirm({ show: false, nodeIds: [] })
+    setSelectedNodeIds(new Set())
+  }, [deleteConfirm.nodeIds])
+
+  const handleCancelDelete = useCallback(() => {
+    setDeleteConfirm({ show: false, nodeIds: [] })
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedEdgeId) {
         handleEdgeDelete(selectedEdgeId)
+      } else if ((e.key === 'Delete' || e.key === 'Backspace') && selectedNodeIds.size > 0 && !deleteConfirm.show) {
+        setDeleteConfirm({ show: true, nodeIds: Array.from(selectedNodeIds) })
       }
 
       if (e.key === 'Escape' && dragState.isDragging) {
@@ -142,7 +163,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
       window.removeEventListener('keyup', handleKeyUp)
       document.body.removeAttribute('data-control-pressed')
     }
-  }, [selectedEdgeId, handleEdgeDelete, dragState, linkDrawingData])
+  }, [selectedEdgeId, handleEdgeDelete, selectedNodeIds, deleteConfirm.show, dragState, linkDrawingData, setNodes])
 
   const handleNodeClick = useCallback((nodeId: string, isCtrlClick: boolean = false) => {
     setSelectedNodeIds(prev => {
@@ -347,6 +368,24 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
       onMouseUp={handleCanvasMouseUp}
       onContextMenu={(e) => e.preventDefault()}
     >
+      <button
+        data-testid="create-node-action"
+        onClick={handleCreateNode}
+        type="button"
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          padding: '8px 16px',
+          borderRadius: '4px',
+          border: '1px solid #ccc',
+          background: 'white',
+          cursor: 'pointer',
+          zIndex: 100
+        }}
+      >
+        + New Node
+      </button>
       {nodes.map(node => (
         <NodeWrapper
           key={node.id}
@@ -453,6 +492,59 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
         tabIndex={0}
         aria-label="Clear selection"
       />
+
+      {deleteConfirm.show && (
+        <div
+          data-testid="delete-confirm-dialog"
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            zIndex: 1000,
+            minWidth: '300px'
+          }}
+        >
+          <h3 data-testid="delete-confirm-title">
+            Delete {deleteConfirm.nodeIds.length} {deleteConfirm.nodeIds.length === 1 ? 'node' : 'nodes'}?
+          </h3>
+          <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <button
+              data-testid="delete-cancel-btn"
+              onClick={handleCancelDelete}
+              type="button"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                background: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              data-testid="delete-confirm-btn"
+              onClick={handleConfirmDelete}
+              type="button"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: 'none',
+                background: '#dc3545',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     </CanvasContainer>
   )
 }
