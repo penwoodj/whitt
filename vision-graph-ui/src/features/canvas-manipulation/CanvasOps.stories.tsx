@@ -185,3 +185,83 @@ export const GRPC_05_EdgeDelete: Story = {
     },
   },
 }
+
+const mockNodesWithEdges: FlowNode[] = [
+  { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
+  { id: 'node-b', position: { x: 300, y: 100 }, data: { title: 'Node B' } },
+]
+
+const mockEdgesSingle: Edge[] = [
+  { id: 'edge-a-b', source: 'node-a', target: 'node-b' },
+]
+
+export const GRP_04_ConnectedPull: Story = {
+  name: 'GRP-04 connected pull',
+  args: {
+    initialNodes: mockNodesWithEdges,
+    initialEdges: mockEdgesSingle,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Node A connected to Node B via edge. Drag Node A and observe Node B following the movement. Edge stays connected.',
+      },
+    },
+  },
+}
+
+export const GRPC_01_ClickVsDrag: Story = {
+  name: 'GRPC-01 click vs drag',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click node without moving mouse: node becomes selected, position unchanged. Drag node >4px: node moves to new position, not selected.',
+      },
+    },
+  },
+}
+
+export const GRPC_02_EscCancelsDrag: Story = {
+  name: 'GRPC-02 esc cancels drag',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Start dragging node, then press ESC. Drag operation cancelled, node returns to original position.',
+      },
+    },
+  },
+}
+
+const mockNodesMulti: FlowNode[] = [
+  { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
+  { id: 'node-b', position: { x: 300, y: 100 }, data: { title: 'Node B' } },
+  { id: 'node-c', position: { x: 200, y: 250 }, data: { title: 'Node C' } },
+]
+
+const mockEdgesMulti: Edge[] = [
+  { id: 'edge-a-b', source: 'node-a', target: 'node-b' },
+  { id: 'edge-b-c', source: 'node-b', target: 'node-c' },
+]
+
+export const GRPC_08_MultiDragCoherence: Story = {
+  name: 'GRPC-08 multi-drag coherence',
+  args: {
+    initialNodes: mockNodesMulti,
+    initialEdges: mockEdgesMulti,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Multi-select nodes A, B, C. Drag any selected node and observe all selected nodes moving together. Relative positions preserved.',
+      },
+    },
+  },
+}
