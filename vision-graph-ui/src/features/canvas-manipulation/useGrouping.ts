@@ -17,6 +17,7 @@ export type Group = {
   memberIds: Set<string>
   bounds: { left: number; top: number; width: number; height: number }
   isExpanded: boolean
+  isFocused: boolean
   groupType: GroupType
 }
 
@@ -43,6 +44,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     memberIds: new Set(data.memberIds),
     bounds: data.bounds,
     isExpanded: data.isExpanded,
+    isFocused: data.isFocused || false,
     groupType: data.groupType
   }), [])
 
@@ -136,6 +138,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
       memberIds: new Set(selectedNodeIds),
       bounds,
       isExpanded: false,
+      isFocused: false,
       groupType: 'soft',
     }
 
@@ -168,6 +171,19 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
       }
       return next
     })
+  }, [])
+
+  const focusGroup = useCallback((groupId: string) => {
+    setGroups(prev => prev.map(g =>
+      g.id === groupId ? { ...g, isFocused: true, isExpanded: true } : { ...g, isFocused: false }
+    ))
+    setActiveGroupIds(new Set([groupId]))
+  }, [])
+
+  const unfocusGroup = useCallback((groupId: string) => {
+    setGroups(prev => prev.map(g =>
+      g.id === groupId ? { ...g, isFocused: false, isExpanded: false } : g
+    ))
   }, [])
 
   const clearGroupSelection = useCallback(() => {
@@ -241,6 +257,8 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     getGroupsForNode,
     createStandaloneNode,
     promoteToHard,
+    focusGroup,
+    unfocusGroup,
   }), [
     groups,
     activeGroupIds,
@@ -254,6 +272,8 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     getGroupsForNode,
     createStandaloneNode,
     promoteToHard,
+    focusGroup,
+    unfocusGroup,
   ])
 
   return groupData

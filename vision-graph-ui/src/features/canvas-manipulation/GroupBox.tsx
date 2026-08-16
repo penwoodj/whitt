@@ -14,6 +14,8 @@ type GroupBoxProps = {
   onMouseEnter: () => void
   onMouseLeave: () => void
   onPromoteToHard: () => void
+  onFocus?: () => void
+  onUnfocus?: () => void
 }
 
 const GroupBoxContainer = styled.div<{
@@ -116,6 +118,34 @@ const MenuItem = styled.button`
   }
 `
 
+const MiniWindow = styled.div<{ $isFocused: boolean }>`
+  position: absolute;
+  inset: 8px;
+  background: rgba(30, 30, 30, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  display: ${props => (props.$isFocused ? 'none' : 'block')};
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.3) 0%, transparent 70%);
+  }
+`
+
+const MiniNode = styled.div`
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+`
+
 export function GroupBox({
   group,
   memberNodes,
@@ -127,6 +157,8 @@ export function GroupBox({
   onMouseEnter,
   onMouseLeave,
   onPromoteToHard,
+  onFocus,
+  onUnfocus,
 }: GroupBoxProps) {
   const memberTitles = memberNodes.map(n => n.data.title as string)
   const [showMenu, setShowMenu] = useState(false)
@@ -140,6 +172,9 @@ export function GroupBox({
 
   const handleSpeakToSelected = (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (onFocus) {
+      onFocus()
+    }
     console.log('Speak to selected:', memberTitles)
     setShowMenu(false)
   }
@@ -150,10 +185,18 @@ export function GroupBox({
     setShowMenu(false)
   }
 
+  const handleGroupBoxClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!showMenu && !menuHovered) {
+      onClick()
+    }
+  }
+
   return (
     <GroupBoxContainer
       data-testid="group-box"
       data-group-type={group.groupType}
+      data-focused={group.isFocused}
       style={{
         left: group.bounds.left,
         top: group.bounds.top,
@@ -162,24 +205,57 @@ export function GroupBox({
       }}
       $groupType={group.groupType}
       $isSelected={isSelected}
-      onClick={onClick}
+      onClick={handleGroupBoxClick}
       onContextMenu={e => {
         e.preventDefault()
         onRightClick()
       }}
-      onDoubleClick={onDoubleClick}
+      onDoubleClick={e => {
+        e.stopPropagation()
+        onDoubleClick()
+        if (onFocus) onFocus()
+      }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       role="button"
       tabIndex={0}
       aria-label={`Group with ${memberNodes.length} nodes`}
     >
-      {group.isExpanded ? (
-        <ExpansionSurface data-testid="group-expansion-surface">
-          {memberTitles.map(title => (
-            <div key={title}>{title}</div>
-          ))}
-        </ExpansionSurface>
+      {group.isFocused ? (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(30, 30, 30, 0.95)',
+          borderRadius: '12px',
+          padding: '16px',
+          color: '#fff',
+          overflow: 'auto',
+          border: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
+          <h4 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>Group Details</h4>
+          <div style={{ marginBottom: '16px' }}>
+            <strong>Full Graph View:</strong>
+            <div style={{ 
+              marginTop: '8px', 
+              minHeight: '100px', 
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '6px',
+              padding: '12px',
+              textAlign: 'center',
+              color: 'rgba(255, 255, 255, 0.5)'
+            }}>
+              {memberTitles.length} nodes
+            </div>
+          </div>
+          <div>
+            <strong>Members:</strong>
+            <ul style={{ marginTop: '8px', paddingLeft: '20px', margin: 0 }}>
+              {memberTitles.map(title => (
+                <li key={title}>{title}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       ) : (
         <>
           {isHovered && !showMenu && (
@@ -190,6 +266,21 @@ export function GroupBox({
                 {memberTitles.length > 3 && '...'}
               </div>
             </GroupTooltip>
+          )}
+          {!group.isFocused && (
+            <MiniWindow $isFocused={group.isFocused} data-testid="mini-window">
+              {memberTitles.slice(0, 4).map((title, i) => (
+                <MiniNode
+                  key={title}
+                  style={{
+                    left: `${20 + (i % 2) * 40}%`,
+                    top: `${20 + Math.floor(i / 2) * 40}%`
+                  }}
+                >
+                  {title.substring(0, 10)}...
+                </MiniNode>
+              ))}
+            </MiniWindow>
           )}
           {group.groupType === 'soft' && (
             <>

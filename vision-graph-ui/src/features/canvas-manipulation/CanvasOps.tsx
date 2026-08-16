@@ -6,6 +6,7 @@ import { useLinkDrawing } from './useLinkDrawing'
 import { GroupBox } from './GroupBox'
 import { ConnectionLineComponent } from './ConnectionLine'
 import { EdgeWithDelete } from './EdgeWithDelete'
+import { GroupDetailPanel } from './GroupDetailPanel'
 import type { FsPort } from '../../shared/fs/FsPort'
 
 const CanvasContainer = styled.div`
@@ -74,6 +75,7 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
     isPanning: false,
     panStart: { x: 0, y: 0 }
   })
+  const [focusedGroupId, setFocusedGroupId] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{
     show: boolean
     nodeIds: string[]
@@ -108,6 +110,18 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
       },
     ])
   }, [groupingData])
+
+  const handleFocusGroup = useCallback((groupId: string) => {
+    setFocusedGroupId(groupId)
+    groupingData.focusGroup(groupId)
+  }, [groupingData])
+
+  const handleUnfocusGroup = useCallback(() => {
+    if (focusedGroupId) {
+      groupingData.unfocusGroup(focusedGroupId)
+      setFocusedGroupId(null)
+    }
+  }, [focusedGroupId, groupingData])
   const linkDrawingData = useLinkDrawing(nodes, edges)
 
   const handleCreateNode = useCallback(() => {
@@ -501,6 +515,8 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           onMouseEnter={() => setHoveredGroupId(group.id)}
           onMouseLeave={() => setHoveredGroupId(null)}
           onPromoteToHard={() => handlePromoteToHard(group)}
+          onFocus={() => handleFocusGroup(group.id)}
+          onUnfocus={handleUnfocusGroup}
         />
       ))}
 
@@ -596,6 +612,22 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           </div>
         </div>
       )}
+
+      {focusedGroupId && (() => {
+        const focusedGroup = groupingData.groups.find(g => g.id === focusedGroupId)
+        const memberNodes = nodes.filter(n => focusedGroup?.memberIds.has(n.id))
+        if (focusedGroup && memberNodes.length > 0) {
+          return (
+            <GroupDetailPanel
+              key={focusedGroupId}
+              group={focusedGroup}
+              memberNodes={memberNodes}
+              onClose={handleUnfocusGroup}
+            />
+          )
+        }
+        return null
+      })()}
     </CanvasContainer>
   )
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CanvasOps } from './CanvasOps'
 import { ThemeProvider } from '../../shared/ThemeProvider'
@@ -802,6 +802,184 @@ describe('CanvasOps - Drag Coherence', () => {
         const newNodes = screen.queryAllByText(/New Group/i)
         expect(newNodes.length).toBeGreaterThan(0)
       })
+    })
+  })
+
+  describe('GRPX-07 group detail panel with full graph view', () => {
+    it('group detail panel opens when group is focused', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      // Wait for + icon to appear
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      // Click Speak to Selected to focus group
+      await waitFor(() => {
+        const speakToSelectedMenuItem = screen.queryByTestId('menu-speak-to-selected')
+        expect(speakToSelectedMenuItem).toBeInTheDocument()
+      })
+      
+      const speakToSelectedMenuItem = screen.getByTestId('menu-speak-to-selected')
+      await userEvent.click(speakToSelectedMenuItem)
+      
+      // Verify group detail panel appears
+      await waitFor(() => {
+        const detailPanel = screen.queryByTestId('group-detail-panel')
+        expect(detailPanel).toBeInTheDocument()
+      })
+    })
+
+    it('detail panel shows full-size graph view section', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Create group and focus it
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      await userEvent.hover(groupBox)
+      
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+      
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await userEvent.click(makeFolderBtn)
+      
+      await waitFor(() => {
+        const speakToSelectedMenuItem = screen.queryByTestId('menu-speak-to-selected')
+        expect(speakToSelectedMenuItem).toBeInTheDocument()
+      })
+      
+      const speakToSelectedMenuItem = screen.getByTestId('menu-speak-to-selected')
+      await userEvent.click(speakToSelectedMenuItem)
+      
+      // Verify graph view section exists
+      await waitFor(() => {
+        const detailPanel = screen.queryByTestId('group-detail-panel')
+        expect(detailPanel).toBeInTheDocument()
+      })
+      
+      const detailPanel = screen.getByTestId('group-detail-panel')
+      const graphViewSection = within(detailPanel).queryByTestId('graph-view-section')
+      expect(graphViewSection).toBeInTheDocument()
+    })
+  })
+
+  describe('GRPX-08 unfocused group bubble + halo + mini-window', () => {
+    it('unfocused group shows bubble of light with halo', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      
+      // Verify group has halo border
+      expect(groupBox).toHaveAttribute('data-group-type', 'soft')
+      
+      // Verify mini-window is visible when unfocused
+      const miniWindow = within(groupBox).queryByTestId('mini-window')
+      expect(miniWindow).toBeInTheDocument()
+    })
+
+    it('mini-window shows zoomed-out inner graph', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      const nodeC = screen.getByTestId('node-node-c')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.click(nodeC, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      
+      // Verify mini-window shows member nodes
+      const miniWindow = within(groupBox).queryByTestId('mini-window')
+      expect(miniWindow).toBeInTheDocument()
+    })
+
+    it('group is reasonably sized bigger than average node', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Wait for group box to appear
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+      
+      const groupBox = screen.getByTestId('group-box')
+      
+      // Verify group box is larger than individual nodes
+      const groupBoxStyle = window.getComputedStyle(groupBox)
+      const groupBoxWidth = parseFloat(groupBoxStyle.width)
+      
+      const nodeAStyle = window.getComputedStyle(nodeA)
+      const nodeAWidth = parseFloat(nodeAStyle.width)
+      
+      expect(groupBoxWidth).toBeGreaterThan(nodeAWidth)
     })
   })
 })

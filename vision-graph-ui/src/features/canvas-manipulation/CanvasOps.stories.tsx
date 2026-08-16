@@ -437,3 +437,33 @@ export const GRPX_06_MakeFolderFileSystemAction: Story = {
     },
   },
 }
+
+export const GRPX_07_GroupDetailPanelWithFullGraphView: Story = {
+  name: 'GRPX-07 group detail panel with full graph view',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group, hover to show + icon, click menu, select "Speak to Selected". Group detail panel opens with first section = full-size graph view of group contents. Member nodes and edges visible in full-size graph. Panel shows member list below.',
+      },
+    },
+  },
+}
+
+export const GRPX_08_UnfocusedGroupBubbleHaloMiniWindow: Story = {
+  name: 'GRPX-08 unfocused group bubble + halo + mini-window',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group, then unfocus it (click outside). Group appears as bubble of light with group halo border surrounding it. Inner graph displays zoomed-out view inside node in mini-window. Node is reasonably sized (bigger than average node) but shows subgraph of information.',
+      },
+    },
+  },
+}
