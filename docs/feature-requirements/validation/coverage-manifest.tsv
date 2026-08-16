@@ -61,25 +61,25 @@ EXPC-01	04	slice04 -- EXPC-01 single modal	pass
 EXPC-02	04	slice04 -- EXPC-02 size caps	pass
 EXPC-03	04	slice04 -- EXPC-03 esc precedence	pass
 EXPC-04	04	slice04 -- EXPC-04 origin transition	pass
-EXE-01	05	-	todo
-EXE-02	05	-	todo
-EXE-03	05	-	todo
-EXE-04	05	-	todo
-EXE-05	05	-	todo
-EXE-06	05	-	todo
-EXE-07	05	-	todo
-EXE-08	05	-	todo
-EXE-09	05	-	todo
-EXE-10	05	-	todo
-EXE-13	05	-	todo
-EXE-15	05	-	todo
-EXE-16	05	-	todo
-EXE-17	05	-	todo
-EXEC-01	05	-	todo
-EXEC-02	05	-	todo
-EXEC-03	05	-	todo
-EXEC-04	05	-	todo
-EXEC-05	05	-	todo
+EXE-01	05	slice05 -- EXE-01 area present	pass
+EXE-02	05	slice05 -- EXE-02 dbl-left executes	pass
+EXE-03	05	slice05 -- EXE-03 dbl-right confirms	pass
+EXE-04	05	slice05 -- EXE-04 hover yaml tooltip	pass
+EXE-05	05	slice05 -- EXE-05 tooltip pins	pass
+EXE-06	05	slice05 -- EXE-06 yaml visualizer	pass
+EXE-07	05	slice05 -- EXE-07 colored expandable	pass
+EXE-08	05	slice05 -- EXE-08 dense padding	pass
+EXE-09	05	slice05 -- EXE-09 status card minimal	pass
+EXE-10	05	slice05 -- EXE-10 hover affordance	pass
+EXE-13	05	slice05 -- EXE-13 only text+loader	pass
+EXE-15	05	slice05 -- EXE-15 step title changes	pass
+EXE-16	05	slice05 -- EXE-16 panel live	pass
+EXE-17	05	slice05 -- EXE-17 file preview on create	pass
+EXEC-01	05	slice05 -- EXEC-01 confirm shows yaml	pass
+EXEC-02	05	slice05 -- EXEC-02 title truncates	pass
+EXEC-03	05	slice05 -- EXEC-03 yaml failure	pass
+EXEC-04	05	slice05 -- EXEC-04 step error	pass
+EXEC-05	05	slice05 -- EXEC-05 completion	pass
 AGT-01	06	-	todo
 AGT-02	06	-	todo
 AGT-03	06	-	todo

@@ -175,11 +175,9 @@ export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPane
   const status = stepErrorEvent ? 'error' : runDoneEvent?.status === 'done' ? 'done' : (latestStatus?.kind === 'run-start' || stepStartEvent) ? 'running' : 'idle'
   const stepTitle = stepErrorEvent
     ? `Error: ${stepErrorEvent?.stepId}`
-    : stepStartEvent?.title
-    ? stepStartEvent.title
     : runDoneEvent?.status === 'done'
     ? 'Completed'
-    : 'Ready'
+    : stepStartEvent?.title ?? 'Ready'
 
   const handleMouseEnter = () => {
     if (!pinned) {

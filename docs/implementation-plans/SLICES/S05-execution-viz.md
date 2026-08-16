@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/05-execution-viz.md` (cases: EXE-01..17, EXEC-01..05)
 > Validation spec: `docs/feature-requirements/validation/slice-05.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-15). Commits 9e13c31, a4064d1, 17e774a, ec7680d, ce08c7f, b36ca07 (run-done busy-set fix), S05-6/7 (ExecutionPanel + story renames + orchestrator red-test fixes). Gate: scoped execution 65/65 green (8 files); full suite 427 pass / 5 fail = exact baseline (GraphSim act ×3, Node ×1, NodeDetailPanel ×1); tsc 0; SB build 0; 20/20 `slice05 -- ` stories (CSF3 name field). Two delegate prompt-deaths recovered by orchestrator; naming drift (PascalCase exports w/o names) fixed in S05-6/7.
 > Depends on: E2-agent-runtime-bridge
 
 ## 1. Objective

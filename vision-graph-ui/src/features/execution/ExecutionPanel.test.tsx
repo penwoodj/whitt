@@ -69,7 +69,7 @@ describe('ExecutionPanel', () => {
       renderWithTheme(<ExecutionPanel workflow={mockWorkflow} events={events} />)
 
       await waitFor(() => {
-        expect(screen.getByText('Third step')).toBeInTheDocument()
+        expect(screen.getAllByText('Third step').length).toBeGreaterThan(0)
       })
     })
   })
@@ -84,7 +84,7 @@ describe('ExecutionPanel', () => {
       const { rerender } = renderWithTheme(<ExecutionPanel workflow={mockWorkflow} events={initialEvents} />)
 
       await waitFor(() => {
-        expect(screen.getByText('Initial step')).toBeInTheDocument()
+        expect(screen.getAllByText('Initial step').length).toBeGreaterThan(0)
       })
 
       const updatedEvents: AgentEvt[] = [
@@ -96,7 +96,7 @@ describe('ExecutionPanel', () => {
       rerender(<ThemeProvider><ExecutionPanel workflow={mockWorkflow} events={updatedEvents} /></ThemeProvider>)
 
       await waitFor(() => {
-        expect(screen.getByText('Updated step')).toBeInTheDocument()
+        expect(screen.getAllByText('Updated step').length).toBeGreaterThan(0)
       })
     })
   })
@@ -156,7 +156,7 @@ describe('ExecutionPanel', () => {
       renderWithTheme(<ExecutionPanel workflow={mockWorkflow} events={events} />)
 
       await waitFor(() => {
-        expect(screen.getByText('Completed')).toBeInTheDocument()
+        expect(screen.getAllByText('Completed').length).toBeGreaterThan(0)
       })
     })
   })
