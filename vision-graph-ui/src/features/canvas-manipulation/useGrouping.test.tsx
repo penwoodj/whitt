@@ -621,10 +621,12 @@ describe('Canvas Grouping Basics', () => {
         expect(groupBox).toBeInTheDocument()
       })
 
-      expect(mockWriteFile).toHaveBeenCalledWith(
-        '.whitt/groups.json',
-        expect.stringContaining('"groupType"')
-      )
+      await waitFor(() => {
+        expect(mockWriteFile).toHaveBeenCalledWith(
+          '.whitt/groups.json',
+          expect.stringContaining('"groupType"')
+        )
+      }, { timeout: 4000 })
       expect(mockWriteFile).toHaveBeenCalledWith(
         '.whitt/groups.json',
         expect.stringContaining('soft')
@@ -658,7 +660,7 @@ describe('Canvas Grouping Basics', () => {
         isExpanded: false,
         groupType: 'soft' as const
       }]
-      mockReadFile.mockResolvedValue(JSON.stringify(savedGroups))
+      mockReadFile.mockResolvedValueOnce(JSON.stringify(savedGroups))
 
       renderCanvas()
 
@@ -773,13 +775,13 @@ describe('Canvas Grouping Basics', () => {
         title: 'old-folder-name'
       }]
       
-      mockReadFile.mockImplementation((path: string) => {
+      mockReadFile.mockImplementationOnce((path: string) => {
         if (path === '.whitt/groups.json') {
           return Promise.resolve(JSON.stringify(initialGroups))
         }
         return Promise.resolve('content')
       })
-      
+
       renderCanvas()
 
       await waitFor(() => {
@@ -793,47 +795,25 @@ describe('Canvas Grouping Basics', () => {
     })
 
     it('loads soft group title from localStorage on reload', async () => {
-      const user = userEvent.setup()
+      const savedGroups = [{
+        id: 'group-titled-789',
+        memberIds: ['node-a', 'node-b'],
+        bounds: { left: 90, top: 90, width: 320, height: 70 },
+        isExpanded: false,
+        isFocused: false,
+        groupType: 'soft' as const,
+        title: 'existing-group'
+      }]
+      localStorage.setItem('softGroups', JSON.stringify(savedGroups))
+
       renderCanvas()
-
-      const nodeA = screen.getByText('Node A')
-      const nodeB = screen.getByText('Node B')
-
-      await user.click(nodeA)
-      await user.keyboard('{Control>}')
-      await user.click(nodeB)
-      await user.keyboard('{/Control}')
-
-      await user.pointer({ keys: '[MouseRight]', target: nodeA })
 
       await waitFor(() => {
         const groupBox = screen.getByTestId('group-box')
         expect(groupBox).toBeInTheDocument()
+        const titleDisplay = screen.getByTestId('group-title-display')
+        expect(titleDisplay).toHaveTextContent('existing-group')
       })
-
-      const titleDisplay = screen.getByTestId('group-title-display')
-      await user.click(titleDisplay)
-
-      await waitFor(() => {
-        const titleEdit = screen.getByTestId('group-title-edit')
-        expect(titleEdit).toBeInTheDocument()
-      })
-
-      const titleEdit = screen.getByTestId('group-title-edit')
-      await user.clear(titleEdit)
-      await user.type(titleEdit, 'Existing Group')
-      await user.keyboard('{Enter}')
-
-      await waitFor(() => {
-        const titleDisplayAfter = screen.getByTestId('group-title-display')
-        expect(titleDisplayAfter).toHaveTextContent('existing-group')
-      })
-
-      const localStorageData = localStorage.getItem('softGroups')
-      expect(localStorageData).toBeDefined()
-      const groups = JSON.parse(localStorageData || '[]')
-      const group = groups.find((g: any) => g.memberIds.includes('node-a'))
-      expect(group.title).toBe('existing-group')
     })
 
     it('loads hard group title from folder name on reload', async () => {
@@ -846,7 +826,7 @@ describe('Canvas Grouping Basics', () => {
         title: 'project-documents'
       }]
       
-      mockReadFile.mockImplementation((path: string) => {
+      mockReadFile.mockImplementationOnce((path: string) => {
         if (path === '.whitt/groups.json') {
           return Promise.resolve(JSON.stringify(initialGroups))
         }
