@@ -226,7 +226,7 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   }, [groupingData, linkDrawingData])
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 0) {
+    if (e.button === 0 && e.target === e.currentTarget) {
       setPanState(prev => ({
         ...prev,
         isPanning: true,
@@ -453,7 +453,9 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           $isConnectionTarget={linkDrawingData.connectionState.targetNodeId === node.id && linkDrawingData.connectionState.isValid}
           style={{
             left: node.position.x,
-            top: node.position.y
+            top: node.position.y,
+            width: 160,
+            height: 40
           }}
           onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
           onMouseUp={handleNodeMouseUp}
@@ -516,7 +518,6 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           onMouseLeave={() => setHoveredGroupId(null)}
           onPromoteToHard={() => handlePromoteToHard(group)}
           onFocus={() => handleFocusGroup(group.id)}
-          onUnfocus={handleUnfocusGroup}
         />
       ))}
 

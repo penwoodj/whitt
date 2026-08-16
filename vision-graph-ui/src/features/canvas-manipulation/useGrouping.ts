@@ -92,17 +92,16 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   }, [fsPort, deserializeGroup])
 
   useEffect(() => {
-    const softGroups = groups.filter(g => g.groupType === 'soft')
-    if (softGroups.length === 0) return
+    if (groups.length === 0) return
 
     try {
-      const serializedGroups = softGroups.map(serializeGroup)
+      const serializedGroups = groups.map(serializeGroup)
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializedGroups))
     } catch {}
 
     if (fsPort) {
       try {
-        const serializedGroups = softGroups.map(serializeGroup)
+        const serializedGroups = groups.map(serializeGroup)
         fsPort.writeFile(WHITT_GROUPS_FILE, JSON.stringify(serializedGroups, null, 2))
       } catch {}
     }

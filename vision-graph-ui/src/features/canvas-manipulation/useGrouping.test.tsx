@@ -332,6 +332,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = screen.getByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const groupBoxes = screen.getAllByTestId('group-box')
@@ -364,6 +365,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = await screen.findByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const groupBox = screen.getByTestId('group-box')
@@ -397,6 +399,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = await screen.findByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const groupBox = screen.getByTestId('group-box')
@@ -438,6 +441,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = screen.getByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const folderSpy = screen.queryByTestId('folder-create-spy')
@@ -470,6 +474,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = await screen.findByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const moveSpy = screen.queryAllByTestId('file-move-spy')
@@ -503,6 +508,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = await screen.findByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const newNodes = screen.getAllByText(/New Group/i)
@@ -534,6 +540,7 @@ describe('Canvas Grouping Basics', () => {
 
       const makeFolderBtn = await screen.findByTestId('make-folder-action')
       await user.click(makeFolderBtn)
+      await user.click(screen.getByTestId('menu-make-folder'))
 
       await waitFor(() => {
         const groupBox = screen.getByTestId('group-box')

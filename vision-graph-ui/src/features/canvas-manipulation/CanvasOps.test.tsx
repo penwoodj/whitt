@@ -178,6 +178,7 @@ describe('CanvasOps - Drag Coherence', () => {
   const mockNodes = [
     { id: 'node-a', position: { x: 100, y: 100 }, data: { title: 'Node A' } },
     { id: 'node-b', position: { x: 300, y: 100 }, data: { title: 'Node B' } },
+    { id: 'node-c', position: { x: 500, y: 100 }, data: { title: 'Node C' } },
   ]
 
   const renderWithTheme = (component: React.ReactElement) => {
@@ -307,7 +308,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
 
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
 
       await userEvent.pointer([
         { keys: '[MouseLeft]', target: nodeA },
@@ -332,7 +334,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
 
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
 
       await userEvent.pointer([
         { keys: '[MouseLeft]', target: nodeA },
@@ -373,17 +376,15 @@ describe('CanvasOps - Drag Coherence', () => {
       
       const canvas = screen.getByTestId('react-flow-canvas')
       
-      await userEvent.pointer([
-        { keys: '[MouseRight]', target: canvas, coords: { x: 50, y: 50 } },
-        { coords: { x: 600, y: 400 } },
-        { keys: '[/MouseRight]' },
-      ])
+      fireEvent.mouseDown(canvas, { button: 2, clientX: 50, clientY: 50 })
+      fireEvent.mouseMove(canvas, { button: 2, clientX: 600, clientY: 400 })
       
-      // Verify lasso box appears
+      // Verify lasso box appears during drag
       await waitFor(() => {
         const lassoBox = screen.queryByTestId('lasso-box')
         expect(lassoBox).toBeInTheDocument()
       })
+      fireEvent.mouseUp(canvas, { button: 2, clientX: 600, clientY: 400 })
     })
 
     it('left-click on node selects node (does not pan)', async () => {
@@ -407,7 +408,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -428,8 +430,10 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeC = screen.getByTestId('node-node-c')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
-      fireEvent.click(nodeC, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeC, { ctrlKey: true })
+      fireEvent.mouseUp(nodeC, { ctrlKey: true })
       
       // Verify selection halo appears
       await waitFor(() => {
@@ -445,7 +449,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -474,7 +479,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -505,7 +511,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -543,7 +550,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -581,7 +589,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -624,7 +633,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -669,7 +679,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -715,7 +726,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -766,7 +778,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -813,7 +826,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -858,7 +872,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -907,7 +922,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -935,8 +951,10 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeC = screen.getByTestId('node-node-c')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
-      fireEvent.click(nodeC, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeC, { ctrlKey: true })
+      fireEvent.mouseUp(nodeC, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       
@@ -960,7 +978,8 @@ describe('CanvasOps - Drag Coherence', () => {
       const nodeB = screen.getByTestId('node-node-b')
       
       await userEvent.click(nodeA)
-      fireEvent.click(nodeB, { ctrlKey: true })
+      fireEvent.mouseDown(nodeB, { ctrlKey: true })
+      fireEvent.mouseUp(nodeB, { ctrlKey: true })
       
       await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
       

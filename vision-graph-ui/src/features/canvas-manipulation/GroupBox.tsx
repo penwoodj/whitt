@@ -164,7 +164,7 @@ export function GroupBox({
 
   const handleMakeFolderBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onPromoteToHard()
+    setShowMenu(prev => !prev)
   }
 
   const handleMakeFolderClick = (e: React.MouseEvent) => {
@@ -214,7 +214,6 @@ export function GroupBox({
       onDoubleClick={e => {
         e.stopPropagation()
         onDoubleClick()
-        if (onFocus) onFocus()
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

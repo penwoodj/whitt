@@ -21,5 +21,5 @@ afterEach(() => {
 beforeEach(() => {
   vi.clearAllMocks()
   vi.clearAllTimers()
-  window.localStorage.clear()
+  window.localStorage?.clear()
 })
