@@ -472,6 +472,18 @@ const nodeTypes = useMemo(() => ({
           panOnDrag={true}
           panActivationKeyCode={' '}
           selectionOnDrag={true}
+          onNodeMouseEnter={() => {
+            document.body.style.cursor = 'grab'
+          }}
+          onNodeMouseLeave={() => {
+            document.body.style.cursor = 'default'
+          }}
+          onNodeDragStart={() => {
+            document.body.style.cursor = 'grabbing'
+          }}
+          onNodeDragStop={() => {
+            document.body.style.cursor = 'grab'
+          }}
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls showFitView={true} />

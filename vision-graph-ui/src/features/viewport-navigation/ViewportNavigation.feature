@@ -54,3 +54,14 @@ Feature: Viewport Navigation Zoom
     When background agent spawns node
     Then camera does not pan
     And minimap shows glow on new node
+
+  Scenario: NAV-06 cursor semantics
+    Given canvas w/ nodes
+    When usr hovers over node
+    Then cursor shows grab
+    When usr starts dragging node
+    Then cursor shows grabbing
+    When usr hovers over empty canvas
+    Then cursor shows default
+    When usr hovers over actionable affordance
+    Then cursor shows pointer

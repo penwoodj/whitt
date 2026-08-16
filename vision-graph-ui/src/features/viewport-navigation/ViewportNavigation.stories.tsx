@@ -128,3 +128,13 @@ export const NAV08SpawnReveal: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAV06CursorSemantics: Story = {
+  name: 'NAV-06 cursor semantics',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

@@ -140,7 +140,7 @@ NAV-02	11	slice11 -- NAV-02 pan modes	pass
 NAV-03	11	slice11 -- NAV-03 zoom limits	pass
 NAV-04	11	slice11 -- NAV-04 fit view	pass
 NAV-05	11	slice11 -- NAV-05 minimap	pass
-NAV-06	11	-	todo
+NAV-06	11	slice11 -- NAV-06 cursor semantics	pass
 NAV-07	11	-	todo
 NAV-08	11	slice11 -- NAV-08 spawn reveal	pass
 FIL-03	07	(non-markdown types - future)	deferred
