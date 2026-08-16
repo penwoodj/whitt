@@ -155,3 +155,35 @@ export const NAV07KeyboardNudge: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAVX01CtrlAcceleratedPan: Story = {
+  name: 'NAVX-01 ctrl-accelerated pan',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      clientX: 100,
+      clientY: 100,
+      bubbles: true,
+      ctrlKey: true,
+    })
+
+    const mouseMoveEvent = new MouseEvent('mousemove', {
+      clientX: 200,
+      clientY: 200,
+      bubbles: true,
+      ctrlKey: true,
+    })
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+    })
+
+    canvas.dispatchEvent(mouseDownEvent)
+    canvas.dispatchEvent(mouseMoveEvent)
+    canvas.dispatchEvent(mouseUpEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

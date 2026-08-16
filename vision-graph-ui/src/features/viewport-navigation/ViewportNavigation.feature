@@ -72,3 +72,9 @@ Feature: Viewport Navigation Zoom
     Then node moves 1px in arrow direction
     When usr holds shift and presses arrow key
     Then node moves 10px in arrow direction
+
+  Scenario: NAVX-01 ctrl-accelerated pan
+    Given canvas w/ nodes
+    When usr left-clicks and drags empty canvas while holding Ctrl
+    Then pan speed is accelerated compared to normal pan
+    And pan direction follows mouse movement

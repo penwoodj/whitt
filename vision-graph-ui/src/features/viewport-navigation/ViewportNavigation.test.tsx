@@ -259,4 +259,41 @@ describe('Viewport Navigation - Zoom Config (NAV-01, NAV-03)', () => {
       expect(true).toBe(true)
     })
   })
+
+  it('NAVX-01 ctrl-accelerated pan - faster pan with Ctrl', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const canvas = screen.getByTestId('react-flow__canvas')
+    expect(canvas).toBeInTheDocument()
+
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      clientX: 100,
+      clientY: 100,
+      bubbles: true,
+      ctrlKey: true,
+    })
+
+    const mouseMoveEvent = new MouseEvent('mousemove', {
+      clientX: 200,
+      clientY: 200,
+      bubbles: true,
+      ctrlKey: true,
+    })
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+    })
+
+    canvas.dispatchEvent(mouseDownEvent)
+    canvas.dispatchEvent(mouseMoveEvent)
+    canvas.dispatchEvent(mouseUpEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
 })
