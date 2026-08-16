@@ -32,8 +32,11 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
   const animationFrameRef = useRef<number | null>(null)
   const alphaRef = useRef(1)
   const isRunningRef = useRef(false)
+  const iterationCountRef = useRef(0)
+  const maxIterations = 100
 
   const [simulatedNodes, setSimulatedNodes] = useState<FlowNode[]>(nodes)
+  const [isRunning, setIsRunning] = useState(false)
 
   const initializeNodes = useCallback((inputNodes: FlowNode[]) => {
     return inputNodes.map(node => ({
@@ -106,27 +109,27 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
     )
 
     alphaRef.current = totalVelocity / physicsNodesRef.current.length
-
-    if (alphaRef.current < finalConfig.autoSleepThreshold) {
-      isRunningRef.current = false
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-        animationFrameRef.current = null
-      }
-      return
-    }
+    iterationCountRef.current++
 
     setSimulatedNodes(
       physicsNodesRef.current.map(({ vx, vy, fx, fy, ...rest }) => rest as FlowNode)
     )
 
-    animationFrameRef.current = requestAnimationFrame(step)
+    if (alphaRef.current < finalConfig.autoSleepThreshold || iterationCountRef.current >= maxIterations) {
+      isRunningRef.current = false
+      setIsRunning(false)
+      return
+    }
+
+    animationFrameRef.current = window.setTimeout(() => step(), 0)
   }, [applyForces, finalConfig.autoSleepThreshold])
 
   const startSimulation = useCallback(() => {
     if (!isRunningRef.current) {
       isRunningRef.current = true
+      setIsRunning(true)
       alphaRef.current = 1
+      iterationCountRef.current = 0
       step()
     }
   }, [step])
@@ -141,7 +144,7 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
   const stopSimulation = useCallback(() => {
     isRunningRef.current = false
     if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
+      window.clearTimeout(animationFrameRef.current)
       animationFrameRef.current = null
     }
   }, [])
@@ -149,9 +152,13 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
   useEffect(() => {
     physicsNodesRef.current = initializeNodes(nodes)
     setSimulatedNodes(nodes)
-    startSimulation()
+
+    const timer = window.setTimeout(() => {
+      startSimulation()
+    }, 0)
 
     return () => {
+      window.clearTimeout(timer)
       stopSimulation()
     }
   }, [nodes, initializeNodes, startSimulation, stopSimulation])
@@ -160,6 +167,6 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
     nodes: simulatedNodes,
     reheat,
     stop: stopSimulation,
-    isRunning: isRunningRef.current,
+    isRunning,
   }
 }
