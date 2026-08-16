@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import type { Group } from './useGrouping'
 import type { Node as FlowNode } from '@xyflow/react'
@@ -15,6 +15,7 @@ type GroupBoxProps = {
   onMouseLeave: () => void
   onPromoteToHard: () => void
   onFocus?: () => void
+  onTitleUpdate?: (groupId: string, newTitle: string) => void
 }
 
 const GroupBoxContainer = styled.div<{
@@ -35,6 +36,46 @@ const GroupBoxContainer = styled.div<{
       background-color: transparent;
     `}
   ${props => props.$isSelected && 'box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);'}
+`
+
+const GroupTitleDisplay = styled.div<{ $isEditable: boolean }>`
+  position: absolute;
+  top: -24px;
+  left: 0;
+  background: rgba(30, 30, 30, 0.9);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: ${props => props.$isEditable ? 'text' : 'default'};
+  border: 1px solid transparent;
+  
+  ${props => props.$isEditable && `
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(50, 50, 50, 0.95);
+    }
+  `}
+`
+
+const GroupTitleInput = styled.input`
+  position: absolute;
+  top: -24px;
+  left: 0;
+  background: rgba(30, 30, 30, 0.95);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  min-width: 120px;
+  
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  }
 `
 
 const GroupTooltip = styled.div`
@@ -157,10 +198,51 @@ export function GroupBox({
   onMouseLeave,
   onPromoteToHard,
   onFocus,
+  onTitleUpdate,
 }: GroupBoxProps) {
   const memberTitles = memberNodes.map(n => n.data.title as string)
   const [showMenu, setShowMenu] = useState(false)
   const [menuHovered, setMenuHovered] = useState(false)
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [editTitle, setEditTitle] = useState(group.title || '')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isEditingTitle && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditingTitle])
+
+  const handleTitleDisplayClick = () => {
+    if (onTitleUpdate) {
+      setIsEditingTitle(true)
+      setEditTitle(group.title || '')
+    }
+  }
+
+  const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditTitle(e.target.value)
+  }
+
+  const handleTitleInputBlur = () => {
+    if (onTitleUpdate && editTitle.trim()) {
+      onTitleUpdate(group.id, editTitle.trim())
+    }
+    setIsEditingTitle(false)
+  }
+
+  const handleTitleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      if (onTitleUpdate && editTitle.trim()) {
+        onTitleUpdate(group.id, editTitle.trim())
+      }
+      setIsEditingTitle(false)
+    } else if (e.key === 'Escape') {
+      setIsEditingTitle(false)
+      setEditTitle(group.title || '')
+    }
+  }
 
   const handleMakeFolderBtnClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -221,6 +303,25 @@ export function GroupBox({
       tabIndex={0}
       aria-label={`Group with ${memberNodes.length} nodes`}
     >
+      {isEditingTitle ? (
+        <GroupTitleInput
+          ref={inputRef}
+          data-testid="group-title-edit"
+          type="text"
+          value={editTitle}
+          onChange={handleTitleInputChange}
+          onBlur={handleTitleInputBlur}
+          onKeyDown={handleTitleInputKeyDown}
+        />
+      ) : (
+        <GroupTitleDisplay
+          data-testid="group-title-display"
+          $isEditable={!!onTitleUpdate}
+          onClick={handleTitleDisplayClick}
+        >
+          {group.title || `Group ${group.id.split('-')[1]}`}
+        </GroupTitleDisplay>
+      )}
       {group.isFocused ? (
         <div style={{
           position: 'absolute',

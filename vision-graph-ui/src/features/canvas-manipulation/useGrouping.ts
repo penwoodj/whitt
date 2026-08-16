@@ -7,6 +7,15 @@ export type GroupType = 'soft' | 'hard'
 const LOCAL_STORAGE_KEY = 'softGroups'
 const WHITT_GROUPS_FILE = '.whitt/groups.json'
 
+const toDashCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
 export type FsOps = {
   folderCreated: boolean
   movedNames: string[]
@@ -19,6 +28,7 @@ export type Group = {
   isExpanded: boolean
   isFocused: boolean
   groupType: GroupType
+  title?: string
 }
 
 type UseGroupingProps = {
@@ -37,7 +47,8 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     bounds: group.bounds,
     isExpanded: group.isExpanded,
     isFocused: group.isFocused,
-    groupType: group.groupType
+    groupType: group.groupType,
+    title: group.title
   }), [])
 
   const deserializeGroup = useCallback((data: any): Group => ({
@@ -46,7 +57,8 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     bounds: data.bounds,
     isExpanded: data.isExpanded,
     isFocused: data.isFocused || false,
-    groupType: data.groupType
+    groupType: data.groupType,
+    title: data.title
   }), [])
 
   useEffect(() => {
@@ -69,9 +81,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
           const whittData = await fsPort.readFile(WHITT_GROUPS_FILE)
           if (whittData && whittData.trim() !== '') {
             const parsedGroups = JSON.parse(whittData)
-            const whittGroups = parsedGroups
-              .filter((g: any) => g.groupType === 'soft')
-              .map(deserializeGroup)
+            const whittGroups = parsedGroups.map(deserializeGroup)
             
             const existingIds = new Set(loadedGroups.map(g => g.id))
             whittGroups.forEach((group: Group) => {
@@ -178,6 +188,21 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     ))
   }, [])
 
+  const updateGroupTitle = useCallback(async (groupId: string, newTitle: string) => {
+    const dashCaseTitle = toDashCase(newTitle)
+    const group = groups.find(g => g.id === groupId)
+    
+    if (!group) return
+
+    if (group.groupType === 'hard' && fsPort && group.title) {
+      await fsPort.atomicRename(`/${group.title}`, `/${dashCaseTitle}`)
+    }
+
+    setGroups(prev => prev.map(g =>
+      g.id === groupId ? { ...g, title: dashCaseTitle } : g
+    ))
+  }, [groups, fsPort])
+
   const clearGroupSelection = useCallback(() => {
     setActiveGroupIds(new Set())
   }, [])
@@ -251,6 +276,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     promoteToHard,
     focusGroup,
     unfocusGroup,
+    updateGroupTitle,
   }), [
     groups,
     activeGroupIds,
@@ -266,6 +292,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
     promoteToHard,
     focusGroup,
     unfocusGroup,
+    updateGroupTitle,
   ])
 
   return groupData

@@ -669,4 +669,200 @@ describe('Canvas Grouping Basics', () => {
       })
     })
   })
+
+  describe('GRPX-09 editable deterministic group titles', () => {
+    beforeEach(() => {
+      localStorage.clear()
+      vi.clearAllMocks()
+    })
+
+    it('edits soft group title to dash-case lowercase', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const titleDisplay = screen.getByTestId('group-title-display')
+      await user.click(titleDisplay)
+
+      await waitFor(() => {
+        const titleEdit = screen.getByTestId('group-title-edit')
+        expect(titleEdit).toBeInTheDocument()
+      })
+
+      const titleEdit = screen.getByTestId('group-title-edit')
+      await user.clear(titleEdit)
+      await user.type(titleEdit, 'My Custom Group')
+      await user.keyboard('{Enter}')
+
+      await waitFor(() => {
+        const localStorageData = localStorage.getItem('softGroups')
+        expect(localStorageData).toBeDefined()
+        const groups = JSON.parse(localStorageData || '[]')
+        const group = groups.find((g: any) => g.memberIds.includes('node-a'))
+        expect(group.title).toBe('my-custom-group')
+      })
+    })
+
+    it('persists soft group title to .whitt folder', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const titleDisplay = screen.getByTestId('group-title-display')
+      await user.click(titleDisplay)
+
+      await waitFor(() => {
+        const titleEdit = screen.getByTestId('group-title-edit')
+        expect(titleEdit).toBeInTheDocument()
+      })
+
+      const titleEdit = screen.getByTestId('group-title-edit')
+      await user.clear(titleEdit)
+      await user.type(titleEdit, 'Test Group')
+      await user.keyboard('{Enter}')
+
+      await waitFor(() => {
+        const titleDisplay = screen.getByTestId('group-title-display')
+        expect(titleDisplay).toHaveTextContent('test-group')
+      })
+
+      await waitFor(() => {
+        const localStorageData = localStorage.getItem('softGroups')
+        expect(localStorageData).toBeDefined()
+        const groups = JSON.parse(localStorageData || '[]')
+        const group = groups.find((g: any) => g.memberIds.includes('node-a'))
+        expect(group.title).toBe('test-group')
+      })
+    })
+
+    it('renames hard group folder when title edited', async () => {
+      const initialGroups = [{
+        id: 'group-hard-789',
+        memberIds: ['node-a', 'node-b'],
+        bounds: { left: 90, top: 90, width: 320, height: 70 },
+        isExpanded: false,
+        groupType: 'hard' as const,
+        title: 'old-folder-name'
+      }]
+      
+      mockReadFile.mockImplementation((path: string) => {
+        if (path === '.whitt/groups.json') {
+          return Promise.resolve(JSON.stringify(initialGroups))
+        }
+        return Promise.resolve('content')
+      })
+      
+      renderCanvas()
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+      }, { timeout: 3000 })
+
+      const titleDisplay = screen.getByTestId('group-title-display')
+      expect(titleDisplay).toHaveTextContent('old-folder-name')
+    })
+
+    it('loads soft group title from localStorage on reload', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const titleDisplay = screen.getByTestId('group-title-display')
+      await user.click(titleDisplay)
+
+      await waitFor(() => {
+        const titleEdit = screen.getByTestId('group-title-edit')
+        expect(titleEdit).toBeInTheDocument()
+      })
+
+      const titleEdit = screen.getByTestId('group-title-edit')
+      await user.clear(titleEdit)
+      await user.type(titleEdit, 'Existing Group')
+      await user.keyboard('{Enter}')
+
+      await waitFor(() => {
+        const titleDisplayAfter = screen.getByTestId('group-title-display')
+        expect(titleDisplayAfter).toHaveTextContent('existing-group')
+      })
+
+      const localStorageData = localStorage.getItem('softGroups')
+      expect(localStorageData).toBeDefined()
+      const groups = JSON.parse(localStorageData || '[]')
+      const group = groups.find((g: any) => g.memberIds.includes('node-a'))
+      expect(group.title).toBe('existing-group')
+    })
+
+    it('loads hard group title from folder name on reload', async () => {
+      const initialGroups = [{
+        id: 'group-hard-title',
+        memberIds: ['node-c', 'node-d'],
+        bounds: { left: 490, top: 290, width: 220, height: 70 },
+        isExpanded: false,
+        groupType: 'hard' as const,
+        title: 'project-documents'
+      }]
+      
+      mockReadFile.mockImplementation((path: string) => {
+        if (path === '.whitt/groups.json') {
+          return Promise.resolve(JSON.stringify(initialGroups))
+        }
+        return Promise.resolve('content')
+      })
+      
+      renderCanvas()
+
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        if (groupBox) {
+          expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+          const titleDisplay = screen.getByTestId('group-title-display')
+          expect(titleDisplay).toHaveTextContent('project-documents')
+        }
+      }, { timeout: 3000 })
+    })
+  })
 })

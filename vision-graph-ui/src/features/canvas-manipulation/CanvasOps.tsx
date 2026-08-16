@@ -518,6 +518,7 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           onMouseLeave={() => setHoveredGroupId(null)}
           onPromoteToHard={() => handlePromoteToHard(group)}
           onFocus={() => handleFocusGroup(group.id)}
+          onTitleUpdate={groupingData.updateGroupTitle}
         />
       ))}
 

@@ -467,3 +467,18 @@ export const GRPX_08_UnfocusedGroupBubbleHaloMiniWindow: Story = {
     },
   },
 }
+
+export const GRPX_09_EditableDeterministicGroupTitles: Story = {
+  name: 'GRPX-09 editable deterministic group titles',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group by selecting 2+ nodes (ctrl+click) and right-clicking. Click on group title (above group box) to edit. Type title like "My Custom Group" and press Enter. Title converts to dash-case lowercase ("my-custom-group") and persists to localStorage and .whitt folder. For hard groups, title update also renames the folder. Title persists across page reloads.',
+      },
+    },
+  },
+}
