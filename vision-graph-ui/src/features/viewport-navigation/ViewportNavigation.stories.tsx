@@ -187,3 +187,37 @@ export const NAVX01CtrlAcceleratedPan: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAVX02ArrowKeysPan: Story = {
+  name: 'NAVX-02 arrow keys pan',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const arrowLeftEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowLeft',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(arrowLeftEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAVX03WASDPan: Story = {
+  name: 'NAVX-03 WASD pan',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const wKeyEvent = new KeyboardEvent('keydown', {
+      key: 'w',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(wKeyEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

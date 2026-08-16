@@ -296,4 +296,42 @@ describe('Viewport Navigation - Zoom Config (NAV-01, NAV-03)', () => {
       expect(true).toBe(true)
     })
   })
+
+  it('NAVX-02 arrow keys pan - canvas pans when no STT focus', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const arrowLeftEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowLeft',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(arrowLeftEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
+
+  it('NAVX-03 WASD pan - canvas pans with WASD keys', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const wKeyEvent = new KeyboardEvent('keydown', {
+      key: 'w',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(wKeyEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
 })

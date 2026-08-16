@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges, useReactFlow } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
@@ -45,6 +45,7 @@ type Snapshot = {
 
 export default function GraphSim() {
   const simLog = useGraphSimLogging()
+  const { getViewport, setViewport } = useReactFlow()
 
   const [simState, setSimState] = useState<SimState>('picker')
   const [activeProjectId, setActiveProjectId] = useState<string>('')
@@ -485,6 +486,17 @@ const nodeTypes = useMemo(() => ({
             document.body.style.cursor = 'grab'
           }}
           onKeyDown={(evt) => {
+            const activeElement = document.activeElement
+            const isInputFocused =
+              activeElement?.tagName === 'INPUT' ||
+              activeElement?.tagName === 'TEXTAREA' ||
+              activeElement?.getAttribute('contenteditable') === 'true'
+
+            if (isInputFocused) return
+
+            const viewport = getViewport()
+            const panDelta = 50
+
             if (activeNodeId) {
               const delta = evt.shiftKey ? 10 : 1
               if (evt.key === 'ArrowRight') {
@@ -546,6 +558,20 @@ const nodeTypes = useMemo(() => ({
                       : node
                   )
                 )
+                evt.preventDefault()
+              }
+            } else {
+              if (evt.key === 'ArrowRight' || evt.key === 'd' || evt.key === 'D') {
+                setViewport({ x: viewport.x - panDelta, y: viewport.y, zoom: viewport.zoom })
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowLeft' || evt.key === 'a' || evt.key === 'A') {
+                setViewport({ x: viewport.x + panDelta, y: viewport.y, zoom: viewport.zoom })
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowUp' || evt.key === 'w' || evt.key === 'W') {
+                setViewport({ x: viewport.x, y: viewport.y + panDelta, zoom: viewport.zoom })
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowDown' || evt.key === 's' || evt.key === 'S') {
+                setViewport({ x: viewport.x, y: viewport.y - panDelta, zoom: viewport.zoom })
                 evt.preventDefault()
               }
             }

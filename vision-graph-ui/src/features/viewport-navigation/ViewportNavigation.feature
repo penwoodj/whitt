@@ -78,3 +78,17 @@ Feature: Viewport Navigation Zoom
     When usr left-clicks and drags empty canvas while holding Ctrl
     Then pan speed is accelerated compared to normal pan
     And pan direction follows mouse movement
+
+  Scenario: NAVX-02 arrow keys pan
+    Given canvas w/ nodes
+    And usr not focused in speech-to-text input
+    When usr presses arrow keys
+    Then canvas pans in arrow key direction
+    And pan speed is consistent
+
+  Scenario: NAVX-03 WASD pan
+    Given canvas w/ nodes
+    And usr not focused in speech-to-text input
+    When usr presses W, A, S, or D keys
+    Then canvas pans in corresponding direction
+    And pan speed is consistent with arrow keys
