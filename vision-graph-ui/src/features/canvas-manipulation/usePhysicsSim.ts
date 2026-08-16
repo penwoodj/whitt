@@ -121,7 +121,7 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
       return
     }
 
-    animationFrameRef.current = window.setTimeout(() => step(), 0)
+    animationFrameRef.current = window.setTimeout(() => step(), 1)
   }, [applyForces, finalConfig.autoSleepThreshold])
 
   const startSimulation = useCallback(() => {
@@ -130,7 +130,10 @@ export function usePhysicsSim(nodes: FlowNode[], config: Partial<PhysicsConfig> 
       setIsRunning(true)
       alphaRef.current = 1
       iterationCountRef.current = 0
-      step()
+
+      setTimeout(() => {
+        step()
+      }, 0)
     }
   }, [step])
 

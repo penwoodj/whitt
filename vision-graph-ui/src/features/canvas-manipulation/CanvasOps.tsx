@@ -64,6 +64,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const [lassoStart, setLassoStart] = useState<{ x: number; y: number } | null>(null)
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
   const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
+  const [isCtrlPressed] = useState(false)
 
   const [dragState, setDragState] = useState<{
     isDragging: boolean
@@ -110,14 +111,14 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
           })
         )
 
-      setDragState({
-        isDragging: false,
-        draggedNodeId: null,
-        dragStart: null,
-        nodeStartPositions: new Map(),
-        isClick: true,
-        isCtrlClick: false,
-      })
+        setDragState({
+          isDragging: false,
+          draggedNodeId: null,
+          dragStart: null,
+          nodeStartPositions: new Map(),
+          isClick: true,
+          isCtrlClick: false,
+        })
       }
     }
 
@@ -163,6 +164,8 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
 
   const handleNodeMouseDown = useCallback((nodeId: string, e: React.MouseEvent) => {
     if (e.button === 0) {
+      const isCtrlClick = e.ctrlKey || e.metaKey || isCtrlPressed
+
       const nodePositions = new Map<string, { x: number; y: number }>()
       if (selectedNodeIds.has(nodeId)) {
         selectedNodeIds.forEach(id => {
@@ -184,10 +187,14 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
         dragStart: { x: e.clientX, y: e.clientY },
         nodeStartPositions: nodePositions,
         isClick: true,
-        isCtrlClick: e.ctrlKey || e.metaKey,
+        isCtrlClick: isCtrlClick,
       })
+
+      if (isCtrlClick) {
+        linkDrawingData.startConnection(nodeId)
+      }
     }
-  }, [nodes, selectedNodeIds])
+  }, [nodes, selectedNodeIds, linkDrawingData, isCtrlPressed])
 
   const handleNodeMouseUp = useCallback(() => {
     if (dragState.isDragging) {
@@ -208,35 +215,77 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
     if (dragState.isDragging && dragState.dragStart) {
-      const dx = e.clientX - dragState.dragStart.x
-      const dy = e.clientY - dragState.dragStart.y
-      const dragDistance = Math.sqrt(dx * dx + dy * dy)
-
-      if (dragDistance > 4) {
-        setDragState(prev => ({ ...prev, isClick: false }))
-      }
-
-      if (!dragState.isClick) {
-        setNodes(prevNodes =>
-          prevNodes.map(node => {
-            if (dragState.nodeStartPositions.has(node.id)) {
-              const startPos = dragState.nodeStartPositions.get(node.id)!
-              return {
-                ...node,
-                position: {
-                  x: startPos.x + dx,
-                  y: startPos.y + dy,
-                },
-              }
+      if (dragState.isCtrlClick) {
+        const sourceNode = nodes.find(n => n.id === dragState.draggedNodeId)
+        if (sourceNode) {
+          const targetNodeId = nodes.find(n => {
+            const nodeRect = {
+              left: n.position.x,
+              top: n.position.y,
+              right: n.position.x + 150,
+              bottom: n.position.y + 50,
             }
-            return node
-          })
-        )
+            return e.clientX >= nodeRect.left && e.clientX <= nodeRect.right &&
+                   e.clientY >= nodeRect.top && e.clientY <= nodeRect.bottom
+          })?.id || null
+
+          linkDrawingData.updateConnection({ x: e.clientX, y: e.clientY }, targetNodeId)
+        }
+      } else {
+        const dx = e.clientX - dragState.dragStart.x
+        const dy = e.clientY - dragState.dragStart.y
+        const dragDistance = Math.sqrt(dx * dx + dy * dy)
+
+        if (dragDistance > 4) {
+          setDragState(prev => ({ ...prev, isClick: false }))
+        }
+
+        if (!dragState.isClick) {
+          setNodes(prevNodes =>
+            prevNodes.map(node => {
+              if (dragState.nodeStartPositions.has(node.id)) {
+                const startPos = dragState.nodeStartPositions.get(node.id)!
+                return {
+                  ...node,
+                  position: {
+                    x: startPos.x + dx,
+                    y: startPos.y + dy,
+                  },
+                }
+              }
+              return node
+            })
+          )
+        }
+
+        // Auto-start connection drawing when dragging from one node towards another
+        if (dragState.draggedNodeId && !dragState.isCtrlClick) {
+          const targetNodeId = nodes.find(n => {
+            const nodeRect = {
+              left: n.position.x,
+              top: n.position.y,
+              right: n.position.x + 150,
+              bottom: n.position.y + 50,
+            }
+            return e.clientX >= nodeRect.left && e.clientX <= nodeRect.right &&
+                   e.clientY >= nodeRect.top && e.clientY <= nodeRect.bottom
+          })?.id || null
+
+          if (targetNodeId && targetNodeId !== dragState.draggedNodeId) {
+            // First time we hit another node, start connection drawing
+            if (!linkDrawingData.connectionState.isDrawing) {
+              linkDrawingData.startConnection(dragState.draggedNodeId)
+              setDragState(prev => ({ ...prev, isCtrlClick: true }))
+            }
+
+            linkDrawingData.updateConnection({ x: e.clientX, y: e.clientY }, targetNodeId)
+          }
+        }
       }
     } else if (lassoStart) {
       setLassoEnd({ x: e.clientX, y: e.clientY })
     }
-  }, [dragState, lassoStart, nodes, setNodes])
+  }, [dragState, lassoStart, nodes, linkDrawingData, setNodes])
 
   const handleCanvasMouseUp = useCallback(() => {
     if (dragState.isDragging) {
@@ -245,7 +294,18 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
         if (newEdge) {
           setEdges(prev => [...prev, newEdge])
         }
+      } else if (dragState.isClick && dragState.draggedNodeId) {
+        handleNodeClick(dragState.draggedNodeId, dragState.isCtrlClick)
       }
+
+      setDragState({
+        isDragging: false,
+        draggedNodeId: null,
+        dragStart: null,
+        nodeStartPositions: new Map(),
+        isClick: true,
+        isCtrlClick: false,
+      })
     }
 
     if (lassoStart && lassoEnd) {
@@ -266,18 +326,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
 
     setLassoStart(null)
     setLassoEnd(null)
-
-    if (dragState.isDragging) {
-      setDragState({
-        isDragging: false,
-        draggedNodeId: null,
-        dragStart: null,
-        nodeStartPositions: new Map(),
-        isClick: true,
-        isCtrlClick: false,
-      })
-    }
-  }, [dragState, lassoStart, lassoEnd, nodes, groupingData, linkDrawingData, setEdges])
+  }, [dragState, lassoStart, lassoEnd, nodes, groupingData, linkDrawingData, setEdges, handleNodeClick])
 
   const selectionBounds = selectedNodeIds.size > 0 ? (() => {
     const selectedNodes = nodes.filter(n => selectedNodeIds.has(n.id))
