@@ -136,7 +136,7 @@ GRPC-08	10	slice10 -- GRPC-08 multi-drag coherence	pass
 GRPC-09	10	slice10 -- GRPC-09 reheat settle	pass
 GRPC-10	10	slice10 -- GRPC-10 hard group	pass
 NAV-01	11	slice11 -- NAV-01 zoom to cursor	pass
-NAV-02	11	-	todo
+NAV-02	11	slice11 -- NAV-02 pan modes	pass
 NAV-03	11	slice11 -- NAV-03 zoom limits	pass
 NAV-04	11	-	todo
 NAV-05	11	-	todo

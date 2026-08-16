@@ -18,3 +18,13 @@ Feature: Viewport Navigation Zoom
     And scale clamps to max 2.5
     And clamping does not bounce
     And clamping does not jitter
+
+  Scenario: NAV-02 pan modes
+    Given canvas w/ nodes
+    When usr drags empty canvas
+    Then canvas pans
+    When usr holds space and drags on node
+    Then canvas pans
+    When usr drags on node without space
+    Then node moves
+    And canvas does not pan

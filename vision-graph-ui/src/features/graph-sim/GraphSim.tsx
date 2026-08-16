@@ -468,6 +468,10 @@ const nodeTypes = useMemo(() => ({
           maxZoom={2.5}
           zoomOnScroll={true}
           zoomOnPinch={true}
+          panOnScroll={false}
+          panOnDrag={true}
+          panActivationKeyCode={' '}
+          selectionOnDrag={true}
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls />

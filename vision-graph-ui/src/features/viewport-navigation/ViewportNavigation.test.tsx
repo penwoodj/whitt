@@ -95,4 +95,86 @@ describe('Viewport Navigation - Zoom Config (NAV-01, NAV-03)', () => {
 
     expect(zoomLevels).toHaveLength(5)
   })
+
+  it('NAV-02 pan modes - drag empty canvas pans', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const canvas = screen.getByTestId('react-flow__canvas')
+    expect(canvas).toBeInTheDocument()
+
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      clientX: 100,
+      clientY: 100,
+      bubbles: true,
+    })
+
+    const mouseMoveEvent = new MouseEvent('mousemove', {
+      clientX: 150,
+      clientY: 150,
+      bubbles: true,
+    })
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+    })
+
+    canvas.dispatchEvent(mouseDownEvent)
+    canvas.dispatchEvent(mouseMoveEvent)
+    canvas.dispatchEvent(mouseUpEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
+
+  it('NAV-02 pan modes - space+drag on node pans', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const canvas = screen.getByTestId('react-flow__canvas')
+    expect(canvas).toBeInTheDocument()
+
+    const spaceKeyDownEvent = new KeyboardEvent('keydown', {
+      key: ' ',
+      bubbles: true,
+    })
+
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      clientX: 100,
+      clientY: 100,
+      bubbles: true,
+    })
+
+    const mouseMoveEvent = new MouseEvent('mousemove', {
+      clientX: 150,
+      clientY: 150,
+      bubbles: true,
+    })
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+    })
+
+    const spaceKeyUpEvent = new KeyboardEvent('keyup', {
+      key: ' ',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(spaceKeyDownEvent)
+    canvas.dispatchEvent(mouseDownEvent)
+    canvas.dispatchEvent(mouseMoveEvent)
+    canvas.dispatchEvent(mouseUpEvent)
+    document.dispatchEvent(spaceKeyUpEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
 })

@@ -68,3 +68,33 @@ export const NAV03ZoomLimits: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAV02PanModes: Story = {
+  name: 'NAV-02 pan modes',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const mouseDownEvent = new MouseEvent('mousedown', {
+      clientX: 100,
+      clientY: 100,
+      bubbles: true,
+    })
+
+    const mouseMoveEvent = new MouseEvent('mousemove', {
+      clientX: 150,
+      clientY: 150,
+      bubbles: true,
+    })
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+    })
+
+    canvas.dispatchEvent(mouseDownEvent)
+    canvas.dispatchEvent(mouseMoveEvent)
+    canvas.dispatchEvent(mouseUpEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
