@@ -64,7 +64,7 @@ Ask user (2-3 questions max, `question` tool):
    - B. No, intervention only (correction redirects flow)
    - C. Optional, per user settings (configurable)
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-16: Q1=B dynamic radius by sibling count (crowd-aware). Q2=C inline tooltip near running node (minimal intrusion). Q3=A yes, stop button in expanded modal execution area.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
