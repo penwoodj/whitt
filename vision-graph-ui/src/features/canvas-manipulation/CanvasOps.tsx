@@ -2,7 +2,9 @@ import { useState, useCallback } from 'react'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import styled from 'styled-components'
 import { useGrouping } from './useGrouping'
+import { useLinkDrawing } from './useLinkDrawing'
 import { GroupBox } from './GroupBox'
+import { ConnectionLineComponent } from './ConnectionLine'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -11,7 +13,7 @@ const CanvasContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
 `
 
-const NodeWrapper = styled.div<{ $isSelected: boolean }>`
+const NodeWrapper = styled.div<{ $isSelected: boolean; $isConnectionTarget: boolean }>`
   position: absolute;
   padding: 8px 16px;
   border: 1px solid #ccc;
@@ -20,6 +22,19 @@ const NodeWrapper = styled.div<{ $isSelected: boolean }>`
   cursor: pointer;
   user-select: none;
   z-index: 1;
+  box-shadow: ${({ $isConnectionTarget }) => $isConnectionTarget ? '0 0 8px rgba(0, 123, 255, 0.5)' : 'none'};
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 100%;
+    background: transparent;
+    cursor: crosshair;
+  }
 `
 
 const SelectionHalo = styled.div`
@@ -41,12 +56,14 @@ type CanvasOpsProps = {
 
 export function CanvasOps({ initialNodes }: CanvasOpsProps) {
   const [nodes] = useState<FlowNode[]>(initialNodes)
+  const [edges, setEdges] = useState<Edge[]>([])
   const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
   const [lassoStart, setLassoStart] = useState<{ x: number; y: number } | null>(null)
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
   const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
 
   const groupingData = useGrouping(nodes)
+  const linkDrawingData = useLinkDrawing(nodes, edges)
 
   const handleNodeClick = useCallback((nodeId: string, isCtrlClick: boolean = false) => {
     setSelectedNodeIds(prev => {
@@ -71,7 +88,8 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
     setLassoStart(null)
     setLassoEnd(null)
     groupingData.clearGroupSelection()
-  }, [groupingData])
+    linkDrawingData.cancelConnection()
+  }, [groupingData, linkDrawingData])
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 2) {
@@ -84,13 +102,62 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
     }
   }, [selectedNodeIds, groupingData])
 
+  const handleNodeMouseDown = useCallback((nodeId: string, e: React.MouseEvent) => {
+    if (e.button === 0 && e.ctrlKey) {
+      const node = nodes.find(n => n.id === nodeId)
+      if (node) {
+        const rightEdge = { x: node.position.x + 150, y: node.position.y + 25 }
+        const dx = Math.abs(e.clientX - rightEdge.x)
+        const dy = Math.abs(e.clientY - rightEdge.y)
+
+        if (dx < 15 && dy < 25) {
+          e.stopPropagation()
+          linkDrawingData.startConnection(nodeId)
+        }
+      }
+    }
+  }, [nodes, linkDrawingData])
+
+  const handleNodeMouseUp = useCallback(() => {
+    if (linkDrawingData.connectionState.isDrawing) {
+      const newEdge = linkDrawingData.completeConnection()
+      if (newEdge) {
+        setEdges(prev => [...prev, newEdge])
+      }
+    }
+  }, [linkDrawingData])
+
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
-    if (lassoStart) {
+    if (linkDrawingData.connectionState.isDrawing && linkDrawingData.connectionState.sourceNodeId) {
+      const sourceNode = nodes.find(n => n.id === linkDrawingData.connectionState.sourceNodeId)
+      if (sourceNode) {
+        const targetNodeId = nodes.find(n => {
+          const nodeRect = {
+            left: n.position.x,
+            top: n.position.y,
+            right: n.position.x + 150,
+            bottom: n.position.y + 50,
+          }
+          return e.clientX >= nodeRect.left && e.clientX <= nodeRect.right &&
+                 e.clientY >= nodeRect.top && e.clientY <= nodeRect.bottom
+        })?.id || null
+
+        linkDrawingData.updateConnection({ x: e.clientX, y: e.clientY }, targetNodeId)
+      }
+    } else if (lassoStart) {
       setLassoEnd({ x: e.clientX, y: e.clientY })
     }
-  }, [lassoStart])
+  }, [lassoStart, nodes, linkDrawingData])
 
   const handleCanvasMouseUp = useCallback(() => {
+    if (linkDrawingData.connectionState.isDrawing) {
+      const newEdge = linkDrawingData.completeConnection()
+      if (newEdge) {
+        setEdges(prev => [...prev, newEdge])
+      }
+      return
+    }
+
     if (lassoStart && lassoEnd) {
       const minX = Math.min(lassoStart.x, lassoEnd.x)
       const maxX = Math.max(lassoStart.x, lassoEnd.x)
@@ -109,7 +176,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
 
     setLassoStart(null)
     setLassoEnd(null)
-  }, [lassoStart, lassoEnd, nodes, groupingData])
+  }, [lassoStart, lassoEnd, nodes, groupingData, linkDrawingData, setEdges])
 
   const selectionBounds = selectedNodeIds.size > 0 ? (() => {
     const selectedNodes = nodes.filter(n => selectedNodeIds.has(n.id))
@@ -145,6 +212,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
           key={node.id}
           data-testid={`node-${node.id}`}
           $isSelected={selectedNodeIds.has(node.id)}
+          $isConnectionTarget={linkDrawingData.connectionState.targetNodeId === node.id}
           style={{
             left: node.position.x,
             top: node.position.y
@@ -153,6 +221,8 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
             e.stopPropagation()
             handleNodeClick(node.id, e.ctrlKey || e.metaKey)
           }}
+          onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
+          onMouseUp={handleNodeMouseUp}
           role="button"
           tabIndex={0}
           aria-label={`Select ${node.data.title as string}`}
@@ -202,6 +272,59 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
           onMouseLeave={() => setHoveredGroupId(null)}
         />
       ))}
+
+      {linkDrawingData.connectionState.isDrawing && linkDrawingData.connectionState.sourceNodeId && linkDrawingData.connectionState.currentPosition && (() => {
+        const sourceNode = nodes.find(n => n.id === linkDrawingData.connectionState.sourceNodeId)
+        if (!sourceNode) return null
+        return (
+          <ConnectionLineComponent
+            sourcePosition={{ x: sourceNode.position.x + 150, y: sourceNode.position.y + 25 }}
+            targetPosition={linkDrawingData.connectionState.currentPosition}
+            isValid={linkDrawingData.connectionState.isValid}
+          />
+        )
+      })()}
+
+      {edges.map(edge => {
+        const sourceNode = nodes.find(n => n.id === edge.source)
+        const targetNode = nodes.find(n => n.id === edge.target)
+        if (!sourceNode || !targetNode) return null
+
+        return (
+          <svg
+            key={edge.id}
+            data-testid={edge.id}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+            aria-hidden="true"
+          >
+            <line
+              x1={sourceNode.position.x + 150}
+              y1={sourceNode.position.y + 25}
+              x2={targetNode.position.x}
+              y2={targetNode.position.y + 25}
+              stroke="#999"
+              strokeWidth={2}
+              markerEnd="url(#arrowhead)"
+            />
+          </svg>
+        )
+      })}
+
+      <svg style={{ position: 'absolute', width: 0, height: 0' }} aria-hidden="true">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#999" />
+          </marker>
+        </defs>
+      </svg>
 
       <CanvasClickArea
         onClick={handleCanvasClick}
