@@ -317,3 +317,33 @@ export const GRP_05_StandaloneNode: Story = {
     },
   },
 }
+
+export const GRP_07_SoftVsHardGrouping: Story = {
+  name: 'GRP-07 soft vs hard grouping',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Multi-select nodes, then right-click to create soft group with dashed border. Hover over group to see "+ Make Folder" button. Click it to promote to hard group with solid 3px border and darker background.',
+      },
+    },
+  },
+}
+
+export const GRPC_10_HardGroup: Story = {
+  name: 'GRPC-10 hard group',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group, then click "+ Make Folder" button. New folder created in filesystem, member files moved into it, and group box+halo persist after graph reload. Hard group has pronounced border and solid background.',
+      },
+    },
+  },
+}

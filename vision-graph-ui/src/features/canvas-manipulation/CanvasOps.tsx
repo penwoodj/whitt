@@ -6,6 +6,7 @@ import { useLinkDrawing } from './useLinkDrawing'
 import { GroupBox } from './GroupBox'
 import { ConnectionLineComponent } from './ConnectionLine'
 import { EdgeWithDelete } from './EdgeWithDelete'
+import type { FsPort } from '../../shared/fs/FsPort'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -53,9 +54,10 @@ const CanvasClickArea = styled.div`
 type CanvasOpsProps = {
   initialNodes: FlowNode[]
   initialEdges?: Edge[]
+  fsPort?: FsPort
 }
 
-export function CanvasOps({ initialNodes }: CanvasOpsProps) {
+export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   const [nodes, setNodes] = useState<FlowNode[]>(initialNodes)
   const [edges, setEdges] = useState<Edge[]>([])
   const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
@@ -86,7 +88,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
     isCtrlClick: false,
   })
 
-  const groupingData = useGrouping(nodes)
+  const groupingData = useGrouping({ nodes, fsPort })
   const linkDrawingData = useLinkDrawing(nodes, edges)
 
   const handleCreateNode = useCallback(() => {
@@ -450,6 +452,7 @@ export function CanvasOps({ initialNodes }: CanvasOpsProps) {
           onDoubleClick={() => groupingData.toggleGroupExpansion(group.id)}
           onMouseEnter={() => setHoveredGroupId(group.id)}
           onMouseLeave={() => setHoveredGroupId(null)}
+          onPromoteToHard={() => groupingData.promoteToHard(group.id)}
         />
       ))}
 

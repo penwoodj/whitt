@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-const GroupBoxContainer = styled.div<{ $isSelected: boolean }>`
+const GroupBoxContainer = styled.div<{ $isSelected: boolean; $groupType: 'soft' | 'hard' }>`
   position: absolute;
-  border: 2px solid ${({ $isSelected }) => ($isSelected ? '#007bff' : '#666')};
-  background: rgba(0, 123, 255, 0.05);
+  border: ${({ $groupType }) => $groupType === 'hard' ? '3px solid #00008b' : '2px solid #666'};
+  background: ${({ $groupType }) => $groupType === 'hard' ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 123, 255, 0.05)'};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -49,6 +49,7 @@ type GroupBoxProps = {
     memberIds: Set<string>
     bounds: { left: number; top: number; width: number; height: number }
     isExpanded: boolean
+    groupType: 'soft' | 'hard'
   }
   nodes: Array<{ id: string; data: { title: string } }>
   isSelected: boolean
@@ -58,6 +59,7 @@ type GroupBoxProps = {
   onDoubleClick: () => void
   onMouseEnter: () => void
   onMouseLeave: () => void
+  onPromoteToHard: () => void
 }
 
 export function GroupBox({
@@ -70,13 +72,16 @@ export function GroupBox({
   onDoubleClick,
   onMouseEnter,
   onMouseLeave,
+  onPromoteToHard,
 }: GroupBoxProps) {
   const memberNodes = nodes.filter(n => group.memberIds.has(n.id))
 
   return (
     <GroupBoxContainer
       data-testid="group-box"
+      data-group-type={group.groupType}
       $isSelected={isSelected}
+      $groupType={group.groupType}
       style={{
         left: group.bounds.left,
         top: group.bounds.top,
@@ -96,13 +101,52 @@ export function GroupBox({
       aria-label={`Group with ${memberNodes.length} nodes`}
     >
       {isHovered && !group.isExpanded && (
-        <GroupTooltip data-testid="group-tooltip">
-          <div>{memberNodes.length} nodes</div>
-          <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '4px' }}>
-            {memberNodes.slice(0, 3).map(n => n.data.title).join(', ')}
-            {memberNodes.length > 3 && '...'}
-          </div>
-        </GroupTooltip>
+        <>
+          <GroupTooltip data-testid="group-tooltip">
+            <div>{memberNodes.length} nodes</div>
+            <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '4px' }}>
+              {memberNodes.slice(0, 3).map(n => n.data.title).join(', ')}
+              {memberNodes.length > 3 && '...'}
+            </div>
+          </GroupTooltip>
+
+          {group.groupType === 'soft' && (
+            <button
+              data-testid="make-folder-action"
+              onClick={async (e) => {
+                e.stopPropagation()
+                console.log('Make Folder button clicked, calling onPromoteToHard')
+                try {
+                  await onPromoteToHard()
+                  console.log('onPromoteToHard completed')
+                } catch (error) {
+                  console.error('Error in onPromoteToHard:', error)
+                }
+              }}
+              type="button"
+              style={{
+                position: 'absolute',
+                top: '-12px',
+                right: '-12px',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                border: '2px solid #007bff',
+                background: 'white',
+                color: '#007bff',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+              }}
+            >
+              +
+            </button>
+          )}
+        </>
       )}
 
       {group.isExpanded && (

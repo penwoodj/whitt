@@ -1,9 +1,18 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CanvasOps } from './CanvasOps'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
+import type { FsPort } from '../../shared/fs/FsPort'
+
+const mockFsPort: FsPort = {
+  readFile: vi.fn().mockImplementation(async () => 'content'),
+  writeFile: vi.fn().mockImplementation(async () => {}),
+  listDir: vi.fn().mockImplementation(async () => []),
+  watch: vi.fn(),
+  atomicRename: vi.fn().mockImplementation(async () => {}),
+}
 
 describe('Canvas Grouping Basics', () => {
   const mockNodes: FlowNode[] = [
@@ -20,7 +29,7 @@ describe('Canvas Grouping Basics', () => {
   const renderCanvas = () => {
     return render(
       <ThemeProvider>
-        <CanvasOps initialNodes={mockNodes} initialEdges={mockEdges} />
+        <CanvasOps initialNodes={mockNodes} initialEdges={mockEdges} fsPort={mockFsPort} />
       </ThemeProvider>
     )
   }
@@ -260,6 +269,283 @@ describe('Canvas Grouping Basics', () => {
 
       const groupBoxStyle = window.getComputedStyle(screen.getByTestId('group-box'))
       expect(groupBoxStyle.border).toContain('rgb(0, 123, 255)')
+    })
+  })
+
+  describe('GRP-07 soft vs hard grouping', () => {
+    it('soft group has soft border style initially', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+      const nodeC = screen.getByText('Node C')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.click(nodeC)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'soft')
+      })
+    })
+
+    it('invoking Make Folder transforms group to hard style', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'soft')
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const groupBoxes = screen.getAllByTestId('group-box')
+        const hardGroupBox = groupBoxes.find(gb => gb.getAttribute('data-group-type') === 'hard')
+        expect(hardGroupBox).toBeDefined()
+      }, { timeout: 10000 })
+    }, 15000)
+
+    it('hard group has pronounced/harsher border', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      const makeFolderBtn = await screen.findByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        const groupBoxStyle = window.getComputedStyle(groupBox)
+        expect(groupBoxStyle.borderWidth).toBe('3px')
+        expect(groupBoxStyle.borderColor).toBe('rgb(0, 0, 139)')
+      })
+    })
+
+    it('hard group center glow becomes more solid and less opaque', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      const makeFolderBtn = await screen.findByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        const groupBoxStyle = window.getComputedStyle(groupBox)
+        expect(groupBoxStyle.backgroundColor).toBe('rgba(0, 123, 255, 0.8)')
+      })
+    })
+  })
+
+  describe('GRPC-10 hard group', () => {
+    it('Make Folder creates new folder in filesystem', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+      const nodeC = screen.getByText('Node C')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.click(nodeC)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      await waitFor(() => {
+        const makeFolderBtn = screen.queryByTestId('make-folder-action')
+        expect(makeFolderBtn).toBeInTheDocument()
+      })
+
+      const makeFolderBtn = screen.getByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const folderSpy = screen.queryByTestId('folder-create-spy')
+        expect(folderSpy).toBeInTheDocument()
+        expect(folderSpy).toHaveTextContent('folder created')
+      }, { timeout: 10000 })
+    })
+
+    it('hard group moves member files into new folder', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      const makeFolderBtn = await screen.findByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const moveSpy = screen.queryAllByTestId('file-move-spy')
+        expect(moveSpy.length).toBe(2)
+        expect(moveSpy[0]).toHaveTextContent('Node A moved')
+        expect(moveSpy[1]).toHaveTextContent('Node B moved')
+      })
+    })
+
+    it('hard group creates new blank .md node at top level', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      const makeFolderBtn = await screen.findByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const newNodes = screen.getAllByText(/New Group/i)
+        expect(newNodes.length).toBeGreaterThan(0)
+      })
+    })
+
+    it('hard group box+halo persist after graph reload', async () => {
+      const user = userEvent.setup()
+      const { rerender } = renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const groupBox = screen.getByTestId('group-box')
+      await user.hover(groupBox)
+
+      const makeFolderBtn = await screen.findByTestId('make-folder-action')
+      await user.click(makeFolderBtn)
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+      })
+
+      // Sim reload
+      rerender(
+        <ThemeProvider>
+          <CanvasOps initialNodes={mockNodes} initialEdges={mockEdges} />
+        </ThemeProvider>
+      )
+
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+      })
     })
   })
 })
