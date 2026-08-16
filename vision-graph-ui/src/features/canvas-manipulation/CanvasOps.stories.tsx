@@ -362,3 +362,18 @@ export const GRPX_01_SoftGroupDualPersistence: Story = {
     },
   },
 }
+
+export const GRPX_02_LeftClickPanVsRightClickLasso: Story = {
+  name: 'GRPX-02 left-click pan vs right-click lasso',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Left-click and drag on empty canvas to pan (move) the viewport. Right-click and drag on empty canvas to create lasso selection box that encloses nodes. Left-click on node selects it, right-click on selected nodes creates group.',
+      },
+    },
+  },
+}

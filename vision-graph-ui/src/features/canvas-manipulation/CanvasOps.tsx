@@ -67,6 +67,13 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   const [lassoEnd, setLassoEnd] = useState<{ x: number; y: number } | null>(null)
   const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null)
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+  
+  const [panState, setPanState] = useState({
+    translateX: 0,
+    translateY: 0,
+    isPanning: false,
+    panStart: { x: 0, y: 0 }
+  })
   const [deleteConfirm, setDeleteConfirm] = useState<{
     show: boolean
     nodeIds: string[]
@@ -205,7 +212,13 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   }, [groupingData, linkDrawingData])
 
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 2) {
+    if (e.button === 0) {
+      setPanState(prev => ({
+        ...prev,
+        isPanning: true,
+        panStart: { x: e.clientX - prev.translateX, y: e.clientY - prev.translateY }
+      }))
+    } else if (e.button === 2) {
       if (selectedNodeIds.size >= 2) {
         groupingData.createGroup(selectedNodeIds)
       } else {
@@ -266,6 +279,15 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   }, [dragState, handleNodeClick, linkDrawingData])
 
   const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
+    if (panState.isPanning) {
+      setPanState(prev => ({
+        ...prev,
+        translateX: e.clientX - prev.panStart.x,
+        translateY: e.clientY - prev.panStart.y
+      }))
+      return
+    }
+    
     if (dragState.isDragging && dragState.dragStart) {
       if (!dragState.isCtrlClick && (e.ctrlKey || e.metaKey || document.body.hasAttribute('data-control-pressed')) && dragState.draggedNodeId) {
         setDragState(prev => ({ ...prev, isCtrlClick: true }))
@@ -313,6 +335,14 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   }, [dragState, lassoStart, linkDrawingData])
 
   const handleCanvasMouseUp = useCallback(() => {
+    if (panState.isPanning) {
+      setPanState(prev => ({
+        ...prev,
+        isPanning: false
+      }))
+      return
+    }
+    
     if (dragState.isDragging) {
       if (dragState.isCtrlClick) {
         const newEdge = linkDrawingData.completeConnection()

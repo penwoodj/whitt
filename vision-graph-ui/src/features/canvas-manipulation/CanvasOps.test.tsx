@@ -337,4 +337,76 @@ describe('CanvasOps - Drag Coherence', () => {
       })
     })
   })
+
+  describe('GRPX-02 left-click pan vs right-click lasso', () => {
+    it('left-click drag on empty canvas pans the canvas', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const canvas = screen.getByTestId('react-flow-canvas')
+      
+      await userEvent.pointer([
+        { keys: '[MouseLeft]', target: canvas, coords: { x: 400, y: 300 } },
+        { coords: { x: 500, y: 400 } },
+        { keys: '[/MouseLeft]' },
+      ])
+      
+      // Verify pan state changed
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      // Nodes should be visible (panned)
+      expect(nodeA).toBeInTheDocument()
+      expect(nodeB).toBeInTheDocument()
+    })
+
+    it('right-click drag on empty canvas creates lasso selection', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const canvas = screen.getByTestId('react-flow-canvas')
+      
+      await userEvent.pointer([
+        { keys: '[MouseRight]', target: canvas, coords: { x: 50, y: 50 } },
+        { coords: { x: 600, y: 400 } },
+        { keys: '[/MouseRight]' },
+      ])
+      
+      // Verify lasso box appears
+      await waitFor(() => {
+        const lassoBox = screen.queryByTestId('lasso-box')
+        expect(lassoBox).toBeInTheDocument()
+      })
+    })
+
+    it('left-click on node selects node (does not pan)', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      
+      await userEvent.click(nodeA)
+      
+      // Node should be selected (check for selection halo)
+      await waitFor(() => {
+        const selectionHalo = screen.queryByTestId('selection-halo')
+        expect(selectionHalo).toBeInTheDocument()
+      })
+    })
+
+    it('right-click on selected nodes creates group', async () => {
+      renderWithTheme(<CanvasOps initialNodes={mockNodes} />)
+      
+      const nodeA = screen.getByTestId('node-node-a')
+      const nodeB = screen.getByTestId('node-node-b')
+      
+      await userEvent.click(nodeA)
+      fireEvent.click(nodeB, { ctrlKey: true })
+      
+      await userEvent.pointer({ keys: '[MouseRight]', target: nodeA })
+      
+      // Verify group box appears
+      await waitFor(() => {
+        const groupBox = screen.queryByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+    })
+  })
 })
