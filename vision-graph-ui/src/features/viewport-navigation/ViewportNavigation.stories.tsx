@@ -138,3 +138,20 @@ export const NAV06CursorSemantics: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAV07KeyboardNudge: Story = {
+  name: 'NAV-07 keyboard nudge',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    const arrowRightEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowRight',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(arrowRightEvent)
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

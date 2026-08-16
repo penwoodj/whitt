@@ -65,3 +65,10 @@ Feature: Viewport Navigation Zoom
     Then cursor shows default
     When usr hovers over actionable affordance
     Then cursor shows pointer
+
+  Scenario: NAV-07 keyboard nudge
+    Given node selected
+    When usr presses arrow key
+    Then node moves 1px in arrow direction
+    When usr holds shift and presses arrow key
+    Then node moves 10px in arrow direction

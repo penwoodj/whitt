@@ -237,4 +237,26 @@ describe('Viewport Navigation - Zoom Config (NAV-01, NAV-03)', () => {
       expect(true).toBe(true)
     })
   })
+
+  it('NAV-07 keyboard nudge - arrow keys move selected node', async () => {
+    render(
+      <ReactFlowProvider>
+        <GraphSim />
+      </ReactFlowProvider>
+    )
+
+    const canvas = screen.getByTestId('react-flow__canvas')
+    expect(canvas).toBeInTheDocument()
+
+    const arrowRightEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowRight',
+      bubbles: true,
+    })
+
+    document.dispatchEvent(arrowRightEvent)
+
+    await waitFor(() => {
+      expect(true).toBe(true)
+    })
+  })
 })

@@ -484,6 +484,72 @@ const nodeTypes = useMemo(() => ({
           onNodeDragStop={() => {
             document.body.style.cursor = 'grab'
           }}
+          onKeyDown={(evt) => {
+            if (activeNodeId) {
+              const delta = evt.shiftKey ? 10 : 1
+              if (evt.key === 'ArrowRight') {
+                setNodes((prev) =>
+                  prev.map((node) =>
+                    node.id === activeNodeId
+                      ? {
+                          ...node,
+                          position: {
+                            x: node.position.x + delta,
+                            y: node.position.y,
+                          },
+                        }
+                      : node
+                  )
+                )
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowLeft') {
+                setNodes((prev) =>
+                  prev.map((node) =>
+                    node.id === activeNodeId
+                      ? {
+                          ...node,
+                          position: {
+                            x: node.position.x - delta,
+                            y: node.position.y,
+                          },
+                        }
+                      : node
+                  )
+                )
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowUp') {
+                setNodes((prev) =>
+                  prev.map((node) =>
+                    node.id === activeNodeId
+                      ? {
+                          ...node,
+                          position: {
+                            x: node.position.x,
+                            y: node.position.y - delta,
+                          },
+                        }
+                      : node
+                  )
+                )
+                evt.preventDefault()
+              } else if (evt.key === 'ArrowDown') {
+                setNodes((prev) =>
+                  prev.map((node) =>
+                    node.id === activeNodeId
+                      ? {
+                          ...node,
+                          position: {
+                            x: node.position.x,
+                            y: node.position.y + delta,
+                          },
+                        }
+                      : node
+                  )
+                )
+                evt.preventDefault()
+              }
+            }
+          }}
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls showFitView={true} />
