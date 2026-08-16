@@ -464,8 +464,10 @@ const nodeTypes = useMemo(() => ({
           onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
           nodeTypes={nodeTypes}
           defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
-          minZoom={0.2}
-          maxZoom={4}
+          minZoom={0.1}
+          maxZoom={2.5}
+          zoomOnScroll={true}
+          zoomOnPinch={true}
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls />
