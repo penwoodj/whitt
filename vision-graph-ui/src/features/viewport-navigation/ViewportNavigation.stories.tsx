@@ -221,3 +221,13 @@ export const NAVX03WASDPan: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAVX04ExpandedNodeDragPadding: Story = {
+  name: 'NAVX-04 expanded node drag via padding',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

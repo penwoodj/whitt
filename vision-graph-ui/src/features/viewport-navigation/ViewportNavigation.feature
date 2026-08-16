@@ -92,3 +92,10 @@ Feature: Viewport Navigation Zoom
     When usr presses W, A, S, or D keys
     Then canvas pans in corresponding direction
     And pan speed is consistent with arrow keys
+
+  Scenario: NAVX-04 expanded node drag via padding
+    Given expanded node w/ padding area around content
+    When usr left-clicks and drags in padding area
+    Then node moves w/ drag
+    And all connections move w/ node
+    And drag works same as non-expanded node drag
