@@ -1,8 +1,11 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import type { Node as FlowNode } from '@xyflow/react'
 import type { FsPort } from '../../shared/fs/FsPort'
 
 export type GroupType = 'soft' | 'hard'
+
+const LOCAL_STORAGE_KEY = 'softGroups'
+const WHITT_GROUPS_FILE = '.whitt/groups.json'
 
 export type FsOps = {
   folderCreated: boolean
@@ -26,6 +29,89 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   const [groups, setGroups] = useState<Group[]>([])
   const [activeGroupIds, setActiveGroupIds] = useState<Set<string>>(new Set())
   const [fsOps, setFsOps] = useState<FsOps>({ folderCreated: false, movedNames: [] })
+
+  const serializeGroup = useCallback((group: Group) => ({
+    id: group.id,
+    memberIds: Array.from(group.memberIds),
+    bounds: group.bounds,
+    isExpanded: group.isExpanded,
+    groupType: group.groupType
+  }), [])
+
+  const deserializeGroup = useCallback((data: any): Group => ({
+    id: data.id,
+    memberIds: new Set(data.memberIds),
+    bounds: data.bounds,
+    isExpanded: data.isExpanded,
+    groupType: data.groupType
+  }), [])
+
+  useEffect(() => {
+    const loadGroups = async () => {
+      const loadedGroups: Group[] = []
+
+      try {
+        const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY)
+        if (localStorageData) {
+          const parsedGroups = JSON.parse(localStorageData)
+          const localGroups = parsedGroups
+            .filter((g: any) => g.groupType === 'soft')
+            .map(deserializeGroup)
+          loadedGroups.push(...localGroups)
+        }
+      } catch (error) {
+        console.warn('Failed to load groups from localStorage:', error)
+      }
+
+      if (fsPort) {
+        try {
+          const whittData = await fsPort.readFile(WHITT_GROUPS_FILE)
+          if (whittData && whittData.trim() !== '') {
+            const parsedGroups = JSON.parse(whittData)
+            const whittGroups = parsedGroups
+              .filter((g: any) => g.groupType === 'soft')
+              .map(deserializeGroup)
+            
+            const existingIds = new Set(loadedGroups.map(g => g.id))
+            whittGroups.forEach((group: Group) => {
+              if (!existingIds.has(group.id)) {
+                loadedGroups.push(group)
+              }
+            })
+          }
+        } catch (error) {
+          console.warn('Failed to load groups from .whitt folder:', error)
+        }
+      }
+
+      if (loadedGroups.length > 0) {
+        setGroups(loadedGroups)
+      }
+    }
+
+    loadGroups()
+  }, [fsPort, deserializeGroup])
+
+  useEffect(() => {
+    const softGroups = groups.filter(g => g.groupType === 'soft')
+    if (softGroups.length === 0) return
+
+    try {
+      const serializedGroups = softGroups.map(serializeGroup)
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializedGroups))
+    } catch (error) {
+      console.warn('Failed to save groups to localStorage:', error)
+    }
+
+    if (fsPort) {
+      try {
+        const serializedGroups = softGroups.map(serializeGroup)
+        fsPort.writeFile(WHITT_GROUPS_FILE, JSON.stringify(serializedGroups, null, 2))
+      } catch (error) {
+        console.warn('Failed to save groups to .whitt folder:', error)
+      }
+    }
+  }, [groups, fsPort, serializeGroup])
 
   const createGroup = useCallback((selectedNodeIds: Set<string>) => {
     if (selectedNodeIds.size < 2) return null

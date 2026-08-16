@@ -347,3 +347,18 @@ export const GRPC_10_HardGroup: Story = {
     },
   },
 }
+
+export const GRPX_01_SoftGroupDualPersistence: Story = {
+  name: 'GRPX-01 soft group dual persistence',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group by multi-selecting 3+ nodes and right-clicking. Group persists to localStorage AND .whitt/groups.json in closest parent folder. On page reload, groups restore from both sources automatically.',
+      },
+    },
+  },
+}

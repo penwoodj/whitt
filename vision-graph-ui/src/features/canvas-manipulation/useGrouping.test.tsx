@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CanvasOps } from './CanvasOps'
@@ -6,12 +6,18 @@ import { ThemeProvider } from '../../shared/ThemeProvider'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import type { FsPort } from '../../shared/fs/FsPort'
 
+const mockReadFile = vi.fn().mockImplementation(async () => 'content')
+const mockWriteFile = vi.fn().mockImplementation(async () => {})
+const mockListDir = vi.fn().mockImplementation(async () => [])
+const mockWatch = vi.fn()
+const mockAtomicRename = vi.fn().mockImplementation(async () => {})
+
 const mockFsPort: FsPort = {
-  readFile: vi.fn().mockImplementation(async () => 'content'),
-  writeFile: vi.fn().mockImplementation(async () => {}),
-  listDir: vi.fn().mockImplementation(async () => []),
-  watch: vi.fn(),
-  atomicRename: vi.fn().mockImplementation(async () => {}),
+  readFile: mockReadFile,
+  writeFile: mockWriteFile,
+  listDir: mockListDir,
+  watch: mockWatch,
+  atomicRename: mockAtomicRename,
 }
 
 describe('Canvas Grouping Basics', () => {
@@ -545,6 +551,114 @@ describe('Canvas Grouping Basics', () => {
         const groupBox = screen.queryByTestId('group-box')
         expect(groupBox).toBeInTheDocument()
         expect(groupBox).toHaveAttribute('data-group-type', 'hard')
+      })
+    })
+  })
+
+  describe('GRPX-01 soft group dual persistence', () => {
+    beforeEach(() => {
+      localStorage.clear()
+      vi.clearAllMocks()
+    })
+
+    it('soft group persists to localStorage', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+      const nodeC = screen.getByText('Node C')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.click(nodeC)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      const localStorageData = localStorage.getItem('softGroups')
+      expect(localStorageData).not.toBeNull()
+      const groups = JSON.parse(localStorageData!)
+      expect(groups).toHaveLength(1)
+      expect(groups[0].groupType).toBe('soft')
+      expect(groups[0].memberIds).toContain('node-a')
+      expect(groups[0].memberIds).toContain('node-b')
+      expect(groups[0].memberIds).toContain('node-c')
+      expect(groups[0].bounds).toBeDefined()
+    })
+
+    it('soft group persists to .whitt folder', async () => {
+      const user = userEvent.setup()
+      renderCanvas()
+
+      const nodeA = screen.getByText('Node A')
+      const nodeB = screen.getByText('Node B')
+      const nodeC = screen.getByText('Node C')
+
+      await user.click(nodeA)
+      await user.keyboard('{Control>}')
+      await user.click(nodeB)
+      await user.click(nodeC)
+      await user.keyboard('{/Control}')
+
+      await user.pointer({ keys: '[MouseRight]', target: nodeA })
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+      })
+
+      expect(mockWriteFile).toHaveBeenCalledWith(
+        '.whitt/groups.json',
+        expect.stringContaining('"groupType"')
+      )
+      expect(mockWriteFile).toHaveBeenCalledWith(
+        '.whitt/groups.json',
+        expect.stringContaining('soft')
+      )
+    })
+
+    it('soft group loads from localStorage on init', async () => {
+      const savedGroups = [{
+        id: 'group-saved-123',
+        memberIds: ['node-a', 'node-b'],
+        bounds: { left: 90, top: 90, width: 220, height: 70 },
+        isExpanded: false,
+        groupType: 'soft' as const
+      }]
+      localStorage.setItem('softGroups', JSON.stringify(savedGroups))
+
+      renderCanvas()
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'soft')
+      })
+    })
+
+    it('soft group loads from .whitt folder on init', async () => {
+      const savedGroups = [{
+        id: 'group-saved-456',
+        memberIds: ['node-c', 'node-d'],
+        bounds: { left: 490, top: 290, width: 220, height: 70 },
+        isExpanded: false,
+        groupType: 'soft' as const
+      }]
+      mockReadFile.mockResolvedValue(JSON.stringify(savedGroups))
+
+      renderCanvas()
+
+      await waitFor(() => {
+        const groupBox = screen.getByTestId('group-box')
+        expect(groupBox).toBeInTheDocument()
+        expect(groupBox).toHaveAttribute('data-group-type', 'soft')
       })
     })
   })
