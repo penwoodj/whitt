@@ -108,3 +108,23 @@ export const NAV04FitView: Story = {
     await new Promise(resolve => setTimeout(resolve, 100))
   },
 }
+
+export const NAV05Minimap: Story = {
+  name: 'NAV-05 minimap',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}
+
+export const NAV08SpawnReveal: Story = {
+  name: 'NAV-08 spawn reveal',
+  play: async ({ canvasElement }) => {
+    const canvas = canvasElement.querySelector('[data-testid="react-flow__canvas"]')
+    if (!canvas) throw new Error('Canvas not found')
+
+    await new Promise(resolve => setTimeout(resolve, 100))
+  },
+}

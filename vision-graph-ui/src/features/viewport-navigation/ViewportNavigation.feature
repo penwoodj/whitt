@@ -35,3 +35,22 @@ Feature: Viewport Navigation Zoom
     Then camera animates to bound all nodes
     And nodes have padding around edges
     And animation is smooth
+
+  Scenario: NAV-05 minimap
+    Given canvas w/ content beyond viewport
+    Then minimap shows in corner
+    And minimap shows all nodes
+    And minimap shows viewport rect
+    When usr drags viewport rect on minimap
+    Then canvas pans
+    When usr clicks minimap
+    Then camera jumps to clicked location
+
+  Scenario: NAV-08 spawn reveal
+    Given agent/user spawns node outside viewport
+    And spawn involves user action
+    Then canvas auto-pans to reveal node
+    And pan is animated
+    When background agent spawns node
+    Then camera does not pan
+    And minimap shows glow on new node

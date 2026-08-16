@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
@@ -475,6 +475,15 @@ const nodeTypes = useMemo(() => ({
         >
           <Background color="#A6A6A6" gap={20} />
           <Controls showFitView={true} />
+          <MiniMap
+            pannable
+            zoomable
+            nodeStrokeWidth={3}
+            nodeColor={(node) => {
+              const nodeData = node.data as any
+              return nodeData?.status === 'running' ? '#007ACC' : '#303031'
+            }}
+          />
         </ReactFlow>
         <MarkdownHighlightMenu
           selectedText={selectedText}
