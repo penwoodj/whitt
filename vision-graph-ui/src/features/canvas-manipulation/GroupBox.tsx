@@ -8,9 +8,10 @@ type GroupBoxProps = {
   memberNodes: FlowNode[]
   isSelected: boolean
   isHovered: boolean
+  isRecording: boolean
   onClick: () => void
   onRightClick: () => void
-  onDoubleClick: () => void
+  onDoubleClick: (button: number) => void
   onMouseEnter: () => void
   onMouseLeave: () => void
   onPromoteToHard: () => void
@@ -186,11 +187,34 @@ const MiniNode = styled.div`
   white-space: nowrap;
 `
 
+const SttTooltip = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  top: -50px;
+  right: -20px;
+  background: rgba(220, 53, 69, 0.9);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: opacity 200ms ease;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+  
+  &::before {
+    content: '🎤 Recording...';
+    margin-right: 8px;
+  }
+`
+
 export function GroupBox({
   group,
   memberNodes,
   isSelected,
   isHovered,
+  isRecording,
   onClick,
   onRightClick,
   onDoubleClick,
@@ -295,7 +319,7 @@ export function GroupBox({
       }}
       onDoubleClick={e => {
         e.stopPropagation()
-        onDoubleClick()
+        onDoubleClick(e.button || 0)
       }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -359,6 +383,10 @@ export function GroupBox({
         </div>
       ) : (
         <>
+          <SttTooltip
+            data-testid="stt-tooltip"
+            $visible={isRecording}
+          />
           {group.isExpanded && (
             <ExpansionSurface data-testid="group-expansion-surface">
               {memberTitles.map(title => (

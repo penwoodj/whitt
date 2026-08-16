@@ -7,6 +7,7 @@ import { GroupBox } from './GroupBox'
 import { ConnectionLineComponent } from './ConnectionLine'
 import { EdgeWithDelete } from './EdgeWithDelete'
 import { GroupDetailPanel } from './GroupDetailPanel'
+import { createFakeSttEngine } from '../voice-capture/fake/FakeSttEngine'
 import type { FsPort } from '../../shared/fs/FsPort'
 
 const CanvasContainer = styled.div`
@@ -76,6 +77,10 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
     panStart: { x: 0, y: 0 }
   })
   const [focusedGroupId, setFocusedGroupId] = useState<string | null>(null)
+  const [recordingGroupId, setRecordingGroupId] = useState<string | null>(null)
+  const [sttEngine, setSttEngine] = useState<ReturnType<typeof createFakeSttEngine> | null>(null)
+  const [recordedText, setRecordedText] = useState<string>('')
+
   const [deleteConfirm, setDeleteConfirm] = useState<{
     show: boolean
     nodeIds: string[]
@@ -98,6 +103,31 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   })
 
   const groupingData = useGrouping({ nodes, fsPort })
+
+  useEffect(() => {
+    return () => {
+      if (sttEngine) {
+        sttEngine.stop()
+      }
+    }
+  }, [sttEngine])
+
+  const handleGroupDoubleClick = useCallback((groupId: string, button: number) => {
+    if (button === 2) {
+      groupingData.toggleGroupExpansion(groupId)
+    } else if (button === 0) {
+      groupingData.toggleGroupExpansion(groupId)
+      setRecordingGroupId(groupId)
+      const engine = createFakeSttEngine(['Hello', 'group', 'members'])
+      setSttEngine(engine)
+      engine.on((evt) => {
+        if (evt.type === 'final') {
+          setRecordedText(evt.text)
+        }
+      })
+      engine.start()
+    }
+  }, [groupingData])
 
   const handlePromoteToHard = useCallback(async (group: { id: string; bounds: { left: number; top: number } }) => {
     await groupingData.promoteToHard(group.id)
@@ -511,9 +541,10 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           memberNodes={nodes.filter(n => group.memberIds.has(n.id))}
           isSelected={groupingData.activeGroupIds.has(group.id)}
           isHovered={hoveredGroupId === group.id}
+          isRecording={recordingGroupId === group.id}
           onClick={() => groupingData.selectGroup(group.id)}
           onRightClick={() => groupingData.removeGroup(group.id)}
-          onDoubleClick={() => groupingData.toggleGroupExpansion(group.id)}
+          onDoubleClick={(button) => handleGroupDoubleClick(group.id, button)}
           onMouseEnter={() => setHoveredGroupId(group.id)}
           onMouseLeave={() => setHoveredGroupId(null)}
           onPromoteToHard={() => handlePromoteToHard(group)}

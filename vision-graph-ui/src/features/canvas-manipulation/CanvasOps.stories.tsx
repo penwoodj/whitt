@@ -497,3 +497,33 @@ export const GRPX_10_DebouncedFileSystemReflection: Story = {
     },
   },
 }
+
+export const GRPX_11_DoubleRightClickExpandGroup: Story = {
+  name: 'GRPX-11 double-right-click expand group',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group by selecting 2+ nodes (ctrl+click) and right-clicking. Double-right-click on the group box to expand it and show the group detail panel. Speech-to-text recording is NOT started (reserved gesture). Works whether node is expanded or collapsed.',
+      },
+    },
+  },
+}
+
+export const GRPX_12_DoubleLeftClickExpandAndRecord: Story = {
+  name: 'GRPX-12 double-left-click expand + record',
+  args: {
+    initialNodes: mockNodes,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Create soft group by selecting 2+ nodes (ctrl+click) and right-clicking. Double-left-click on the group box to expand it and start speech-to-text recording. Red "🎤 Recording..." tooltip appears in upper right-hand corner around the node. Works whether node is expanded or collapsed. Recording continues until manually stopped or group is deselected.',
+      },
+    },
+  },
+}
