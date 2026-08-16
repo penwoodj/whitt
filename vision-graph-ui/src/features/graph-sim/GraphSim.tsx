@@ -159,6 +159,7 @@ function GraphSimFlow({
   }, [activeNodeId, setNodes, getViewport, setViewport])
 
   return (
+    <div data-testid="react-flow__canvas" style={{ width: '100%', height: '100%' }}>
     <ReactFlow
       nodes={nodes}
       edges={edges}
@@ -192,6 +193,7 @@ function GraphSimFlow({
         }}
       />
     </ReactFlow>
+    </div>
   )
 }
 
