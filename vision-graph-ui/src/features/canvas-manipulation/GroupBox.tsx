@@ -1,57 +1,10 @@
 import styled from 'styled-components'
-
-const GroupBoxContainer = styled.div<{ $isSelected: boolean; $groupType: 'soft' | 'hard' }>`
-  position: absolute;
-  border: ${({ $groupType }) => $groupType === 'hard' ? '3px solid #00008b' : '2px solid #666'};
-  background: ${({ $groupType }) => $groupType === 'hard' ? 'rgba(0, 123, 255, 0.8)' : 'rgba(0, 123, 255, 0.05)'};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #007bff;
-    background: rgba(0, 123, 255, 0.1);
-  }
-`
-
-const GroupTooltip = styled.div`
-  position: absolute;
-  left: 100%;
-  top: 0;
-  margin-left: 8px;
-  background: #333;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1000;
-  pointer-events: none;
-`
-
-const ExpansionSurface = styled.div`
-  position: absolute;
-  left: 100%;
-  top: 0;
-  margin-left: 16px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-`
+import type { Group } from './useGrouping'
+import type { Node as FlowNode } from '@xyflow/react'
 
 type GroupBoxProps = {
-  group: {
-    id: string
-    memberIds: Set<string>
-    bounds: { left: number; top: number; width: number; height: number }
-    isExpanded: boolean
-    groupType: 'soft' | 'hard'
-  }
-  nodes: Array<{ id: string; data: { title: string } }>
+  group: Group
+  memberNodes: FlowNode[]
   isSelected: boolean
   isHovered: boolean
   onClick: () => void
@@ -62,9 +15,68 @@ type GroupBoxProps = {
   onPromoteToHard: () => void
 }
 
+const GroupBoxContainer = styled.div<{
+  $groupType: string
+  $isSelected: boolean
+}>`
+  position: absolute;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+  ${props => props.$groupType === 'hard'
+    ? `
+      border: 3px solid #00008b;
+      background-color: rgba(0, 123, 255, 0.8);
+    `
+    : `
+      border: 2px dashed #007bff;
+      background-color: transparent;
+    `}
+  ${props => props.$isSelected && 'box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);'}
+`
+
+const GroupTooltip = styled.div`
+  position: absolute;
+  top: -28px;
+  left: 0;
+  background: rgba(30, 30, 30, 0.9);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+`
+
+const MakeFolderBtn = styled.button<{ $isHovered: boolean }>`
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  background: #fff;
+  color: #007bff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: ${props => (props.$isHovered ? 1 : 0)};
+  transition: opacity 120ms ease;
+`
+
+const ExpansionSurface = styled.div`
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 12px;
+  padding: 12px;
+  color: #fff;
+  overflow: hidden;
+`
+
 export function GroupBox({
   group,
-  nodes,
+  memberNodes,
   isSelected,
   isHovered,
   onClick,
@@ -74,22 +86,22 @@ export function GroupBox({
   onMouseLeave,
   onPromoteToHard,
 }: GroupBoxProps) {
-  const memberNodes = nodes.filter(n => group.memberIds.has(n.id))
+  const memberTitles = memberNodes.map(n => n.data.title as string)
 
   return (
     <GroupBoxContainer
       data-testid="group-box"
       data-group-type={group.groupType}
-      $isSelected={isSelected}
-      $groupType={group.groupType}
       style={{
         left: group.bounds.left,
         top: group.bounds.top,
         width: group.bounds.width,
         height: group.bounds.height,
       }}
+      $groupType={group.groupType}
+      $isSelected={isSelected}
       onClick={onClick}
-      onContextMenu={(e) => {
+      onContextMenu={e => {
         e.preventDefault()
         onRightClick()
       }}
@@ -100,66 +112,38 @@ export function GroupBox({
       tabIndex={0}
       aria-label={`Group with ${memberNodes.length} nodes`}
     >
-      {isHovered && !group.isExpanded && (
+      {group.isExpanded ? (
+        <ExpansionSurface data-testid="group-expansion-surface">
+          {memberTitles.map(title => (
+            <div key={title}>{title}</div>
+          ))}
+        </ExpansionSurface>
+      ) : (
         <>
-          <GroupTooltip data-testid="group-tooltip">
-            <div>{memberNodes.length} nodes</div>
-            <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '4px' }}>
-              {memberNodes.slice(0, 3).map(n => n.data.title).join(', ')}
-              {memberNodes.length > 3 && '...'}
-            </div>
-          </GroupTooltip>
-
+          {isHovered && (
+            <GroupTooltip data-testid="group-tooltip">
+              <div>{memberNodes.length} nodes</div>
+              <div>
+                {memberTitles.slice(0, 3).join(', ')}
+                {memberTitles.length > 3 && '...'}
+              </div>
+            </GroupTooltip>
+          )}
           {group.groupType === 'soft' && (
-            <button
+            <MakeFolderBtn
               data-testid="make-folder-action"
-              onClick={async (e) => {
-                e.stopPropagation()
-                console.log('Make Folder button clicked, calling onPromoteToHard')
-                try {
-                  await onPromoteToHard()
-                  console.log('onPromoteToHard completed')
-                } catch (error) {
-                  console.error('Error in onPromoteToHard:', error)
-                }
-              }}
               type="button"
-              style={{
-                position: 'absolute',
-                top: '-12px',
-                right: '-12px',
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                border: '2px solid #007bff',
-                background: 'white',
-                color: '#007bff',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10,
+              $isHovered={isHovered}
+              aria-label="Make Folder"
+              onClick={e => {
+                e.stopPropagation()
+                onPromoteToHard()
               }}
             >
               +
-            </button>
+            </MakeFolderBtn>
           )}
         </>
-      )}
-
-      {group.isExpanded && (
-        <ExpansionSurface data-testid="group-expansion-surface">
-          <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold' }}>
-            Group Contents
-          </h3>
-          {memberNodes.map(node => (
-            <div key={node.id} style={{ padding: '4px 0', fontSize: '13px' }}>
-              {node.data.title}
-            </div>
-          ))}
-        </ExpansionSurface>
       )}
     </GroupBoxContainer>
   )

@@ -4,6 +4,11 @@ import type { FsPort } from '../../shared/fs/FsPort'
 
 export type GroupType = 'soft' | 'hard'
 
+export type FsOps = {
+  folderCreated: boolean
+  movedNames: string[]
+}
+
 export type Group = {
   id: string
   memberIds: Set<string>
@@ -20,6 +25,7 @@ type UseGroupingProps = {
 export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   const [groups, setGroups] = useState<Group[]>([])
   const [activeGroupIds, setActiveGroupIds] = useState<Set<string>>(new Set())
+  const [fsOps, setFsOps] = useState<FsOps>({ folderCreated: false, movedNames: [] })
 
   const createGroup = useCallback((selectedNodeIds: Set<string>) => {
     if (selectedNodeIds.size < 2) return null
@@ -100,62 +106,46 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   }, [])
 
   const promoteToHard = useCallback(async (groupId: string) => {
-    console.log('promoteToHard called with groupId:', groupId)
-    console.log('Available fsPort:', !!fsPort)
-    console.log('Available groups:', groups.length)
-
     const group = groups.find(g => g.id === groupId)
-    if (!group || !fsPort) {
-      console.log('No group or fsPort, promoting without FS ops')
+    if (!group) return
+
+    const promoteGroup = () => {
       setGroups(prev => prev.map(g =>
         g.id === groupId ? { ...g, groupType: 'hard' as GroupType } : g
       ))
+    }
+
+    if (!fsPort) {
+      promoteGroup()
       return
     }
 
     const memberNodes = nodes.filter(n => group.memberIds.has(n.id))
-    if (memberNodes.length === 0) return
+    if (memberNodes.length === 0) {
+      promoteGroup()
+      return
+    }
 
     const folderName = `group-${group.id}`
     const folderPath = `/${folderName}`
 
-    const moves = memberNodes.map(node => ({
-      from: `/${node.data.title as string}.md`,
-      to: `${folderPath}/${node.data.title as string}.md`
-    }))
-
-    try {
-      console.log('Starting FS operations for folder:', folderPath)
-      await fsPort.writeFile(`${folderPath}/.gitkeep`, '')
-      await Promise.all(moves.map(move => fsPort.atomicRename(move.from, move.to)))
-      await fsPort.writeFile(`${folderPath}/index.md`, `# ${folderName}`)
-      console.log('FS operations completed')
-    } catch (error) {
-      console.error('Failed to promote group to hard:', error)
-    }
-
-    setGroups(prev => prev.map(g =>
-      g.id === groupId ? { ...g, groupType: 'hard' as GroupType } : g
+    await fsPort.writeFile(`${folderPath}/.gitkeep`, '')
+    await Promise.all(memberNodes.map(node =>
+      fsPort.atomicRename(`/${node.data.title as string}.md`, `${folderPath}/${node.data.title as string}.md`)
     ))
+    await fsPort.writeFile(`${folderPath}/index.md`, `# ${folderName}`)
 
-    const spyDiv = document.createElement('div')
-    spyDiv.dataset.testid = 'folder-create-spy'
-    spyDiv.textContent = 'folder created'
-    document.body.appendChild(spyDiv)
-
-    moves.forEach(move => {
-      const moveSpy = document.createElement('div')
-      moveSpy.dataset.testid = 'file-move-spy'
-      moveSpy.textContent = `${move.from.split('/').pop()} moved`
-      document.body.appendChild(moveSpy)
+    promoteGroup()
+    setFsOps({
+      folderCreated: true,
+      movedNames: memberNodes.map(n => `${n.data.title as string} moved`),
     })
-
-    console.log('Promoted group to hard:', groupId)
   }, [groups, nodes, fsPort])
 
   const groupData = useMemo(() => ({
     groups,
     activeGroupIds,
+    fsOps,
     createGroup,
     removeGroup,
     toggleGroupExpansion,
@@ -168,6 +158,7 @@ export function useGrouping({ nodes, fsPort }: UseGroupingProps) {
   }), [
     groups,
     activeGroupIds,
+    fsOps,
     createGroup,
     removeGroup,
     toggleGroupExpansion,

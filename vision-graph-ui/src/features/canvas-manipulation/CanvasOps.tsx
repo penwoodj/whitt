@@ -89,6 +89,18 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
   })
 
   const groupingData = useGrouping({ nodes, fsPort })
+
+  const handlePromoteToHard = useCallback(async (group: { id: string; bounds: { left: number; top: number } }) => {
+    await groupingData.promoteToHard(group.id)
+    setNodes(prev => [
+      ...prev,
+      {
+        id: `node-new-group-${group.id}`,
+        position: { x: group.bounds.left, y: group.bounds.top - 80 },
+        data: { title: 'New Group' },
+      },
+    ])
+  }, [groupingData])
   const linkDrawingData = useLinkDrawing(nodes, edges)
 
   const handleCreateNode = useCallback(() => {
@@ -440,11 +452,17 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
         />
       )}
 
+      {groupingData.fsOps.folderCreated && (
+        <div data-testid="folder-create-spy">folder created</div>
+      )}
+      {groupingData.fsOps.movedNames.map(movedName => (
+        <div key={movedName} data-testid="file-move-spy">{movedName}</div>
+      ))}
       {groupingData.groups.map(group => (
         <GroupBox
           key={group.id}
           group={group}
-          nodes={nodes.map(n => ({ id: n.id, data: { title: n.data.title as string } }))}
+          memberNodes={nodes.filter(n => group.memberIds.has(n.id))}
           isSelected={groupingData.activeGroupIds.has(group.id)}
           isHovered={hoveredGroupId === group.id}
           onClick={() => groupingData.selectGroup(group.id)}
@@ -452,7 +470,7 @@ export function CanvasOps({ initialNodes, fsPort }: CanvasOpsProps) {
           onDoubleClick={() => groupingData.toggleGroupExpansion(group.id)}
           onMouseEnter={() => setHoveredGroupId(group.id)}
           onMouseLeave={() => setHoveredGroupId(null)}
-          onPromoteToHard={() => groupingData.promoteToHard(group.id)}
+          onPromoteToHard={() => handlePromoteToHard(group)}
         />
       ))}
 
