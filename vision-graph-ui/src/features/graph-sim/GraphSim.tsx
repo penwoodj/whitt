@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges, useReactFlow } from '@xyflow/react'
+import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
@@ -37,6 +37,164 @@ const GraphContainer = styled.div`
 
 type SimState = 'picker' | 'graph'
 
+type GraphSimFlowProps = {
+  nodes: FlowNode[]
+  edges: Edge[]
+  nodeTypes: Record<string, React.FC<any>>
+  onNodesChange: (changes: any) => void
+  onEdgesChange: (changes: any) => void
+  setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>
+  activeNodeId: string | null
+  onNodeMouseEnter: () => void
+  onNodeMouseLeave: () => void
+  onNodeDragStart: () => void
+  onNodeDragStop: () => void
+}
+
+function GraphSimFlow({
+  nodes,
+  edges,
+  nodeTypes,
+  onNodesChange,
+  onEdgesChange,
+  setNodes,
+  activeNodeId,
+  onNodeMouseEnter,
+  onNodeMouseLeave,
+  onNodeDragStart,
+  onNodeDragStop
+}: GraphSimFlowProps) {
+  const { getViewport, setViewport } = useReactFlow()
+
+  const handleKeyDown = useCallback((evt: React.KeyboardEvent) => {
+    const activeElement = document.activeElement
+    const isInputFocused =
+      activeElement?.tagName === 'INPUT' ||
+      activeElement?.tagName === 'TEXTAREA' ||
+      activeElement?.getAttribute('contenteditable') === 'true'
+
+    if (isInputFocused) return
+
+    const viewport = getViewport()
+    const panDelta = 50
+
+    if (activeNodeId) {
+      const delta = evt.shiftKey ? 10 : 1
+      if (evt.key === 'ArrowRight') {
+        setNodes((prev) =>
+          prev.map((node) =>
+            node.id === activeNodeId
+              ? {
+                  ...node,
+                  position: {
+                    x: node.position.x + delta,
+                    y: node.position.y,
+                  },
+                }
+              : node
+          )
+        )
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowLeft') {
+        setNodes((prev) =>
+          prev.map((node) =>
+            node.id === activeNodeId
+              ? {
+                  ...node,
+                  position: {
+                    x: node.position.x - delta,
+                    y: node.position.y,
+                  },
+                }
+              : node
+          )
+        )
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowUp') {
+        setNodes((prev) =>
+          prev.map((node) =>
+            node.id === activeNodeId
+              ? {
+                  ...node,
+                  position: {
+                    x: node.position.x,
+                    y: node.position.y - delta,
+                  },
+                }
+              : node
+          )
+        )
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowDown') {
+        setNodes((prev) =>
+          prev.map((node) =>
+            node.id === activeNodeId
+              ? {
+                  ...node,
+                  position: {
+                    x: node.position.x,
+                    y: node.position.y + delta,
+                  },
+                }
+              : node
+          )
+        )
+        evt.preventDefault()
+      }
+    } else {
+      if (evt.key === 'ArrowRight' || evt.key === 'd' || evt.key === 'D') {
+        setViewport({ x: viewport.x - panDelta, y: viewport.y, zoom: viewport.zoom })
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowLeft' || evt.key === 'a' || evt.key === 'A') {
+        setViewport({ x: viewport.x + panDelta, y: viewport.y, zoom: viewport.zoom })
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowUp' || evt.key === 'w' || evt.key === 'W') {
+        setViewport({ x: viewport.x, y: viewport.y + panDelta, zoom: viewport.zoom })
+        evt.preventDefault()
+      } else if (evt.key === 'ArrowDown' || evt.key === 's' || evt.key === 'S') {
+        setViewport({ x: viewport.x, y: viewport.y - panDelta, zoom: viewport.zoom })
+        evt.preventDefault()
+      }
+    }
+  }, [activeNodeId, setNodes, getViewport, setViewport])
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      nodeTypes={nodeTypes}
+      defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
+      minZoom={0.1}
+      maxZoom={2.5}
+      zoomOnScroll={true}
+      zoomOnPinch={true}
+      panOnScroll={false}
+      panOnDrag={true}
+      panActivationKeyCode={' '}
+      selectionOnDrag={true}
+      onNodeMouseEnter={onNodeMouseEnter}
+      onNodeMouseLeave={onNodeMouseLeave}
+      onNodeDragStart={onNodeDragStart}
+      onNodeDragStop={onNodeDragStop}
+      onKeyDown={handleKeyDown}
+    >
+      <Background color="#A6A6A6" gap={20} />
+      <Controls showFitView={true} />
+      <MiniMap
+        pannable
+        zoomable
+        nodeStrokeWidth={3}
+        nodeColor={(node) => {
+          const nodeData = node.data as any
+          return nodeData?.status === 'running' ? '#007ACC' : '#303031'
+        }}
+      />
+    </ReactFlow>
+  )
+}
+
 type Snapshot = {
   nodes: FlowNode[]
   edges: Edge[]
@@ -45,7 +203,6 @@ type Snapshot = {
 
 export default function GraphSim() {
   const simLog = useGraphSimLogging()
-  const { getViewport, setViewport } = useReactFlow()
 
   const [simState, setSimState] = useState<SimState>('picker')
   const [activeProjectId, setActiveProjectId] = useState<string>('')
@@ -413,6 +570,22 @@ const nodeTypes = useMemo(() => ({
   custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
 }), [handleNodeSend])
 
+  const handleNodeMouseEnter = useCallback(() => {
+    document.body.style.cursor = 'grab'
+  }, [])
+
+  const handleNodeMouseLeave = useCallback(() => {
+    document.body.style.cursor = 'default'
+  }, [])
+
+  const handleNodeDragStart = useCallback(() => {
+    document.body.style.cursor = 'grabbing'
+  }, [])
+
+  const handleNodeDragStop = useCallback(() => {
+    document.body.style.cursor = 'grab'
+  }, [])
+
   if (simState === 'picker') {
     return (
       <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
@@ -458,137 +631,21 @@ const nodeTypes = useMemo(() => ({
       }
     >
       <GraphContainer>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={(changes) => setNodes((nds) => applyNodeChanges(changes, nds))}
-          onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
-          nodeTypes={nodeTypes}
-          defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
-          minZoom={0.1}
-          maxZoom={2.5}
-          zoomOnScroll={true}
-          zoomOnPinch={true}
-          panOnScroll={false}
-          panOnDrag={true}
-          panActivationKeyCode={' '}
-          selectionOnDrag={true}
-          onNodeMouseEnter={() => {
-            document.body.style.cursor = 'grab'
-          }}
-          onNodeMouseLeave={() => {
-            document.body.style.cursor = 'default'
-          }}
-          onNodeDragStart={() => {
-            document.body.style.cursor = 'grabbing'
-          }}
-          onNodeDragStop={() => {
-            document.body.style.cursor = 'grab'
-          }}
-          onKeyDown={(evt) => {
-            const activeElement = document.activeElement
-            const isInputFocused =
-              activeElement?.tagName === 'INPUT' ||
-              activeElement?.tagName === 'TEXTAREA' ||
-              activeElement?.getAttribute('contenteditable') === 'true'
-
-            if (isInputFocused) return
-
-            const viewport = getViewport()
-            const panDelta = 50
-
-            if (activeNodeId) {
-              const delta = evt.shiftKey ? 10 : 1
-              if (evt.key === 'ArrowRight') {
-                setNodes((prev) =>
-                  prev.map((node) =>
-                    node.id === activeNodeId
-                      ? {
-                          ...node,
-                          position: {
-                            x: node.position.x + delta,
-                            y: node.position.y,
-                          },
-                        }
-                      : node
-                  )
-                )
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowLeft') {
-                setNodes((prev) =>
-                  prev.map((node) =>
-                    node.id === activeNodeId
-                      ? {
-                          ...node,
-                          position: {
-                            x: node.position.x - delta,
-                            y: node.position.y,
-                          },
-                        }
-                      : node
-                  )
-                )
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowUp') {
-                setNodes((prev) =>
-                  prev.map((node) =>
-                    node.id === activeNodeId
-                      ? {
-                          ...node,
-                          position: {
-                            x: node.position.x,
-                            y: node.position.y - delta,
-                          },
-                        }
-                      : node
-                  )
-                )
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowDown') {
-                setNodes((prev) =>
-                  prev.map((node) =>
-                    node.id === activeNodeId
-                      ? {
-                          ...node,
-                          position: {
-                            x: node.position.x,
-                            y: node.position.y + delta,
-                          },
-                        }
-                      : node
-                  )
-                )
-                evt.preventDefault()
-              }
-            } else {
-              if (evt.key === 'ArrowRight' || evt.key === 'd' || evt.key === 'D') {
-                setViewport({ x: viewport.x - panDelta, y: viewport.y, zoom: viewport.zoom })
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowLeft' || evt.key === 'a' || evt.key === 'A') {
-                setViewport({ x: viewport.x + panDelta, y: viewport.y, zoom: viewport.zoom })
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowUp' || evt.key === 'w' || evt.key === 'W') {
-                setViewport({ x: viewport.x, y: viewport.y + panDelta, zoom: viewport.zoom })
-                evt.preventDefault()
-              } else if (evt.key === 'ArrowDown' || evt.key === 's' || evt.key === 'S') {
-                setViewport({ x: viewport.x, y: viewport.y - panDelta, zoom: viewport.zoom })
-                evt.preventDefault()
-              }
-            }
-          }}
-        >
-          <Background color="#A6A6A6" gap={20} />
-          <Controls showFitView={true} />
-          <MiniMap
-            pannable
-            zoomable
-            nodeStrokeWidth={3}
-            nodeColor={(node) => {
-              const nodeData = node.data as any
-              return nodeData?.status === 'running' ? '#007ACC' : '#303031'
-            }}
+        <ReactFlowProvider>
+          <GraphSimFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodesChange={(changes) => setNodes((nds) => applyNodeChanges(changes, nds))}
+            onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
+            setNodes={setNodes}
+            activeNodeId={activeNodeId}
+            onNodeMouseEnter={handleNodeMouseEnter}
+            onNodeMouseLeave={handleNodeMouseLeave}
+            onNodeDragStart={handleNodeDragStart}
+            onNodeDragStop={handleNodeDragStop}
           />
-        </ReactFlow>
+        </ReactFlowProvider>
         <MarkdownHighlightMenu
           selectedText={selectedText}
           position={highlightPosition}
