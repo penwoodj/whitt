@@ -265,3 +265,25 @@ export const GRPC_08_MultiDragCoherence: Story = {
     },
   },
 }
+
+const mockNodesPhysics: FlowNode[] = [
+  { id: 'node-a', position: { x: 50, y: 50 }, data: { title: 'Node A' } },
+  { id: 'node-b', position: { x: 750, y: 50 }, data: { title: 'Node B' } },
+  { id: 'node-c', position: { x: 50, y: 550 }, data: { title: 'Node C' } },
+  { id: 'node-d', position: { x: 750, y: 550 }, data: { title: 'Node D' } },
+]
+
+export const GRPC_09_ReheatSettle: Story = {
+  name: 'GRPC-09 reheat settle',
+  args: {
+    initialNodes: mockNodesPhysics,
+    initialEdges: mockEdges,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Nodes scattered at edges. Observe physics simulation: gentle center pull, collision avoidance, velocity decay. Drag any node to reheat simulation. Auto-sleep when stable.',
+      },
+    },
+  },
+}
