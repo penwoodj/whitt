@@ -106,7 +106,7 @@ PIL-04	08	slice08 -- PIL-04 pause highlight speak	pass
 PIL-05	08	slice08 -- PIL-05 attention weighting	pass
 PILC-01	08	slice08 -- PILC-01 overflow stacking	pass
 PILC-02	08	slice08 -- PILC-02 hover preview	pass
-GIT-01	09	-	todo
+GIT-01	09	slice09 -- GIT-01 commit per save	pass
 GIT-02	09	-	todo
 GIT-03	09	-	todo
 GIT-04	09	-	todo
