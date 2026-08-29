@@ -48,7 +48,7 @@ Ask user (2-3 questions max, `question` tool):
    - B) CodeMirror 6 now (md syntax highlight in raw mode)
    - C) Shiki read-only highlight + textarea edit
 
-## 5. Task breakdown (execute in order)
+## 5. Tasks (incremental, TDD, each ends green+committed)
 
 ### Task 5.1 — Preview area basic render (cases: FIL-01, FIL-02)
 - **Gherkin first**: `file-visualization.feature` (scenarios = FIL-01 area present, FIL-02 markdown preview)
@@ -145,7 +145,27 @@ NOTE task 5.1/5.2 adjust: raw mode = CodeMirror (dark+ theme) NOT textarea; line
 | 5.6 | `modern-react`, `storybook`, `test-driven-development` | `category="deep"` |
 | 5.7 | `test-driven-development` | do-not-delegate (placeholder only) |
 
-## 7. Out of scope / guards
+## 7. Live-system validation gate (slice DONE only when ALL pass)
+
+1. Run validation stories: `npx vitest run --project=storybook -t "slice07"`
+2. Every case ID in slice -> story -> play fn asserts pass (see validation spec assert table)
+3. Manifest: all slice rows `pass` (or `deferred` w/ reason)
+4. `check-coverage.sh` GREEN
+5. Manual review: user eyeballs stories in Storybook UI (serve: `npm run storybook`)
+
+NOTE: --project=storybook lane pre-existing broken (E4 log); substitute = scoped vitest + `npm run build-storybook` + story presence greps — used for S07 DONE evidence.
+
+## 8. Retry loop (failure = iterate, NEVER skip)
+
+```
+attempt -> fail -> read actual log lines (AGENTS.md §2)
+  -> hypothesis -> minimal fix -> re-run story
+  -> fail again? x2 -> load systematic-debugging skill
+  -> fail x3 -> escalate: oracle subagent w/ full ctx -> fix -> re-run
+  -> NEVER: delete test, loosen assert, extend timeout >2x, mark skip w/o user OK
+```
+
+## 9. Out of scope / guards
 
 - **FIL-03 (non-markdown types)**: syntax highlighting per type, specialized editing features — deferred, placeholder task only
 - **S08 pill UI**: selection surfaces feed pills (S08 owns pill rendering), this slice only exports selection state
