@@ -43,7 +43,7 @@ Ask user (2-3 questions max, `question` tool):
 
 2. **Sync conflict policy**: When `git push` fails due to remote divergence, what should happen? (A) Show error + manual resolve in external git client, (B) Auto-merge with force push option, (C) Pull-rebase-prompt in UI, (D) Other (specify).
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-16: Q1=A settings panel (remote URL + optional token fields, persisted). Q2=A error + manual resolve (plain error region + 'resolve in external git client' hint; NO auto force/rebase).
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
