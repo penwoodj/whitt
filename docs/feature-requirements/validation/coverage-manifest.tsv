@@ -80,15 +80,15 @@ EXEC-02	05	slice05 -- EXEC-02 title truncates	pass
 EXEC-03	05	slice05 -- EXEC-03 yaml failure	pass
 EXEC-04	05	slice05 -- EXEC-04 step error	pass
 EXEC-05	05	slice05 -- EXEC-05 completion	pass
-AGT-01	06	-	todo
-AGT-02	06	-	todo
-AGT-03	06	-	todo
-AGT-04	06	-	todo
-AGT-05	06	-	todo
-AGT-06	06	-	todo
-AGTC-01	06	-	todo
-AGTC-02	06	-	todo
-AGTC-03	06	-	todo
+AGT-01	06	slice06 -- AGT-01 default context	pass
+AGT-02	06	slice06 -- AGT-02 linked edit allowed	pass
+AGT-03	06	slice06 -- AGT-03 initial one file	pass
+AGT-04	06	slice06 -- AGT-04 mutations as movement	pass
+AGT-05	06	slice06 -- AGT-05 intervene mid-run	pass
+AGT-06	06	slice06 -- AGT-06 fs projects to graph	pass
+AGTC-01	06	slice06 -- AGTC-01 event vocabulary	pass
+AGTC-02	06	slice06 -- AGTC-02 spawn placement	pass
+AGTC-03	06	slice06 -- AGTC-03 intervention path	pass
 FIL-01	07	slice07 -- FIL-01 area present	pass
 FIL-02	07	slice07 -- FIL-02 markdown preview	pass
 FIL-04	07	slice07 -- FIL-04 edit toggle	pass
