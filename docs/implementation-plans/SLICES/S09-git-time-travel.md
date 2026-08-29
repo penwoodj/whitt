@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/09-git-time-travel.md` (cases: GIT-01..04, GITC-01..04)
 > Validation spec: `docs/feature-requirements/validation/slice-09.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-16). Commits 36fe773..8f51761 (7 tasks + SB fix). Gate: scoped git-sync 10/10; full 625 pass/4 fail = EXACT baseline (GraphSim act ×3, Node ×1); tsc 0; SB 0. Stories renamed to slice09 -- convention (8 stories, meta.title Features/GitSync/GitSync). Manifest GIT-01..04 + GITC-01..04 all pass w/ story names (agent flips verified truthful — tests green). Gate answers: Q1=A settings panel remote config, Q2=A error+manual resolve.
 > Depends on: E3-fs-graph-sync
 
 ## 1. Objective
