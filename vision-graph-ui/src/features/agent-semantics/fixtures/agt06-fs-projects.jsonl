@@ -1,0 +1,5 @@
+{"t":0.0,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.5,"kind":"step-start","runId":"r1","stepId":"s1","title":"Writing to file"}
+{"t":1.0,"kind":"file-write","runId":"r1","path":"n1.md","actor":"agent"}
+{"t":1.5,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":2.0,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}

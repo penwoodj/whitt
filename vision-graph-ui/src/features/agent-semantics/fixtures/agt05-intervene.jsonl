@@ -1,0 +1,6 @@
+{"t":0.0,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"process"}
+{"t":0.5,"kind":"step-start","runId":"r1","stepId":"s1","title":"Step 1"}
+{"t":1.0,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":1.5,"kind":"step-start","runId":"r1","stepId":"s2","title":"Step 2"}
+{"t":1.6,"kind":"step-done","runId":"r1","stepId":"s2"}
+{"t":2.0,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}

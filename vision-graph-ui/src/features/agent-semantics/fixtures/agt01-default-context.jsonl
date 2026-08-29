@@ -1,0 +1,5 @@
+{"t":0.0,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.5,"kind":"step-start","runId":"r1","stepId":"s1","title":"Parsing prompt"}
+{"t":1.0,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":1.5,"kind":"graph-mutation","runId":"r1","mutation":{"op":"spawn","parentNodeId":"n1","newNodeId":"n2","title":"Sub topic"}}
+{"t":2.0,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}

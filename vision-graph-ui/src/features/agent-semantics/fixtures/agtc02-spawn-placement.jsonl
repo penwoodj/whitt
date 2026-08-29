@@ -1,0 +1,8 @@
+{"t":0.0,"kind":"run-start","runId":"r1","nodeId":"n1","workflow":"draft"}
+{"t":0.5,"kind":"step-start","runId":"r1","stepId":"s1","title":"Creating child"}
+{"t":1.0,"kind":"step-done","runId":"r1","stepId":"s1"}
+{"t":1.5,"kind":"graph-mutation","runId":"r1","mutation":{"op":"spawn","parentNodeId":"n1","newNodeId":"n2","title":"First child"}}
+{"t":2.0,"kind":"step-start","runId":"r1","stepId":"s2","title":"Creating second child"}
+{"t":2.5,"kind":"step-done","runId":"r1","stepId":"s2"}
+{"t":3.0,"kind":"graph-mutation","runId":"r1","mutation":{"op":"spawn","parentNodeId":"n1","newNodeId":"n3","title":"Second child"}}
+{"t":3.5,"kind":"run-done","runId":"r1","nodeId":"n1","status":"done"}
