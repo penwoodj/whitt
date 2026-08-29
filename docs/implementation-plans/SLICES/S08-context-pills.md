@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/08-context-pills.md` (cases: PIL-01..05, PILC-01..02)
 > Validation spec: `docs/feature-requirements/validation/slice-08.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-16). All 5 tasks: commits 40cf962, cdcf6c7, 66896c3, e0ceda3, 4621a09. Gate: full 615 pass/4 fail = EXACT baseline (GraphSim act ×3, Node ×1); tsc 0; SB build 0; 7 slice08 stories; manifest PIL+PILC 7 rows pass w/ story names. Pill layout: 6 visible in 2 rows of 3 then +N more; lines-only face (L12-18); hover preview w/ snippet + jump (scroll+expand).
 > Depends on: S07-file-visualization, S02-voice-capture
 
 ## 1. Objective

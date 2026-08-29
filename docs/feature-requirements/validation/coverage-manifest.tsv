@@ -99,13 +99,13 @@ FILC-01	07	slice07 -- FILC-01 skeleton	pass
 FILC-02	07	slice07 -- FILC-02 save failure	pass
 FILC-03	07	slice07 -- FILC-03 concurrent guard	pass
 FILC-04	07	slice07 -- FILC-04 close guard	pass
-PIL-01	08	-	todo
-PIL-02	08	-	todo
-PIL-03	08	-	todo
-PIL-04	08	-	todo
-PIL-05	08	-	todo
-PILC-01	08	-	todo
-PILC-02	08	-	todo
+PIL-01	08	slice08 -- PIL-01 pills on highlight	pass
+PIL-02	08	slice08 -- PIL-02 remove via X	pass
+PIL-03	08	slice08 -- PIL-03 line numbers	pass
+PIL-04	08	slice08 -- PIL-04 pause highlight speak	pass
+PIL-05	08	slice08 -- PIL-05 attention weighting	pass
+PILC-01	08	slice08 -- PILC-01 overflow stacking	pass
+PILC-02	08	slice08 -- PILC-02 hover preview	pass
 GIT-01	09	-	todo
 GIT-02	09	-	todo
 GIT-03	09	-	todo
