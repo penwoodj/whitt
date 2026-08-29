@@ -107,12 +107,12 @@ PIL-05	08	slice08 -- PIL-05 attention weighting	pass
 PILC-01	08	slice08 -- PILC-01 overflow stacking	pass
 PILC-02	08	slice08 -- PILC-02 hover preview	pass
 GIT-01	09	slice09 -- GIT-01 commit per save	pass
-GIT-02	09	-	todo
+GIT-02	09	slice09 -- GIT-02 agent commits	pass
 GIT-03	09	-	todo
 GIT-04	09	-	todo
 GITC-01	09	-	todo
 GITC-02	09	-	todo
-GITC-03	09	-	todo
+GITC-03	09	slice09 -- GITC-03 metadata schema	pass
 GITC-04	09	slice09 -- GITC-04 cadence guard	pass
 GRP-01	10	slice10 -- GRP-01 multi-select	pass
 GRP-02	10	slice10 -- GRP-02 selection surround	pass
