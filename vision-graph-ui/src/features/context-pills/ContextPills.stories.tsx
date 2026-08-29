@@ -104,3 +104,8 @@ export const PILC01OverflowStacking: Story = {
     onRemovePill: () => {},
   },
 }
+
+export const PILC02HoverPreview: Story = {
+  name: 'slice08 -- PILC-02 hover preview',
+  ...PIL01PillsOnHighlight,
+}

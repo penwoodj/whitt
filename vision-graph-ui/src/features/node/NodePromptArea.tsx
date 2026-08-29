@@ -1,8 +1,8 @@
-import React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import NodeMicBtn from './NodeMicBtn'
 import type { ContextPill } from '../context-pills/contextPillTypes'
+import { usePillHoverPreview } from '../context-pills/usePillHoverPreview'
 
 type NodePromptAreaProps = {
   value: string
@@ -16,6 +16,7 @@ type NodePromptAreaProps = {
   onSend: () => void
   contextPills?: ContextPill[]
   onRemovePill?: (pillId: string) => void
+  onJumpToPill?: (pillId: string) => void
 }
 
 const MAX_HEIGHT = 154
@@ -33,7 +34,8 @@ const PillRow = styled.div<{ $showOverflow: boolean }>`
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `
 
-const Pill = styled.div`
+const Pill = styled.div<{ $position?: 'relative' }>`
+  position: ${({ $position }) => $position || 'static'};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,6 +93,58 @@ const OverflowList = styled.div<{ $visible: boolean }>`
   gap: ${({ theme }) => theme.spacing.sm};
   padding-top: ${({ theme }) => theme.spacing.sm};
   border-top: 1px solid ${({ theme }) => theme.colors.border};
+`
+
+const PreviewPopover = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  z-index: ${({ theme }) => theme.zIndex.tooltip};
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  max-width: 300px;
+  padding: ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.bgElevated};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  box-shadow: ${({ theme }) => theme.shadow.md};
+  display: ${({ $visible }) => ($visible ? 'block' : 'none')};
+`
+
+const PreviewContent = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`
+
+const PreviewSnippet = styled.pre`
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  padding: ${({ theme }) => theme.spacing.xs};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: ${({ theme }) => theme.colors.text};
+`
+
+const PreviewLineRange = styled.div`
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-family: ${({ theme }) => theme.font.mono};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+`
+
+const JumpBtn = styled.button`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.primary};
+  border: none;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.colors.textInverse};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  cursor: pointer;
+  transition: background-color ${({ theme }) => theme.transition.fast};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+  }
 `
 
 const Composer = styled.div<{ $multi: boolean }>`
@@ -170,10 +224,12 @@ export default function NodePromptArea({
   onSend,
   contextPills = [],
   onRemovePill,
+  onJumpToPill,
 }: NodePromptAreaProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isMulti, setIsMulti] = useState(false)
   const [showOverflow, setShowOverflow] = useState(false)
+  const { hoveredPillId, handlePillHover, handlePillLeave } = usePillHoverPreview()
 
   const displayTxt = isStream && streamedTxt ? streamedTxt : value
 
@@ -183,6 +239,8 @@ export default function NodePromptArea({
   const overflowPills = contextPills.slice(MAX_VISIBLE_PILLS)
 
   const hasOverflow = contextPills.length > MAX_VISIBLE_PILLS
+
+  const hoveredPill = contextPills.find((p) => p.id === hoveredPillId)
 
   const handleChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -198,6 +256,26 @@ export default function NodePromptArea({
   const handleOverflowClick = useCallback(() => {
     setShowOverflow((prev) => !prev)
   }, [])
+
+  const handleJump = useCallback(
+    (e: React.MouseEvent, pillId: string) => {
+      e.stopPropagation()
+      if (onJumpToPill) {
+        onJumpToPill(pillId)
+      }
+    },
+    [onJumpToPill]
+  )
+
+  const handlePillRemove = useCallback(
+    (e: React.MouseEvent, pillId: string) => {
+      e.stopPropagation()
+      if (onRemovePill) {
+        onRemovePill(pillId)
+      }
+    },
+    [onRemovePill]
+  )
 
   useEffect(() => {
     if (!inputRef.current) return
@@ -225,18 +303,38 @@ export default function NodePromptArea({
           {visiblePills.map((pill) => (
             <Pill
               key={pill.id}
+              $position="relative"
               data-testid={`context-pill-${pill.id}`}
               data-line-range={pill.lineRange}
+              onMouseEnter={() => handlePillHover(pill.id)}
+              onMouseLeave={handlePillLeave}
             >
               <PillText>{pill.lineRange}</PillText>
               {onRemovePill && (
                 <RemoveBtn
                   type="button"
                   data-testid={`remove-${pill.id}`}
-                  onClick={() => onRemovePill(pill.id)}
+                  onClick={(e) => handlePillRemove(e, pill.id)}
                 >
                   ×
                 </RemoveBtn>
+              )}
+              {hoveredPillId === pill.id && hoveredPill && (
+                <PreviewPopover $visible data-testid={`preview-${pill.id}`}>
+                  <PreviewContent>
+                    <PreviewSnippet>{hoveredPill.textSnippet}</PreviewSnippet>
+                    <PreviewLineRange>{hoveredPill.lineRange}</PreviewLineRange>
+                  </PreviewContent>
+                  {onJumpToPill && (
+                    <JumpBtn
+                      type="button"
+                      data-testid={`jump-${pill.id}`}
+                      onClick={(e) => handleJump(e, pill.id)}
+                    >
+                      Jump to {hoveredPill.lineRange}
+                    </JumpBtn>
+                  )}
+                </PreviewPopover>
               )}
             </Pill>
           ))}
@@ -251,22 +349,42 @@ export default function NodePromptArea({
         </PillRow>
       )}
       {hasOverflow && showOverflow && (
-        <OverflowList $visible={showOverflow} data-testid="overflow-list">
+        <OverflowList $visible data-testid="overflow-list">
           {overflowPills.map((pill) => (
             <Pill
               key={pill.id}
+              $position="relative"
               data-testid={`context-pill-${pill.id}`}
               data-line-range={pill.lineRange}
+              onMouseEnter={() => handlePillHover(pill.id)}
+              onMouseLeave={handlePillLeave}
             >
               <PillText>{pill.lineRange}</PillText>
               {onRemovePill && (
                 <RemoveBtn
                   type="button"
                   data-testid={`remove-${pill.id}`}
-                  onClick={() => onRemovePill(pill.id)}
+                  onClick={(e) => handlePillRemove(e, pill.id)}
                 >
                   ×
                 </RemoveBtn>
+              )}
+              {hoveredPillId === pill.id && hoveredPill && (
+                <PreviewPopover $visible data-testid={`preview-${pill.id}`}>
+                  <PreviewContent>
+                    <PreviewSnippet>{hoveredPill.textSnippet}</PreviewSnippet>
+                    <PreviewLineRange>{hoveredPill.lineRange}</PreviewLineRange>
+                  </PreviewContent>
+                  {onJumpToPill && (
+                    <JumpBtn
+                      type="button"
+                      data-testid={`jump-${pill.id}`}
+                      onClick={(e) => handleJump(e, pill.id)}
+                    >
+                      Jump to {hoveredPill.lineRange}
+                    </JumpBtn>
+                  )}
+                </PreviewPopover>
               )}
             </Pill>
           ))}
