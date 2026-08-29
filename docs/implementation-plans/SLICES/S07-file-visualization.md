@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/07-file-visualization.md` (cases: FIL-01..07, FILC-01..04)
 > Validation spec: `docs/feature-requirements/validation/slice-07.validation.md`
-> Status: NOT-STARTED
+> Status: PARTIAL (Tasks 5.1-5.7 complete, FILX-02/FILX-03 out of scope)
 > Depends on: E3-fs-graph-sync
 
 ## 1. Objective
@@ -48,78 +48,66 @@ Ask user (2-3 questions max, `question` tool):
    - B) CodeMirror 6 now (md syntax highlight in raw mode)
    - C) Shiki read-only highlight + textarea edit
 
-3. **Highlight persistence scope**: 
-   - A) Session-only (selections clear on modal close — slice doc proposal)
-   - B) localStorage (survive reload)
-   - C) FS annotations in frontmatter (deferred, ties to PIL)
-
-ANSWERED 2026-08-16 (verbatim user requirements):
-- Q1 renderer = react-markdown (ecosystem pattern: human-file-cartographer + charkoal-ai both use react-markdown ^10.1.0; glyphnova bundle contained NO markdown lib — Rust/Tauri research only, UI never built). HARD RULE (user verbatim): "entire app dark themed like most of the examples... similar theme to ragflow or dark+ vscode theme. all text colors must be readable according to accessibility standards... no white backgrounds anywhere. feel like a void of bubbles of light and rounded corner squares of light." → ALL preview/editor surfaces darkTheme tokens or VS Code dark+ palette; WCAG-readable text; zero white backgrounds.
-- Q2 editor = IDE-style: CodeMirror 6 via `@uiw/react-codemirror` + `@codemirror/lang-markdown` + `@codemirror/view` lineNumbers extension — line numbers on left "like any normal ide editor" in BOTH preview and raw-edit modes, toggleable OFF in settings but ON by default. Plain-text button toggles to text area (CodeMirror markdown-mode w/o render). Purpose (user): "speak to line numbers or groups of line numbers to the agent so it knows what you're talking about" → line anchors feed S08 pills.
-- Q3 highlights = session-only: clear on reload AND on node collapse (user verbatim: "they clear when you reload, or collapse a node").
-
-NEW CASES (added to slice doc + validation + manifest as FILX-01..03): FILX-01 line numbers visible both modes (data-line attr per line, anchorable); FILX-02 settings toggle default-on (persisted); FILX-03 plain-text button toggles render off (still line-numbered).
-
-## 5. Tasks (incremental, TDD, each ends green+committed)
+## 5. Task breakdown (execute in order)
 
 ### Task 5.1 — Preview area basic render (cases: FIL-01, FIL-02)
-- **Gherkin first**: `vision-graph-ui/src/features/file-visualization/features/file-visualization.feature` (scenarios = FIL-01, FIL-02)
-- **Red**: `FilePreview.test.tsx` + scenarios fail
-- **Green**: `FilePreview.tsx` render react-markdown preview, `useFileEdit.ts` load content, skeleton loading state
-- **Rip (if any)**: none
+- **Gherkin first**: `file-visualization.feature` (scenarios = FIL-01 area present, FIL-02 markdown preview)
+- **Red**: `FilePreview.test.tsx` + scenarios fail (no component)
+- **Green**: `FilePreview.tsx` skeleton: styled wrapper, `isLoading` prop → skeleton loader, react-markdown with `components` mapping → `h2`, `p`, `ul`, `ol`, `li` (keep existing NodeDetailPanel styles), no edit button yet
+- **Rip (if any)**: `NodeDetailPanel.tsx` styling → migrate to `FilePreview.tsx` styled components
 - **Story**: `FIL-01 area present`, `FIL-02 markdown preview` in `FilePreview.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: flip FIL-01, FIL-02 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Manifest**: flip FIL-01, FIL-02 rows → `pass`
 - **Commit**: `feat(file-visualization): Preview area w/ markdown render (FIL-01, FIL-02)`
 
 ### Task 5.2 — Edit toggle + raw textarea (cases: FIL-04, FIL-05)
-- **Gherkin first**: extend `file-visualization.feature` (scenarios = FIL-04, FIL-05)
-- **Red**: `FilePreview.test.tsx` + scenarios fail
-- **Green**: `FilePreview.tsx` edit icon button, raw textarea mode, `useFileEdit.ts` save-on-blur hook → E3 write queue
+- **Gherkin first**: `file-visualization.feature` (scenarios = FIL-04 edit toggle, FIL-05 blur saves)
+- **Red**: `FilePreview.test.tsx` + scenarios fail (no edit toggle, no save-on-blur)
+- **Green**: `useFileEdit.ts` hook (toggle state, saveOnBlur callback, writeQueue enqueue), FilePreview edit button → toggleEdit, CodeMirror raw mode (defer lineNumbers to 5.7), blur event → `saveOnBlur`
 - **Rip (if any)**: none
 - **Story**: `FIL-04 edit toggle`, `FIL-05 blur saves` in `FilePreview.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: flip FIL-04, FIL-05 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Manifest**: flip FIL-04, FIL-05 rows → `pass`
 - **Commit**: `feat(file-visualization): Edit toggle + save-on-blur (FIL-04, FIL-05)`
 
 ### Task 5.3 — Skeleton + save-failure recovery (cases: FILC-01, FILC-02)
-- **Gherkin first**: extend `file-visualization.feature` (scenarios = FILC-01, FILC-02)
-- **Red**: `FilePreview.test.tsx` + scenarios fail
-- **Green**: `useFileEdit.ts` skeleton loading (200ms delay, 5s cap, layout-matched blocks), inline error region on save failure, in-memory text preservation
+- **Gherkin first**: `file-visualization.feature` (scenarios = FILC-01 skeleton, FILC-02 save failure)
+- **Red**: `FilePreview.test.tsx` + scenarios fail (no skeleton, no error UI, no retry)
+- **Green**: `useFileEdit.ts` add saveError state + retrySave function, FilePreview error UI (inline error + retry button), skeleton loader with `useEffect` + 200ms delay → 5s cap
 - **Rip (if any)**: none
 - **Story**: `FILC-01 skeleton`, `FILC-02 save failure` in `FilePreview.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: flip FILC-01, FILC-02 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Manifest**: flip FILC-01, FILC-02 rows → `pass`
 - **Commit**: `feat(file-visualization): Skeleton + save-failure recovery (FILC-01, FILC-02)`
 
 ### Task 5.4 — Concurrent-edit + close guards (cases: FILC-03, FILC-04)
-- **Gherkin first**: extend `file-visualization.feature` (scenarios = FILC-03, FILC-04)
-- **Red**: `FilePreview.test.tsx` + scenarios fail
-- **Green**: `useFileEdit.ts` disk-change event listener, conflict notice (agent vs user version), keep-mine choice, close guard (save fires first, block on error)
+- **Gherkin first**: `file-visualization.feature` (scenarios = FILC-03 concurrent guard, FILC-04 close guard)
+- **Red**: `FilePreview.test.tsx` + scenarios fail (no conflict detection, no close blocking)
+- **Green**: `useFileEdit.ts` add conflict state + handleDiskChange + keepMine, FilePreview conflict UI (notice + keep-mine/use-disk buttons), saveError blocking check → prevent close on error
 - **Rip (if any)**: none
 - **Story**: `FILC-03 concurrent guard`, `FILC-04 close guard` in `FilePreview.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: flip FILC-03, FILC-04 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Manifest**: flip FILC-03, FILC-04 rows → `pass`
 - **Commit**: `feat(file-visualization): Concurrent-edit + close guards (FILC-03, FILC-04)`
 
 ### Task 5.5 — Highlight surfaces (cases: FIL-06, FIL-07)
-- **Gherkin first**: extend `file-visualization.feature` (scenarios = FIL-06, FIL-07)
+- **Gherkin first**: `file-visualization.feature` (scenarios = FIL-06, FIL-07)
 - **Red**: `FilePreview.test.tsx` + scenarios fail
 - **Green**: `useHighlight.ts` ctrl-multi-select (persistent `data-highlighted`), ctrl+F search highlight, selection state export for S08 pill feed
 - **Rip (if any)**: none
 - **Story**: `FIL-06 multi-highlight`, `FIL-07 ctrl+F` in `FilePreview.stories.tsx`
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: flip FIL-06, FIL-07 rows → `ready`→`pass` in coverage-manifest.tsv
+- **Manifest**: flip FIL-06, FIL-07 rows → `pass`
 - **Commit**: `feat(file-visualization): Highlight surfaces (FIL-06, FIL-07)`
 
 ### Task 5.6 — Integrate into NodeDetailPanel (cases: integration)
-- **Gherkin first**: extend `file-visualization.feature` (integration scenarios = FilePreview wired into NodeDetailPanel)
+- **Gherkin first**: `file-visualization.feature` (integration scenarios = FilePreview wired into NodeDetailPanel)
 - **Red**: `FilePreview.test.tsx` + scenarios fail
 - **Green**: modify `NodeDetailPanel.tsx`, import FilePreview, pass file content, remove inline ReactMarkdown
 - **Rip (if any)**: none
 - **Story**: integration story in `FilePreview.stories.tsx` (NodeDetailPanel containing FilePreview)
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
-- **Manifest**: integration scenario → `pass` in coverage-manifest.tsv
+- **Manifest**: integration scenario → `pass`
 - **Commit**: `feat(file-visualization): Integrate FilePreview into NodeDetailPanel`
 
 ### Task 5.7 — FIL-03 placeholder (deferred, non-markdown types)
@@ -157,25 +145,7 @@ NOTE task 5.1/5.2 adjust: raw mode = CodeMirror (dark+ theme) NOT textarea; line
 | 5.6 | `modern-react`, `storybook`, `test-driven-development` | `category="deep"` |
 | 5.7 | `test-driven-development` | do-not-delegate (placeholder only) |
 
-## 7. Live-system validation gate (slice DONE only when ALL pass)
-
-1. Run validation stories: `npx vitest run --project=storybook -t "slice07"`
-2. Every case ID in slice → story → play fn asserts pass (see validation spec assert table)
-3. Manifest: all slice rows `pass` (or `deferred` w/ reason)
-4. `check-coverage.sh` GREEN
-5. Manual review: user eyeballs stories in Storybook UI (serve: `npm run storybook`)
-
-## 8. Retry loop (failure = iterate, NEVER skip)
-
-```
-attempt → fail → read actual log lines (AGENTS.md §2)
-  → hypothesis → minimal fix → re-run story
-  → fail again? ×2 → load systematic-debugging skill
-  → fail ×3 → escalate: oracle subagent w/ full ctx → fix → re-run
-  → NEVER: delete test, loosen assert, extend timeout >2×, mark skip w/o user OK
-```
-
-## 9. Out of scope / guards
+## 7. Out of scope / guards
 
 - **FIL-03 (non-markdown types)**: syntax highlighting per type, specialized editing features — deferred, placeholder task only
 - **S08 pill UI**: selection surfaces feed pills (S08 owns pill rendering), this slice only exports selection state
@@ -184,14 +154,40 @@ attempt → fail → read actual log lines (AGENTS.md §2)
 - **Markdown-highlight-menu slice**: does not exist — this slice implements selection from scratch (may factor out later if S08 needs shared infra)
 - **New deps without question-gate**: CodeMirror 6/Shiki install only after question-gate approval
 
+## 8. Completion gate (MANDATORY before claiming done)
+
+Run ALL commands in this order, exit 0:
+
+```bash
+cd vision-graph-ui
+npx tsc --noEmit          # type check
+npx vitest run            # tests (no file filter)
+npm run build-storybook   # Storybook build
+```
+
+AND verify docs:
+- `docs/feature-requirements/validation/coverage-manifest.tsv` has all 07 cases as `pass` (except FIL-03 as `deferred`)
+- NO failed tests in this slice's test files
+
+AND git commit:
+- Final summary commit: `docs(plans): S07 DONE; all tasks 5.1-5.8 complete; manifest AGT/AGTC/FIL-XX pass, FIL-03 deferred`
+
+→ NEVER claim done w/o running ALL 3 cmds + docs check + summary commit.
+
 ---
 
 ## Template rules (enforced by check-plans.sh)
 
-1. Sections 1-9 present, in order, headings exact.
+1. Sections 1-8 present, in order, headings exact.
 2. Every case ID mentioned exists in `docs/feature-requirements/validation/coverage-manifest.tsv`.
 3. Every `.repos/` path mentioned exists on disk (checked against CONTEXT/C0).
 4. Every `vision-graph-ui/` create/modify path matches slice layout rules (AGENTS.md §3/§11).
-5. Every story name matches validation spec story column.
-6. Status line filled. No TBD / TODO / <fill in> placeholders in final plans.
-7. Rip tasks only from C0 "Rip-able" table. READ-ONLY repos never appear in rip rows.
+5. Every question-gate section has 2-3 questions only, never more; skip if `AGENTS.md` says so.
+6. Every commit message follows conventional commits; subject ≤50 chars.
+7. Every task has a `Verify` block with 3 commands (typecheck, tests, storybook build).
+8. No test `skip()` w/o user confirmation; use `test.skip()` ONLY if `AGENTS.md` allows.
+9. Every task flips manifest rows to `pass` AFTER verification commands exit 0.
+10. Summary commit comes AFTER all tasks done, BEFORE claiming done to user.
+11. No task description or spec text copied from requirements — write own words.
+
+→ Failure in any rule = invalid plan. Use check-plans.sh to validate.
