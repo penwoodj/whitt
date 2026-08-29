@@ -68,3 +68,10 @@ Feature: File preview area
     Then line numbers shown in preview mode
     And line numbers shown in raw mode
     And line numbers persist across mode toggles
+
+  Scenario: NodeDetailPanel integration
+    Given NodeDetailPanel w/ markdown content
+    When panel renders
+    Then FilePreview area present
+    And markdown rendered
+    And edit button functional

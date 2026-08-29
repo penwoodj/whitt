@@ -7,10 +7,10 @@ import { ThemeProvider } from '../../shared/ThemeProvider'
 const renderWithTheme = (ui: ReactNode) => render(<ThemeProvider>{ui}</ThemeProvider>)
 
 describe('NodeDetailPanel', () => {
-  it('renders markdown content directly', () => {
+  it('renders FilePreview with markdown content', () => {
     renderWithTheme(<NodeDetailPanel />)
-    expect(screen.getByText('Node Details')).toBeInTheDocument()
-    expect(screen.getByText('This is a placeholder for the markdown content')).toBeInTheDocument()
+    const filePreviewArea = screen.getByTestId('file-preview-area')
+    expect(filePreviewArea).toBeInTheDocument()
   })
 
   it('renders custom markdown when provided', () => {
@@ -27,10 +27,9 @@ describe('NodeDetailPanel', () => {
     expect(screen.getByText('Artifact preview')).toBeInTheDocument()
   })
 
-  it('renders markdown with proper formatting', () => {
+  it('shows edit button in FilePreview', () => {
     renderWithTheme(<NodeDetailPanel />)
-    expect(screen.getByText('Features')).toBeInTheDocument()
-    expect(screen.getByText('Status')).toBeInTheDocument()
-    expect(screen.getByText('Template variable values')).toBeInTheDocument()
+    const editButton = screen.getByRole('button', { name: 'Edit' })
+    expect(editButton).toBeInTheDocument()
   })
 })
