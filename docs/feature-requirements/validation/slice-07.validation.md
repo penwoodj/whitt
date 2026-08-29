@@ -15,3 +15,9 @@ fast/slow/fail), edit toggle, save spy.
 | FILC-02 | `FILC-02 save failure` | save spy rejects | inline error + retry; in-memory text intact |
 | FILC-03 | `FILC-03 concurrent guard` | disk-change event while editing; blur | conflict notice; keep-mine preserves user text |
 | FILC-04 | `FILC-04 close guard` | edit; ESC w/ failing save | close blocked; error shown; text preserved |
+
+| Case | Story name | Play outline | Assert |
+|---|---|---|---|
+| FILX-01 | slice07 -- FILX-01 line numbers both modes | open preview → count `.line-number` / `[data-line]` els; toggle raw → CodeMirror gutter present | both modes show numbers 1..N |
+| FILX-02 | slice07 -- FILX-02 settings toggle default on | open settings → toggle exists + checked; uncheck → reload story | default checked; persistence via localStorage key |
+| FILX-03 | slice07 -- FILX-03 plain text mode | click plain-text btn | rendered md elements replaced by raw text; line numbers persist |

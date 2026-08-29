@@ -87,3 +87,38 @@ And if save fails, close blocked w/ FILC-02 error
 
 - Highlight persistence across modal close/reopen — session-only propose; confirm.
 - Ctrl+F scope: node file only vs whole project graph search (propose node-only now).
+
+## FILX — IDE Line Numbers + Plain-Text Mode (added 2026-08-16, user dictation)
+
+## FILX-01 Line numbers both modes
+
+```gherkin
+Given file visualization open (preview or raw mode)
+Then IDE-style line numbers visible on left
+And each line carries data-line anchor
+So user can speak line numbers or line ranges to agent
+```
+
+**Why** (source: user 2026-08-16 — "line numbers on the left like in any normal IDE editor... so I can speak to line numbers or groups of line numbers to the agent and it knows what I'm talking about"): line-addressable content = voice targeting vocabulary for agent commands.
+
+## FILX-02 Settings toggle default-on
+
+```gherkin
+Given settings panel open
+Then line-numbers toggle exists
+And default = ON
+And choice persists across sessions
+```
+
+**Why** (source: same dictation — "toggleable off in settings but on by default"): some users want clean reading view; default serves the voice-first addressing use case.
+
+## FILX-03 Plain-text button
+
+```gherkin
+Given preview mode shown
+When user clicks plain-text button
+Then markdown render toggles off
+And raw text shown (still line-numbered)
+```
+
+**Why** (source: same dictation — "normal-text-rendering button that toggles it to text area"): inspect raw markdown source w/o losing line-number addressing.

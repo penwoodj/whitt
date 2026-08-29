@@ -24,13 +24,15 @@ Deliver file preview/edit in node detail panel: markdown render, edit toggle, sa
 
 | Action | Path | Notes |
 |---|---|---|
-| create | `vision-graph-ui/src/features/file-visualization/FilePreview.tsx` | preview area, edit toggle, raw textarea, save-on-blur hook |
-| create | `vision-graph-ui/src/features/file-visualization/FilePreview.test.tsx` | maps FIL-01..07, FILC-01..04 scenarios |
-| create | `vision-graph-ui/src/features/file-visualization/FilePreview.stories.tsx` | story names from validation spec (FIL-01..07, FILC-01..04) |
+| create | `vision-graph-ui/src/features/file-visualization/FilePreview.tsx` | preview area, edit toggle, CodeMirror raw mode, save-on-blur hook |
+| create | `vision-graph-ui/src/features/file-visualization/FilePreview.test.tsx` | maps FIL-01..07, FILC-01..04, FILX-01..03 scenarios |
+| create | `vision-graph-ui/src/features/file-visualization/FilePreview.stories.tsx` | story names from validation spec (FIL-01..07, FILC-01..04, FILX-01..03) |
 | create | `vision-graph-ui/src/features/file-visualization/useFileEdit.ts` | save-on-blur → E3 write queue, skeleton loading, save-failure, concurrent-edit guard |
 | create | `vision-graph-ui/src/features/file-visualization/features/file-visualization.feature` | Gherkin scenarios |
 | create | `vision-graph-ui/src/features/file-visualization/useHighlight.ts` | ctrl-multi-highlight, ctrl+F, selection persistence, S08 pill feed |
+| create | `vision-graph-ui/src/features/file-visualization/useLineNumbers.ts` | line-number state (FILX), settings toggle read, line-range selection model |
 | modify | `vision-graph-ui/src/features/node/NodeDetailPanel.tsx` | import FilePreview, pass file content, remove ReactMarkdown (move to FilePreview) |
+| modify | `vision-graph-ui/src/features/settings-panel/*` | add line-numbers toggle (default on, persisted localStorage) |
 
 ## 4. Question-cycle gate (AGENTS.md §1 Stage 1 — MANDATORY before tests)
 
@@ -51,7 +53,12 @@ Ask user (2-3 questions max, `question` tool):
    - B) localStorage (survive reload)
    - C) FS annotations in frontmatter (deferred, ties to PIL)
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-16 (verbatim user requirements):
+- Q1 renderer = react-markdown (ecosystem pattern: human-file-cartographer + charkoal-ai both use react-markdown ^10.1.0; glyphnova bundle contained NO markdown lib — Rust/Tauri research only, UI never built). HARD RULE (user verbatim): "entire app dark themed like most of the examples... similar theme to ragflow or dark+ vscode theme. all text colors must be readable according to accessibility standards... no white backgrounds anywhere. feel like a void of bubbles of light and rounded corner squares of light." → ALL preview/editor surfaces darkTheme tokens or VS Code dark+ palette; WCAG-readable text; zero white backgrounds.
+- Q2 editor = IDE-style: CodeMirror 6 via `@uiw/react-codemirror` + `@codemirror/lang-markdown` + `@codemirror/view` lineNumbers extension — line numbers on left "like any normal ide editor" in BOTH preview and raw-edit modes, toggleable OFF in settings but ON by default. Plain-text button toggles to text area (CodeMirror markdown-mode w/o render). Purpose (user): "speak to line numbers or groups of line numbers to the agent so it knows what you're talking about" → line anchors feed S08 pills.
+- Q3 highlights = session-only: clear on reload AND on node collapse (user verbatim: "they clear when you reload, or collapse a node").
+
+NEW CASES (added to slice doc + validation + manifest as FILX-01..03): FILX-01 line numbers visible both modes (data-line attr per line, anchorable); FILX-02 settings toggle default-on (persisted); FILX-03 plain-text button toggles render off (still line-numbered).
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
@@ -124,6 +131,19 @@ Record answers in this file, then never re-ask.
 - **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
 - **Manifest**: flip FIL-03 row → `deferred` w/ reason "syntax highlighting per type deferred"
 - **Commit**: `feat(file-visualization): Add FIL-03 placeholder (deferred)`
+
+### Task 5.8 — IDE line numbers + plain-text mode + settings toggle (cases: FILX-01..03) [NEW — user 2026-08-16]
+- **Gherkin first**: extend `file-visualization.feature` (scenarios = FILX-01 line numbers both modes, FILX-02 settings toggle default-on, FILX-03 plain-text button)
+- **Red**: `FilePreview.test.tsx` + scenarios fail
+- **Green**: `useLineNumbers.ts` hook (toggle state, localStorage persistence, line-range selection model); FilePreview renders line-number gutter in preview mode (per-line `data-line` anchors, react-markdown source-position mapping) AND raw mode (CodeMirror `lineNumbers()` extension, removable via `EditorView.lineNumbers` reconfigure); plain-text button toggles markdown render off (CodeMirror stays, no preview transform); settings-panel toggle row wired to hook
+- **Deps to install** (inside vision-graph-ui ONLY): `@uiw/react-codemirror @codemirror/lang-markdown @codemirror/view` (MIT)
+- **Rip (if any)**: none
+- **Story**: `FILX-01 line numbers both modes`, `FILX-02 settings toggle default on`, `FILX-03 plain text mode` in `FilePreview.stories.tsx`
+- **Verify**: `cd vision-graph-ui && npx tsc --noEmit && npx vitest run FilePreview.test.tsx && npm run build-storybook` — all exit 0
+- **Manifest**: flip FILX-01..03 rows → `pass`
+- **Commit**: `feat(file-visualization): IDE line numbers + plain-text mode (FILX-01..03)`
+
+NOTE task 5.1/5.2 adjust: raw mode = CodeMirror (dark+ theme) NOT textarea; line numbers integrated from 5.1 onward if simpler (single pass acceptable — keep story coverage per-case regardless).
 
 ## 6. Skill + agent routing (per task)
 
