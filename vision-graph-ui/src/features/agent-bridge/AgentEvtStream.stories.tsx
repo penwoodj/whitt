@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useAgentEvtStream } from '../../../shared/agent/useAgentEvtStream'
-import { createEvtBus } from '../../../shared/agent/eventBus'
-import type { AgentEvt, GraphMutation } from '../../../shared/agent/types'
-import { ThemeProvider } from '../../../shared/ThemeProvider'
+import { useAgentEvtStream } from '../../shared/agent/useAgentEvtStream'
+import { createEvtBus } from '../../shared/agent/eventBus'
+import type { AgentEvt, GraphMutation } from '../../shared/agent/types'
+import { ThemeProvider } from '../../shared/ThemeProvider'
 
 function AgentEvtStreamStory() {
   const bus = createEvtBus<AgentEvt>()
@@ -64,6 +64,7 @@ export default meta
 type Story = StoryObj<typeof AgentEvtStreamStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGTC-01 event vocabulary stream',
   decorators: [
     (Story) => (
       <ThemeProvider>

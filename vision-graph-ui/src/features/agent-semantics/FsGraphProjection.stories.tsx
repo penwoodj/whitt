@@ -27,6 +27,7 @@ export default meta
 type Story = StoryObj<typeof AGT06FsProjectsToGraphStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGT-06 fs projects to graph',
   decorators: [
     (Story) => (
       <ThemeProvider>

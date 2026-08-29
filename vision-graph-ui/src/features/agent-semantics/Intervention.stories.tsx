@@ -82,6 +82,7 @@ export default meta
 type Story = StoryObj<typeof AGT05InterveneStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGT-05 intervene',
   decorators: [
     (Story) => (
       <ThemeProvider>
@@ -92,6 +93,7 @@ export const Default: Story = {
 }
 
 export const AGTC03InterventionPath: Story = {
+  name: 'slice06 -- AGTC-03 intervention path',
   render: () => (
     <ThemeProvider>
       <AGTC03InterventionPathStory />

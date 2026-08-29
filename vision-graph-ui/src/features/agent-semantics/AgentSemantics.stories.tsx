@@ -81,6 +81,7 @@ export default meta
 type Story = StoryObj<typeof AGT01DefaultContextStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGT-01 default context',
   decorators: [
     (Story) => (
       <ThemeProvider>
@@ -91,6 +92,7 @@ export const Default: Story = {
 }
 
 export const AGT02LinkedEdit: Story = {
+  name: 'slice06 -- AGT-02 linked edit allowed',
   render: () => (
     <ThemeProvider>
       <AGT02LinkedEditStory />
@@ -99,6 +101,7 @@ export const AGT02LinkedEdit: Story = {
 }
 
 export const AGT03InitialOneFile: Story = {
+  name: 'slice06 -- AGT-03 initial one file',
   render: () => (
     <ThemeProvider>
       <AGT03InitialOneFileStory />

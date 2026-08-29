@@ -73,6 +73,7 @@ export default meta
 type Story = StoryObj<typeof AGTC01EventVocabularyStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGTC-01 event vocabulary',
   decorators: [
     (Story) => (
       <ThemeProvider>
@@ -83,6 +84,7 @@ export const Default: Story = {
 }
 
 export const AGT04MutationsAsMovement: Story = {
+  name: 'slice06 -- AGT-04 mutations as movement',
   render: () => (
     <ThemeProvider>
       <AGT04MutationsAsMovementStory />

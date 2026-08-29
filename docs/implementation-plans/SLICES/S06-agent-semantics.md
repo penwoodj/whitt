@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/06-agent-semantics.md` (cases: AGT-01..06, AGTC-01..03)
 > Validation spec: `docs/feature-requirements/validation/slice-06.validation.md`
-> Status: NOT-STARTED
+> Status: DONE (2026-08-16). Commits 5963f71..bd7a472 + fix commit (story import paths + slice06 names). Gate: scoped agent-semantics+agent-bridge 42/42 green, full 579 pass/5 fail = exact baseline, tsc 0, SB build 0 (path-depth bug fixed by orchestrator). Manifest AGT+AGTC 9 rows pass.
 > Depends on: E2-agent-runtime-bridge, E3-fs-graph-sync
 
 ## 1. Objective

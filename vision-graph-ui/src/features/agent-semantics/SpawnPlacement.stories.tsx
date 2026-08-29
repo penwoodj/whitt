@@ -46,6 +46,7 @@ export default meta
 type Story = StoryObj<typeof AGTC02SpawnPlacementStory>
 
 export const Default: Story = {
+  name: 'slice06 -- AGTC-02 spawn placement',
   decorators: [
     (Story) => (
       <ThemeProvider>
