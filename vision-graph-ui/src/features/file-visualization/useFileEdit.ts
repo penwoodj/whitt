@@ -5,6 +5,7 @@ type FileEditState = {
   isEditing: boolean
   originalContent: string
   content: string
+  saveError: Error | null
 }
 
 export function useFileEdit(
@@ -14,31 +15,44 @@ export function useFileEdit(
 ): FileEditState & {
   toggleEdit: () => void
   saveOnBlur: (newContent: string) => void
+  retrySave: () => void
 } {
   const pendingContentRef = useRef(initialContent)
   const [state, setState] = useState<FileEditState>({
     isEditing: false,
     originalContent: initialContent,
-    content: initialContent
+    content: initialContent,
+    saveError: null
   })
 
   const toggleEdit = () => {
     setState(prev => {
       const wasEditing = prev.isEditing
 
-      if (wasEditing && pendingContentRef.current !== prev.originalContent && writeQueue) {
-        writeQueue.write(filePath, pendingContentRef.current)
-        return {
-          ...prev,
-          isEditing: false,
-          content: pendingContentRef.current,
-          originalContent: pendingContentRef.current
+      if (wasEditing && pendingContentRef.current !== prev.originalContent) {
+        if (writeQueue) {
+          try {
+            writeQueue.write(filePath, pendingContentRef.current)
+            return {
+              ...prev,
+              isEditing: false,
+              content: pendingContentRef.current,
+              originalContent: pendingContentRef.current,
+              saveError: null
+            }
+          } catch (err) {
+            return {
+              ...prev,
+              saveError: err instanceof Error ? err : new Error('Save failed')
+            }
+          }
         }
       }
 
       return {
         ...prev,
-        isEditing: !prev.isEditing
+        isEditing: !prev.isEditing,
+        saveError: null
       }
     })
   }
@@ -47,9 +61,32 @@ export function useFileEdit(
     pendingContentRef.current = newContent
   }
 
+  const retrySave = () => {
+    setState(prev => {
+      if (!writeQueue || !prev.saveError) return prev
+
+      try {
+        writeQueue.write(filePath, pendingContentRef.current)
+        return {
+          ...prev,
+          isEditing: false,
+          content: pendingContentRef.current,
+          originalContent: pendingContentRef.current,
+          saveError: null
+        }
+      } catch (err) {
+        return {
+          ...prev,
+          saveError: err instanceof Error ? err : new Error('Save failed')
+        }
+      }
+    })
+  }
+
   return {
     ...state,
     toggleEdit,
-    saveOnBlur
+    saveOnBlur,
+    retrySave
   }
 }

@@ -95,8 +95,8 @@ FIL-04	07	slice07 -- FIL-04 edit toggle	pass
 FIL-05	07	slice07 -- FIL-05 blur saves	pass
 FIL-06	07	-	todo
 FIL-07	07	-	todo
-FILC-01	07	-	todo
-FILC-02	07	-	todo
+FILC-01	07	slice07 -- FILC-01 skeleton	pass
+FILC-02	07	slice07 -- FILC-02 save failure	pass
 FILC-03	07	-	todo
 FILC-04	07	-	todo
 PIL-01	08	-	todo

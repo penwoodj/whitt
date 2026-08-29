@@ -38,3 +38,23 @@ export const FIL05BlurSaves: Story = {
     content: '# Content to Edit\n\nModify this, then click Save',
   },
 }
+
+export const FILC01Skeleton: Story = {
+  name: 'slice07 -- FILC-01 skeleton',
+  args: {
+    content: '# Loading Content\n\nWait for it',
+    isLoading: true,
+  },
+}
+
+export const FILC02SaveFailure: Story = {
+  name: 'slice07 -- FILC-02 save failure',
+  args: {
+    content: '# Content to Edit\n\nThis will fail on save',
+  },
+  parameters: {
+    docs: {
+      description: 'Simulates save failure by not providing writeQueue',
+    },
+  },
+}

@@ -26,3 +26,16 @@ Feature: File preview area
     When usr clicks outside
     Then save enqueued to write queue
     And view returns to preview
+
+  Scenario: FILC-01 skeleton
+    Given slow loader (300ms delay)
+    When preview area renders
+    Then skeleton shown at >200ms
+    And skeleton has layout-matched blocks
+    And skeleton caps at 5s
+
+  Scenario: FILC-02 save failure
+    Given save operation fails
+    When save attempted
+    Then inline error shown + retry btn
+    And in-memory text intact

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import FilePreview from './FilePreview'
+import { WriteQueue } from '../../shared/fs/WriteQueue'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 
 describe('FilePreview', () => {
@@ -67,6 +68,94 @@ describe('FilePreview', () => {
 
       expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('FILC-01 skeleton', () => {
+    it('shows skeleton loader when loading', () => {
+      const content = '# Loading Content\n\nWait for it'
+      renderWithTheme(<FilePreview content={content} isLoading={true} />)
+
+      const skeleton = screen.getByTestId('skeleton-loader')
+      expect(skeleton).toBeInTheDocument()
+    })
+
+    it('skeleton has layout-matched blocks', () => {
+      const content = '# Loading Content\n\nWait for it'
+      renderWithTheme(<FilePreview content={content} isLoading={true} />)
+
+      const skeletonBlocks = screen.getAllByTestId(/skeleton-block/)
+      expect(skeletonBlocks.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('FILC-02 save failure', () => {
+    it('shows inline error on save failure', () => {
+      const mockWriteQueue = {
+        write: vi.fn(),
+        flush: vi.fn(),
+        getPendingWrites: vi.fn()
+      } as unknown as WriteQueue
+
+      const content = '# Test\n\nContent'
+      const filePath = '/test/file.md'
+
+      renderWithTheme(
+        <FilePreview content={content} writeQueue={mockWriteQueue} filePath={filePath} />
+      )
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const saveBtn = screen.getByRole('button', { name: 'Save' })
+      fireEvent.click(saveBtn)
+
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    })
+
+    it('shows retry button on save failure', () => {
+      const mockWriteQueue = {
+        write: vi.fn(),
+        flush: vi.fn(),
+        getPendingWrites: vi.fn()
+      } as unknown as WriteQueue
+
+      const content = '# Test\n\nContent'
+      const filePath = '/test/file.md'
+
+      renderWithTheme(
+        <FilePreview content={content} writeQueue={mockWriteQueue} filePath={filePath} />
+      )
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const saveBtn = screen.getByRole('button', { name: 'Save' })
+      fireEvent.click(saveBtn)
+
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    })
+
+    it('preserves in-memory text on save failure', () => {
+      const mockWriteQueue = {
+        write: vi.fn(),
+        flush: vi.fn(),
+        getPendingWrites: vi.fn()
+      } as unknown as WriteQueue
+
+      const content = '# Test\n\nContent'
+      const filePath = '/test/file.md'
+
+      renderWithTheme(
+        <FilePreview content={content} writeQueue={mockWriteQueue} filePath={filePath} />
+      )
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const editorContainer = screen.getByTestId('file-preview-area')
+      expect(editorContainer.innerHTML).toContain('cm-editor')
+      expect(editorContainer.innerHTML).toContain('Content')
     })
   })
 })
