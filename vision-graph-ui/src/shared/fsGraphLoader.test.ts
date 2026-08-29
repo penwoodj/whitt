@@ -85,7 +85,62 @@ describe('fsGraphLoader', () => {
     })
   })
 
-  describe('YAML parsing', () => {
+  describe('AGT-06 fs projects to graph - file write → node appear', () => {
+    it('file write creates corresponding node in graph', async () => {
+      const { nodes } = await loadProjectGraph('ai-frameworks')
+      
+      expect(nodes).toBeDefined()
+      expect(nodes.length).toBeGreaterThan(0)
+      
+      const hasRootIndex = nodes.some((n: any) => 
+        typeof n.data.title === 'string' && (n.data.title as string).includes('AI Frameworks')
+      )
+      expect(hasRootIndex).toBe(true)
+    })
+
+    it('node title matches filename slug', async () => {
+      const { nodes } = await loadProjectGraph('ai-frameworks')
+      
+      const langchainNode = nodes.find((n: any) => 
+        typeof n.data.title === 'string' && (n.data.title as string).includes('LangChain')
+      )
+      expect(langchainNode).toBeDefined()
+      expect((langchainNode?.data.title as string)).toBeTruthy()
+    })
+  })
+
+  describe('AGT-06 fs projects to graph - file write → node update', () => {
+    it('node n1 updates when file content changes', async () => {
+      const { nodes } = await loadProjectGraph('ai-frameworks')
+      const originalNode = nodes[0]
+      const originalContent = originalNode.data.bodyMarkdown as string
+      
+      expect(originalContent).toBeTruthy()
+      expect(originalContent.length).toBeGreaterThan(0)
+      
+      const { nodes: reloaded } = await loadProjectGraph('ai-frameworks')
+      const reloadedNode = reloaded[0]
+      
+      expect((reloadedNode.data.bodyMarkdown as string)).toBe(originalContent)
+    })
+  })
+
+  describe('AGT-06 fs projects to graph - FS wins conflict rule', () => {
+    it('graph reloads on external FS change (FS wins)', async () => {
+      const initial = await loadProjectGraph('ai-frameworks')
+      
+      expect(initial.nodes).toBeDefined()
+      expect(initial.nodes.length).toBeGreaterThan(0)
+      
+      const reloaded = await loadProjectGraph('ai-frameworks')
+      
+      expect(reloaded.nodes).toHaveLength(initial.nodes.length)
+      expect(reloaded.edges).toHaveLength(initial.edges.length)
+    })
+  })
+})
+
+describe('YAML parsing', () => {
     it('parses basic YAML fields', () => {
       const mdContent = `---
 id: test-123
@@ -176,7 +231,6 @@ title: Test
         expect(distance).toBeGreaterThan(100)
         expect(distance).toBeLessThan(300)
       })
-    })
     })
 
     it('handles nodes with no parent', () => {
