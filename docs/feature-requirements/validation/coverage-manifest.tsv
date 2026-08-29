@@ -89,8 +89,8 @@ AGT-06	06	-	todo
 AGTC-01	06	-	todo
 AGTC-02	06	-	todo
 AGTC-03	06	-	todo
-FIL-01	07	-	todo
-FIL-02	07	-	todo
+FIL-01	07	slice07 -- FIL-01 area present	pass
+FIL-02	07	slice07 -- FIL-02 markdown preview	pass
 FIL-04	07	-	todo
 FIL-05	07	-	todo
 FIL-06	07	-	todo
