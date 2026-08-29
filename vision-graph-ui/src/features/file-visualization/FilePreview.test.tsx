@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import FilePreview from './FilePreview'
 import { WriteQueue } from '../../shared/fs/WriteQueue'
 import { ThemeProvider } from '../../shared/ThemeProvider'
@@ -156,6 +156,63 @@ describe('FilePreview', () => {
       const editorContainer = screen.getByTestId('file-preview-area')
       expect(editorContainer.innerHTML).toContain('cm-editor')
       expect(editorContainer.innerHTML).toContain('Content')
+    })
+  })
+
+  describe('FILC-03 concurrent guard', () => {
+    it('shows conflict notice when external change detected', () => {
+      const mockWriteQueue = {
+        write: vi.fn(),
+        flush: vi.fn(),
+        getPendingWrites: vi.fn()
+      } as unknown as WriteQueue
+
+      const content = '# Test\n\nContent'
+      const filePath = '/test/file.md'
+      const onExternalChange = vi.fn()
+
+      renderWithTheme(
+        <FilePreview 
+          content={content} 
+          writeQueue={mockWriteQueue} 
+          filePath={filePath}
+          onExternalChange={onExternalChange}
+        />
+      )
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    })
+  })
+
+  describe('FILC-04 close guard', () => {
+    it('blocks editor exit on save failure', () => {
+      const mockWriteQueue = {
+        write: vi.fn(() => {
+          throw new Error('Save failed')
+        }),
+        flush: vi.fn(),
+        getPendingWrites: vi.fn()
+      } as unknown as WriteQueue
+
+      const content = '# Test\n\nContent'
+      const filePath = '/test/file.md'
+
+      renderWithTheme(
+        <FilePreview content={content} writeQueue={mockWriteQueue} filePath={filePath} />
+      )
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const saveBtn = screen.getByRole('button', { name: 'Save' })
+      fireEvent.click(saveBtn)
+
+      const editorContainer = screen.getByTestId('file-preview-area')
+      expect(editorContainer.innerHTML).toContain('cm-editor')
+      expect(screen.queryByTestId('error-notice')).toBeInTheDocument()
     })
   })
 })

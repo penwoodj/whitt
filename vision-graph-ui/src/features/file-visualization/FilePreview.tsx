@@ -11,6 +11,7 @@ type FilePreviewProps = {
   isLoading?: boolean
   writeQueue?: WriteQueue
   filePath?: string
+  onExternalChange?: (event: { type: string; path: string }) => void
 }
 
 const PreviewWrap = styled.div`
@@ -228,8 +229,57 @@ const RetryBtn = styled.button`
   }
 `
 
-export default function FilePreview({ content, isLoading = false, writeQueue, filePath = '' }: FilePreviewProps) {
-  const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave } = useFileEdit(content, writeQueue, filePath)
+const ConflictWrap = styled.div`
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  border: 1px solid ${({ theme }) => theme.colors.warning};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  padding: ${({ theme }) => theme.spacing.sm};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
+`
+
+const ConflictText = styled.span`
+  color: ${({ theme }) => theme.colors.warning};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+`
+
+const ConflictBtns = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.xs};
+`
+
+const KeepMineBtn = styled.button`
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.primary};
+  border: none;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.colors.textInverse};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.sizeXs};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primaryHover};
+  }
+`
+
+const UseDiskBtn = styled.button`
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.bg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.sizeXs};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bgHover};
+  }
+`
+
+export default function FilePreview({ content, isLoading = false, writeQueue, filePath = '', onExternalChange }: FilePreviewProps) {
+  const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, handleDiskChange, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
 
   if (isLoading) {
     return (
@@ -250,18 +300,26 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
   return (
     <PreviewWrap data-testid="file-preview-area">
       <Header>
-        {saveError && (
-          <ErrorWrap>
-            <ErrorText>Save failed: {saveError.message}</ErrorText>
-            <RetryBtn onClick={retrySave}>Retry</RetryBtn>
-          </ErrorWrap>
-        )}
+      {conflict ? (
+        <ConflictWrap data-testid="conflict-notice">
+          <ConflictText>File changed on disk. Choose your version:</ConflictText>
+          <ConflictBtns>
+            <KeepMineBtn onClick={keepMine} data-testid="keep-mine-btn">Keep Mine</KeepMineBtn>
+            <UseDiskBtn onClick={() => window.location.reload()} data-testid="use-disk-btn">Use Disk Version</UseDiskBtn>
+          </ConflictBtns>
+        </ConflictWrap>
+      ) : saveError ? (
+        <ErrorWrap data-testid="error-notice">
+          <ErrorText>Save failed: {saveError.message}</ErrorText>
+          <RetryBtn onClick={retrySave}>Retry</RetryBtn>
+        </ErrorWrap>
+      ) : null}
         <EditBtn onClick={toggleEdit} aria-label={isEditing ? 'Save' : 'Edit'}>
           {isEditing ? 'Save' : 'Edit'}
         </EditBtn>
       </Header>
 
-      {isEditing ? (
+      {isEditing && !conflict ? (
         <EditorWrap>
           <CodeMirror
             value={content}
@@ -271,6 +329,10 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
             theme="dark"
           />
         </EditorWrap>
+      ) : !conflict ? (
+        <MarkdownContent>
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </MarkdownContent>
       ) : (
         <MarkdownContent>
           <ReactMarkdown>{content}</ReactMarkdown>

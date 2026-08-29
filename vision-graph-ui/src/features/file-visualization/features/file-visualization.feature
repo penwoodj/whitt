@@ -39,3 +39,17 @@ Feature: File preview area
     When save attempted
     Then inline error shown + retry btn
     And in-memory text intact
+
+  Scenario: FILC-03 concurrent guard
+    Given edit mode active
+    And disk-change event fires
+    When usr attempts save
+    Then conflict notice shown
+    And keep-mine preserves usr text
+
+  Scenario: FILC-04 close guard
+    Given edit mode active w/ unsaved changes
+    When save fails
+    Then close blocked
+    And error shown
+    And text preserved

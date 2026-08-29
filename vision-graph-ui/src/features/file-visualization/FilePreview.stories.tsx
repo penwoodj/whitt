@@ -58,3 +58,27 @@ export const FILC02SaveFailure: Story = {
     },
   },
 }
+
+export const FILC03ConcurrentGuard: Story = {
+  name: 'slice07 -- FILC-03 concurrent guard',
+  args: {
+    content: '# Content\n\nThis will show conflict notice',
+  },
+  parameters: {
+    docs: {
+      description: 'Shows conflict notice when external change detected',
+    },
+  },
+}
+
+export const FILC04CloseGuard: Story = {
+  name: 'slice07 -- FILC-04 close guard',
+  args: {
+    content: '# Content That Fails to Save\n\nEditor stays open on error',
+  },
+  parameters: {
+    docs: {
+      description: 'Blocks editor exit on save failure - keeps cm-editor visible with error-notice',
+    },
+  },
+}
