@@ -3,7 +3,7 @@ import { ThemeProvider } from '../../shared/ThemeProvider'
 import NodePromptArea from '../node/NodePromptArea'
 
 const meta = {
-  title: 'Features/ContextPills/slice08 -- PIL-01 pills on highlight',
+  title: 'Features/ContextPills',
   component: NodePromptArea,
   parameters: {
     layout: 'centered',
@@ -14,6 +14,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const PIL01PillsOnHighlight: Story = {
+  name: 'slice08 -- PIL-01 pills on highlight',
   render: (args) => (
     <ThemeProvider>
       <div style={{ width: '500px' }}>
@@ -52,9 +53,25 @@ export const PIL01PillsOnHighlight: Story = {
 }
 
 export const NoPills: Story = {
-  ...PIL01PillsOnHighlight,
+  render: (args) => (
+    <ThemeProvider>
+      <div style={{ width: '500px' }}>
+        <NodePromptArea {...args} />
+      </div>
+    </ThemeProvider>
+  ),
   args: {
     ...PIL01PillsOnHighlight.args,
     contextPills: [],
   },
+}
+
+export const PIL02RemoveViaX: Story = {
+  name: 'slice08 -- PIL-02 remove via X',
+  ...PIL01PillsOnHighlight,
+}
+
+export const PIL03LineNumbers: Story = {
+  name: 'slice08 -- PIL-03 line numbers',
+  ...PIL01PillsOnHighlight,
 }

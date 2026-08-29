@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ThemeProvider } from '../../shared/ThemeProvider'
 import NodePromptArea from '../node/NodePromptArea'
@@ -57,5 +57,91 @@ describe('ContextPills - PIL-01 pills on highlight', () => {
     expect(pill2).toBeInTheDocument()
     expect(pill1).toHaveAttribute('data-line-range', 'L12-18')
     expect(pill2).toHaveAttribute('data-line-range', 'L24-30')
+  })
+})
+
+describe('ContextPills - PIL-02 remove via X', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+  })
+
+  function renderWithTheme(component: React.ReactElement) {
+    return render(<ThemeProvider>{component}</ThemeProvider>)
+  }
+
+  it('X button visible on hover and removes pill', async () => {
+    const mockPill: ContextPill = {
+      id: 'pill-1',
+      lineRange: 'L12-18',
+      startLine: 12,
+      endLine: 18,
+      textSnippet: 'function processData',
+      filePath: '/test/file.md'
+    }
+
+    const mockOnRemove = vi.fn()
+
+    renderWithTheme(
+      <NodePromptArea
+        value="test"
+        onChange={vi.fn()}
+        isStream={false}
+        isRec={false}
+        isCycleRun={false}
+        onToggleRec={vi.fn()}
+        onSend={vi.fn()}
+        contextPills={[mockPill]}
+        onRemovePill={mockOnRemove}
+      />
+    )
+
+    const removeBtn = screen.getByTestId('remove-pill-1')
+
+    expect(removeBtn).toBeInTheDocument()
+    fireEvent.click(removeBtn)
+
+    expect(mockOnRemove).toHaveBeenCalledWith('pill-1')
+  })
+})
+
+describe('ContextPills - PIL-03 line numbers', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+  })
+
+  function renderWithTheme(component: React.ReactElement) {
+    return render(<ThemeProvider>{component}</ThemeProvider>)
+  }
+
+  it('pill shows line range format', async () => {
+    const mockPill: ContextPill = {
+      id: 'pill-1',
+      lineRange: 'L12-18',
+      startLine: 12,
+      endLine: 18,
+      textSnippet: 'function processData',
+      filePath: '/test/file.md'
+    }
+
+    renderWithTheme(
+      <NodePromptArea
+        value="test"
+        onChange={vi.fn()}
+        isStream={false}
+        isRec={false}
+        isCycleRun={false}
+        onToggleRec={vi.fn()}
+        onSend={vi.fn()}
+        contextPills={[mockPill]}
+        onRemovePill={vi.fn()}
+      />
+    )
+
+    const pill = screen.getByTestId('context-pill-pill-1')
+
+    expect(pill).toHaveAttribute('data-line-range', 'L12-18')
+    expect(pill.textContent).toContain('L12-18')
   })
 })
