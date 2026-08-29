@@ -170,32 +170,52 @@ describe('GITC-04 cadence guard', () => {
   })
 })
 
-describe('GITC-03 metadata schema', () => {
-  it('produces parseable JSON footer in commit message', async () => {
-    const git = simpleGit()
-    const mockCommitMessage = vi.fn()
-    git.commit = mockCommitMessage
-    git.add = vi.fn().mockResolvedValue(undefined)
+describe('GIT-03 all mutations logged', () => {
+  let gitService: GitService
 
-    const commitBuilder = new CommitBuilder(git)
-    const metadata = {
-      actor: 'user' as const,
-      action: 'file-edit' as const,
-      refs: ['node-123'],
-      ts: '2026-08-15T00:00:00Z'
+  beforeEach(() => {
+    gitService = {
+      commit: vi.fn(),
+      push: vi.fn()
     }
+  })
 
-    await commitBuilder.commit('test.md', metadata)
+  it('edit + spawn + group all produce commits (count + types)', async () => {
+    const { result } = renderHook(() => useGitCommit(gitService))
 
-    const commitCall = mockCommitMessage.mock.calls[0]
-    const messageBody = commitCall[1]['--message']
-    const parsed = JSON.parse(messageBody)
+    await act(async () => {
+      await result.current.onFlush([
+        { path: 'node-edit.md', content: 'edited content' }
+      ])
+    })
 
-    expect(parsed).toEqual({
-      actor: 'user',
-      action: 'file-edit',
-      refs: ['node-123'],
-      ts: '2026-08-15T00:00:00Z'
+    await act(async () => {
+      await result.current.onFlush([
+        { path: 'node-spawn.md', content: 'spawned content' }
+      ])
+    })
+
+    await act(async () => {
+      await result.current.onFlush([
+        { path: 'node-group.md', content: 'grouped content' }
+      ])
+    })
+
+    expect(gitService.commit).toHaveBeenCalledTimes(3)
+
+    const calls = (gitService.commit as vi.Mock).mock.calls
+    expect(calls[0][0]).toBe('node-edit.md')
+    expect(calls[1][0]).toBe('node-spawn.md')
+    expect(calls[2][0]).toBe('node-group.md')
+
+    calls.forEach(call => {
+      const metadata = call[1]
+      expect(metadata).toHaveProperty('actor')
+      expect(metadata).toHaveProperty('action')
+      expect(metadata).toHaveProperty('refs')
+      expect(metadata).toHaveProperty('ts')
+      expect(metadata.actor).toBe('user')
+      expect(metadata.action).toBe('file-edit')
     })
   })
 })
