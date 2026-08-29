@@ -106,3 +106,15 @@ export const FILX01LineNumbers: Story = {
     },
   },
 }
+
+export const FILX03PlainTextButton: Story = {
+  name: 'slice07 -- FILX-03 plain text button',
+  args: {
+    content: '# Heading\n\nLine 1\n\nLine 2\n\nLine 3 with **markdown**',
+  },
+  parameters: {
+    docs: {
+      description: 'Plain Text button toggles between markdown preview and plain text rendering. Line numbers shown via useLineNumbers hook in plain text mode.',
+    },
+  },
+}

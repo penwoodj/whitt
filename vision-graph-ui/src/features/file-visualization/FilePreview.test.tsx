@@ -251,4 +251,80 @@ describe('FilePreview', () => {
       expect(editorContainer.innerHTML).toContain('cm-lineNumbers')
     })
   })
+
+  describe('FILX-03 plain text button', () => {
+    it('shows plain text button in preview mode', () => {
+      const content = '# Test\n\nContent'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const plainTextBtn = screen.getByTestId('plain-text-btn')
+      expect(plainTextBtn).toBeInTheDocument()
+      expect(plainTextBtn.textContent).toBe('Plain Text')
+    })
+
+    it('switches to plain text on click', () => {
+      const content = '# Heading\n\nLine 1\n\nLine 2'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const plainTextBtn = screen.getByTestId('plain-text-btn')
+      expect(plainTextBtn.textContent).toBe('Plain Text')
+
+      fireEvent.click(plainTextBtn)
+
+      expect(plainTextBtn.textContent).toBe('Markdown')
+
+      const plainTextContent = screen.getByTestId('plain-text-content')
+      expect(plainTextContent).toBeInTheDocument()
+
+      expect(screen.getByText('# Heading')).toBeInTheDocument()
+    })
+
+    it('line numbers persist in plain text mode', () => {
+      const content = '# Line 1\n\nLine 2\n\nLine 3'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const plainTextBtn = screen.getByTestId('plain-text-btn')
+      fireEvent.click(plainTextBtn)
+
+      const plainTextContent = screen.getByTestId('plain-text-content')
+      expect(plainTextContent).toBeInTheDocument()
+
+      const lines = screen.getAllByRole('generic').filter((el) =>
+        el.hasAttribute('data-line')
+      )
+
+      expect(lines.length).toBeGreaterThanOrEqual(3)
+      expect(lines[0].getAttribute('data-line')).toBe('1')
+      expect(lines[2].getAttribute('data-line')).toBe('3')
+    })
+
+    it('switches back to markdown on second click', () => {
+      const content = '# Heading\n\nLine 1\n\nLine 2'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const plainTextBtn = screen.getByTestId('plain-text-btn')
+
+      fireEvent.click(plainTextBtn)
+      expect(plainTextBtn.textContent).toBe('Markdown')
+      expect(screen.getByTestId('plain-text-content')).toBeInTheDocument()
+
+      fireEvent.click(plainTextBtn)
+      expect(plainTextBtn.textContent).toBe('Plain Text')
+      expect(screen.queryByTestId('plain-text-content')).not.toBeInTheDocument()
+
+      const heading = screen.getByRole('heading', { level: 1 })
+      expect(heading).toBeInTheDocument()
+      expect(heading.textContent).toBe('Heading')
+    })
+
+    it('plain text button not shown in edit mode', () => {
+      const content = '# Test\n\nContent'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      expect(screen.queryByTestId('plain-text-btn')).not.toBeInTheDocument()
+    })
+  })
 })

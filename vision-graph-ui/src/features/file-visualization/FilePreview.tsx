@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown'
+import React from 'react'
 import styled from 'styled-components'
 import { useFileEdit } from './useFileEdit'
 import { useFileSearch } from './useFileSearch'
@@ -35,6 +36,20 @@ const Header = styled.div`
 `
 
 const EditBtn = styled.button`
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.sizeXs};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bg};
+  }
+`
+
+const PlainTextBtn = styled.button`
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   background-color: ${({ theme }) => theme.colors.bgHover};
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -133,6 +148,37 @@ const MarkdownContent = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.sm};
     color: ${({ theme }) => theme.colors.textMuted};
     font-style: italic;
+  }
+`
+
+const PlainTextContent = styled.div`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  line-height: 1.5;
+  font-family: ${({ theme }) => theme.font.mono};
+  white-space: pre-wrap;
+  word-break: break-all;
+`
+
+const LineNumberCell = styled.span`
+  color: ${({ theme }) => theme.colors.textMuted};
+  text-align: right;
+  padding-right: ${({ theme }) => theme.spacing.sm};
+  min-width: 3em;
+  user-select: none;
+`
+
+const LineContent = styled.span`
+  flex: 1;
+`
+
+const LineRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  min-height: 1.5em;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bgHover};
   }
 `
 
@@ -284,6 +330,11 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
   const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
   const { searchQuery, matches, search } = useFileSearch()
   const { showLineNumbers } = useLineNumbers()
+  const [isPlainText, setIsPlainText] = React.useState(false)
+
+  const togglePlainText = (): void => {
+    setIsPlainText(!isPlainText)
+  }
 
   if (isLoading) {
     return (
@@ -300,6 +351,8 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
       </PreviewWrap>
     )
   }
+
+  const lines = content.split('\n')
 
   return (
     <PreviewWrap data-testid="file-preview-area">
@@ -322,13 +375,18 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
           {isEditing ? 'Save' : 'Edit'}
         </EditBtn>
         {!isEditing && (
-          <input
-            type="text"
-            placeholder="Find..."
-            value={searchQuery}
-            onChange={(e) => search(e.target.value, content)}
-            data-testid="find-input"
-          />
+          <>
+            <PlainTextBtn onClick={togglePlainText} data-testid="plain-text-btn">
+              {isPlainText ? 'Markdown' : 'Plain Text'}
+            </PlainTextBtn>
+            <input
+              type="text"
+              placeholder="Find..."
+              value={searchQuery}
+              onChange={(e) => search(e.target.value, content)}
+              data-testid="find-input"
+            />
+          </>
         )}
       </Header>
 
@@ -343,14 +401,25 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
           />
         </EditorWrap>
       ) : !conflict ? (
-        <MarkdownContent>
-          <ReactMarkdown>{content}</ReactMarkdown>
-          {matches.length > 0 && (
-            <div data-testid="search-matches">
-              Found {matches.length} matches for "{searchQuery}"
-            </div>
-          )}
-        </MarkdownContent>
+        isPlainText ? (
+          <PlainTextContent data-testid="plain-text-content">
+            {lines.map((line, index) => (
+              <LineRow key={index} data-line={index + 1}>
+                {showLineNumbers && <LineNumberCell>{index + 1}</LineNumberCell>}
+                <LineContent>{line || ' '}</LineContent>
+              </LineRow>
+            ))}
+          </PlainTextContent>
+        ) : (
+          <MarkdownContent>
+            <ReactMarkdown>{content}</ReactMarkdown>
+            {matches.length > 0 && (
+              <div data-testid="search-matches">
+                Found {matches.length} matches for "{searchQuery}"
+              </div>
+            )}
+          </MarkdownContent>
+        )
       ) : (
         <MarkdownContent>
           <ReactMarkdown>{content}</ReactMarkdown>

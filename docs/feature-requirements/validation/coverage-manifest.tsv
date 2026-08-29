@@ -97,8 +97,8 @@ FIL-06	07	slice07 -- FIL-06 multi-highlight	pass
 FIL-07	07	slice07 -- FIL-07 ctrl+F local search	pass
 FILC-01	07	slice07 -- FILC-01 skeleton	pass
 FILC-02	07	slice07 -- FILC-02 save failure	pass
-FILC-03	07	pass	concurrent guard
-FILC-04	07	pass	close guard
+FILC-03	07	slice07 -- FILC-03 concurrent guard	pass
+FILC-04	07	slice07 -- FILC-04 close guard	pass
 PIL-01	08	-	todo
 PIL-02	08	-	todo
 PIL-03	08	-	todo
@@ -167,6 +167,6 @@ NAVX-07	11	slice11 -- NAVX-07 11	pass
 NAVX-08	11	slice11 -- NAVX-08 11	pass
 NAVX-09	11	slice11 -- NAVX-09 11	pass
 NAVX-10	11	slice11 -- NAVX-10 11	pass
-07-file-visualization	FILX-01	pass	line numbers both modes
-07-file-visualization	FILX-02	slice07 -- FILX-02 settings toggle default on	todo
-07-file-visualization	FILX-03	slice07 -- FILX-03 plain text mode	todo
+FILX-01	07	slice07 -- FILX-01 line numbers both modes	pass
+FILX-02	07	slice07 -- FILX-02 settings toggle default on	pass
+FILX-03	07	slice07 -- FILX-03 plain text button	pass

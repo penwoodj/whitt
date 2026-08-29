@@ -13,8 +13,10 @@ describe('Settings', () => {
 
   it('persists to localStorage', () => {
     renderWithTheme(<ConnectedSettings />)
-    const checkbox = screen.getByRole('checkbox')
-    fireEvent.click(checkbox)
+    const checkboxes = screen.getAllByRole('checkbox')
+    const autoAcceptCheckbox = checkboxes.find(cb => cb.nextElementSibling?.textContent === 'Auto-accept') as HTMLInputElement
+    expect(autoAcceptCheckbox).toBeDefined()
+    fireEvent.click(autoAcceptCheckbox)
     const stored = localStorage.getItem(STORAGE_KEY)
     expect(stored).toBeTruthy()
     const parsed = JSON.parse(stored || '{}')
@@ -30,13 +32,16 @@ describe('Settings', () => {
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     renderWithTheme(<ConnectedSettings />)
-    const checkbox = screen.getByRole('checkbox')
-    expect(checkbox).not.toBeChecked()
+    const checkboxes = screen.getAllByRole('checkbox')
+    const autoAcceptCheckbox = checkboxes.find(cb => cb.nextElementSibling?.textContent === 'Auto-accept') as HTMLInputElement
+    expect(autoAcceptCheckbox).not.toBeChecked()
   })
 
   it('uses defaults when localStorage empty', () => {
     renderWithTheme(<ConnectedSettings />)
-    const checkbox = screen.getByRole('checkbox')
-    expect(checkbox).toBeChecked()
+    const checkboxes = screen.getAllByRole('checkbox')
+    const autoAcceptCheckbox = checkboxes.find(cb => cb.nextElementSibling?.textContent === 'Auto-accept') as HTMLInputElement
+    expect(autoAcceptCheckbox).toBeDefined()
+    expect(autoAcceptCheckbox).toBeChecked()
   })
 })

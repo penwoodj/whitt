@@ -5,6 +5,7 @@ import { AutoAcceptToggle } from './AutoAcceptToggle'
 import { VoiceShortcutInput } from './VoiceShortcutInput'
 import { ModelEndpointInput } from './ModelEndpointInput'
 import { ProjectFolderPicker } from './ProjectFolderPicker'
+import { LineNumbersSettingsToggle } from './LineNumbersSettingsToggle'
 import merge from 'lodash/fp/merge'
 
 export const Settings = ({ state, updateState }: SettingsProps): React.JSX.Element => {
@@ -41,6 +42,9 @@ export const Settings = ({ state, updateState }: SettingsProps): React.JSX.Eleme
       </SettingsSection>
       <SettingsSection legend="Project Folder">
         <ProjectFolderPicker folderPath={state.folderPath} onChange={handleFolderChange} />
+      </SettingsSection>
+      <SettingsSection legend="File Preview">
+        <LineNumbersSettingsToggle />
       </SettingsSection>
     </SettingsLayout>
   )
