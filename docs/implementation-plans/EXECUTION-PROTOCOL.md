@@ -114,3 +114,13 @@ Each plan §4 lists its open questions. Executor asks ONCE per slice (2-3 Qs max
 task fail ×3 → oracle. slice stuck >1 day → stop, report, replan w/ user.
 Contract drift between enabler + consumer slice → fix ENABLER, not consumer
 (consumers depend on contracts; contracts change via enabler plan revision + version note).
+
+## 9. UI readiness gate (added 2026-08-29)
+
+Live gate gains one step for ANY slice touching rendered UI: before flipping
+plan Status to DONE, run `npm run ui:review -- --topic <slice>` from
+vision-graph-ui. Audit must be clean (0 console errors, 0 unstyled inputs) and
+screenshots must exist under docs/ui-reviews/. Self-claim ceiling = demo;
+dogfood/reviewable/shippable require recorded user verdict via the
+ui-review-gate skill MCQ loop (max 3 rounds). jsdom tests never substitute.
+

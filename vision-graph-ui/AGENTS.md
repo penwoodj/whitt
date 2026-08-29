@@ -275,6 +275,7 @@ OpenCode loads skills from `.opencode/skills/` in this subfolder. The following 
 - `pixi-graphics` — WebGL renderer for 100k+ node fish-eye
 - `cytoscape` — graph-theory algorithms + layouts
 - `d2` — diagram-as-code for planning docs
+- `ui-review-gate` — (global) screenshot review loop; MANDATORY before any UI completion claim (Section 18)
 
 Agents MUST load the relevant skill before working in that domain. Loading is cheap; not loading = violating conventions.
 
@@ -302,6 +303,7 @@ Before ANY edit in a skill's domain, the agent MUST `skill(name="...")` load it.
 | WebGL canvas, 100k+ nodes, fish-eye perf | `pixi-graphics` |
 | Graph algorithms (shortest path, centrality) | `cytoscape` |
 | `.d2` diagram files in `docs/` | `d2` |
+| ANY UI completion claim, screenshots, user review ask | `ui-review-gate` |
 
 ### Improvement loop (skills are LIVING)
 
@@ -484,7 +486,10 @@ Override: user explicitly invokes "build now" or "don't stop" → skip questions
 
 ---
 
-Revision: 5 (2026-08-09)
+Revision: 6 (2026-08-29)
+
+Changes in Rev 6:
+- Section 18: Added UI Readiness Gate — screenshot evidence + bounded user review loop required before ANY UI completion claim. jsdom blind-spot documented. Self-attestation ceiling = demo.
 
 Changes in Rev 5:
 - Section 17: Added "Node Lifecycle (Collapsed → Hover → Expand)" rules per ADR-0012 (sphere→square morph, 3-state lifecycle, details panel gating).
@@ -661,3 +666,29 @@ When converting existing component from inline styles:
 ### Skill loading
 
 Before styling work, agents MUST load `modern-react` skill (project-local at `.opencode/skills/modern-react/SKILL.md`). It has the styled-component patterns + dark theme conventions.
+
+---
+
+## 18. UI Readiness Gate (HARD)
+
+Per user directive 2026-08-29. No UI work is "done/delivered" without rendered evidence + user verdict. jsdom tests are structurally blind to rendered styling (jsdom does not apply styled-components `<style>` tags to computed styles) — green tests NEVER imply usable UI.
+
+### Claim levels
+
+| Level | Gate |
+|---|---|
+| unusable | (floor — honest default) |
+| demo | `npm run ui:review` audit clean (0 console errors, 0 unstyled inputs) + screenshots on disk |
+| dogfood | user verdict recorded |
+| reviewable | user verdict recorded |
+| shippable | user verdict recorded |
+
+Agent self-attestation ceiling: **demo**. Everything above requires the user's word via the review loop.
+
+### Review loop (run `ui-review-gate` skill)
+
+1. `npm run ui:review -- --topic <name>` (build+preview, headless screenshots ×2 viewports, unstyled-input scan → `../docs/ui-reviews/<date>-<topic>/`).
+2. Ask user 2-4 MCQs quoting ABSOLUTE screenshot paths (user views files directly).
+3. Fix per answers, re-run, re-ask. MAX 3 rounds; then stop + honest findings.
+4. NEVER screenshot Storybook as evidence for app deliverables — the composed app only.
+

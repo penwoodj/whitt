@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "ui:review": "node scripts/ui-review.mjs"
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.2",
