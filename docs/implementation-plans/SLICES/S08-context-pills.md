@@ -46,7 +46,7 @@ Ask user (2-3 questions max, `question` tool):
 
 3. **Preview jump behavior**: When clicking pill preview's jump affordance (PILC-02), should it scroll the file preview to the highlighted span AND expand the span visually, or just scroll to position?
 
-Record answers in this file, then never re-ask.
+ANSWERED 2026-08-16: Q1=A lines-only face (e.g. L12-18), snippet on hover preview only. Q2=6 pills, arranged 2 rows of 3 pills each, then '+N more'. Q3=A scroll file preview to span AND visually expand the highlight.
 
 ## 5. Tasks (incremental, TDD, each ends green+committed)
 
