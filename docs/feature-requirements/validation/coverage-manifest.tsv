@@ -93,7 +93,7 @@ FIL-01	07	slice07 -- FIL-01 area present	pass
 FIL-02	07	slice07 -- FIL-02 markdown preview	pass
 FIL-04	07	slice07 -- FIL-04 edit toggle	pass
 FIL-05	07	slice07 -- FIL-05 blur saves	pass
-FIL-06	07	-	todo
+FIL-06	pass	multi-highlight ctrl+select
 FIL-07	07	pass	ctrl+F local search
 FILC-01	07	slice07 -- FILC-01 skeleton	pass
 FILC-02	07	slice07 -- FILC-02 save failure	pass
