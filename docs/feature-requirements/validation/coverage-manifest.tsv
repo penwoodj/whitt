@@ -113,7 +113,7 @@ GIT-04	09	-	todo
 GITC-01	09	-	todo
 GITC-02	09	-	todo
 GITC-03	09	-	todo
-GITC-04	09	-	todo
+GITC-04	09	slice09 -- GITC-04 cadence guard	pass
 GRP-01	10	slice10 -- GRP-01 multi-select	pass
 GRP-02	10	slice10 -- GRP-02 selection surround	pass
 GRP-03	10	slice10 -- GRP-03 right-click box	pass
