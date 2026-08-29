@@ -69,6 +69,21 @@ Feature: File preview area
     And line numbers shown in raw mode
     And line numbers persist across mode toggles
 
+  Scenario: FIL-07 ctrl+F
+    Given preview area w/ markdown content
+    When usr opens find dialog
+    And usr types search term
+    Then all matches highlighted in preview
+    And matches remain highlighted after search
+
+  Scenario: FILX-01 line numbers both modes
+    Given preview area w/ multi-line content
+    When preview renders
+    And usr toggles raw mode
+    Then line numbers shown in preview mode
+    And line numbers shown in raw mode
+    And line numbers persist across mode toggles
+
   Scenario: NodeDetailPanel integration
     Given NodeDetailPanel w/ markdown content
     When panel renders
