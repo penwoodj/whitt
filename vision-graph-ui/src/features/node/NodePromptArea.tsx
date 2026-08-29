@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import NodeMicBtn from './NodeMicBtn'
+import type { ContextPill } from '../context-pills/contextPillTypes'
 
 type NodePromptAreaProps = {
   value: string
@@ -12,10 +13,68 @@ type NodePromptAreaProps = {
   onToggleRec: () => void
   onStreamTxt?: (txt: string) => void
   onSend: () => void
+  contextPills?: ContextPill[]
+  onRemovePill?: (pillId: string) => void
 }
 
 const MAX_HEIGHT = 154
 const LINE_HEIGHT = 22
+
+const PillRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  background-color: ${({ theme }) => theme.colors.bg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+`
+
+const Pill = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.bgElevated};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.pill};
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => theme.font.sizeXs};
+  cursor: pointer;
+  transition: background-color ${({ theme }) => theme.transition.fast};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bgHover};
+  }
+`
+
+const PillText = styled.span`
+  font-family: ${({ theme }) => theme.font.mono};
+`
+
+const RemoveBtn = styled.button`
+  display: none;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.textMuted};
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 2px;
+
+  ${Pill}:hover & {
+    display: flex;
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bgHover};
+    color: ${({ theme }) => theme.colors.error};
+  }
+`
 
 const Composer = styled.div<{ $multi: boolean }>`
   position: relative;
@@ -92,6 +151,8 @@ export default function NodePromptArea({
   onToggleRec,
   onStreamTxt,
   onSend,
+  contextPills = [],
+  onRemovePill,
 }: NodePromptAreaProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isMulti, setIsMulti] = useState(false)
@@ -131,57 +192,81 @@ export default function NodePromptArea({
   }, [isStream])
 
   return (
-    <Composer $multi={isMulti}>
-      <PromptInput
-        ref={inputRef}
-        value={displayTxt}
-        onChange={handleChange}
-        placeholder="Ask anything..."
-        disabled={isStream}
-      />
-      <Actions>
-        <NodeMicBtn
-          isRec={isRec}
-          onToggleRec={onToggleRec}
-          onStreamTxt={onStreamTxt}
+    <>
+      {contextPills && contextPills.length > 0 && (
+        <PillRow data-testid="context-pills-container">
+          {contextPills.map((pill) => (
+            <Pill
+              key={pill.id}
+              data-testid={`context-pill-${pill.id}`}
+              data-line-range={pill.lineRange}
+            >
+              <PillText>{pill.lineRange}</PillText>
+              {onRemovePill && (
+                <RemoveBtn
+                  type="button"
+                  data-testid={`remove-${pill.id}`}
+                  onClick={() => onRemovePill(pill.id)}
+                >
+                  ×
+                </RemoveBtn>
+              )}
+            </Pill>
+          ))}
+        </PillRow>
+      )}
+      <Composer $multi={isMulti}>
+        <PromptInput
+          ref={inputRef}
+          value={displayTxt}
+          onChange={handleChange}
+          placeholder="Ask anything..."
+          disabled={isStream}
         />
-        <SendBtn
-          $disabled={!canSend}
-          onClick={handleSendClick}
-          disabled={!canSend}
-          aria-label={isCycleRun ? 'Stop generation' : 'Send prompt'}
-        >
-          <SendIcon>
-            {isCycleRun ? (
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="none"
-                aria-hidden="true"
-              >
-                <rect x="6" y="6" width="12" height="12" />
-              </svg>
-            ) : (
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5l7 7-7 7" />
-              </svg>
-            )}
-          </SendIcon>
-        </SendBtn>
-      </Actions>
-    </Composer>
+        <Actions>
+          <NodeMicBtn
+            isRec={isRec}
+            onToggleRec={onToggleRec}
+            onStreamTxt={onStreamTxt}
+          />
+          <SendBtn
+            $disabled={!canSend}
+            onClick={handleSendClick}
+            disabled={!canSend}
+            aria-label={isCycleRun ? 'Stop generation' : 'Send prompt'}
+          >
+            <SendIcon>
+              {isCycleRun ? (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  stroke="none"
+                  aria-hidden="true"
+                >
+                  <rect x="6" y="6" width="12" height="12" />
+                </svg>
+              ) : (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                  <path d="M12 5l7 7-7 7" />
+                </svg>
+              )}
+            </SendIcon>
+          </SendBtn>
+        </Actions>
+      </Composer>
+    </>
   )
 }
