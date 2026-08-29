@@ -167,6 +167,6 @@ NAVX-07	11	slice11 -- NAVX-07 11	pass
 NAVX-08	11	slice11 -- NAVX-08 11	pass
 NAVX-09	11	slice11 -- NAVX-09 11	pass
 NAVX-10	11	slice11 -- NAVX-10 11	pass
-07-file-visualization	FILX-01	slice07 -- FILX-01 line numbers both modes	todo
+07-file-visualization	FILX-01	pass	line numbers both modes
 07-file-visualization	FILX-02	slice07 -- FILX-02 settings toggle default on	todo
 07-file-visualization	FILX-03	slice07 -- FILX-03 plain text mode	todo
