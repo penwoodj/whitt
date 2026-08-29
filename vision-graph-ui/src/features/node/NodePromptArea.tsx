@@ -1,3 +1,4 @@
+import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import NodeMicBtn from './NodeMicBtn'
@@ -19,8 +20,9 @@ type NodePromptAreaProps = {
 
 const MAX_HEIGHT = 154
 const LINE_HEIGHT = 22
+const MAX_VISIBLE_PILLS = 6
 
-const PillRow = styled.div`
+const PillRow = styled.div<{ $showOverflow: boolean }>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.sm};
@@ -28,6 +30,7 @@ const PillRow = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
 `
 
 const Pill = styled.div`
@@ -74,6 +77,20 @@ const RemoveBtn = styled.button`
     background-color: ${({ theme }) => theme.colors.bgHover};
     color: ${({ theme }) => theme.colors.error};
   }
+`
+
+const OverflowPill = styled(Pill)`
+  justify-content: center;
+  cursor: pointer;
+`
+
+const OverflowList = styled.div<{ $visible: boolean }>`
+  grid-column: 1 / -1;
+  display: ${({ $visible }) => ($visible ? 'grid' : 'none')};
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding-top: ${({ theme }) => theme.spacing.sm};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const Composer = styled.div<{ $multi: boolean }>`
@@ -156,10 +173,16 @@ export default function NodePromptArea({
 }: NodePromptAreaProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isMulti, setIsMulti] = useState(false)
+  const [showOverflow, setShowOverflow] = useState(false)
 
   const displayTxt = isStream && streamedTxt ? streamedTxt : value
 
   const canSend = !isStream && !isCycleRun && displayTxt.trim().length > 0
+
+  const visiblePills = contextPills.slice(0, MAX_VISIBLE_PILLS)
+  const overflowPills = contextPills.slice(MAX_VISIBLE_PILLS)
+
+  const hasOverflow = contextPills.length > MAX_VISIBLE_PILLS
 
   const handleChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -171,6 +194,10 @@ export default function NodePromptArea({
   const handleSendClick = useCallback(() => {
     onSend()
   }, [onSend])
+
+  const handleOverflowClick = useCallback(() => {
+    setShowOverflow((prev) => !prev)
+  }, [])
 
   useEffect(() => {
     if (!inputRef.current) return
@@ -194,8 +221,8 @@ export default function NodePromptArea({
   return (
     <>
       {contextPills && contextPills.length > 0 && (
-        <PillRow data-testid="context-pills-container">
-          {contextPills.map((pill) => (
+        <PillRow data-testid="context-pills-container" $showOverflow={hasOverflow}>
+          {visiblePills.map((pill) => (
             <Pill
               key={pill.id}
               data-testid={`context-pill-${pill.id}`}
@@ -213,7 +240,37 @@ export default function NodePromptArea({
               )}
             </Pill>
           ))}
+          {hasOverflow && (
+            <OverflowPill
+              data-testid="overflow-pill"
+              onClick={handleOverflowClick}
+            >
+              <PillText>+{overflowPills.length} more</PillText>
+            </OverflowPill>
+          )}
         </PillRow>
+      )}
+      {hasOverflow && showOverflow && (
+        <OverflowList $visible={showOverflow} data-testid="overflow-list">
+          {overflowPills.map((pill) => (
+            <Pill
+              key={pill.id}
+              data-testid={`context-pill-${pill.id}`}
+              data-line-range={pill.lineRange}
+            >
+              <PillText>{pill.lineRange}</PillText>
+              {onRemovePill && (
+                <RemoveBtn
+                  type="button"
+                  data-testid={`remove-${pill.id}`}
+                  onClick={() => onRemovePill(pill.id)}
+                >
+                  ×
+                </RemoveBtn>
+              )}
+            </Pill>
+          ))}
+        </OverflowList>
       )}
       <Composer $multi={isMulti}>
         <PromptInput

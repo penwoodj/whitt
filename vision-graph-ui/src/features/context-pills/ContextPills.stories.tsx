@@ -75,3 +75,32 @@ export const PIL03LineNumbers: Story = {
   name: 'slice08 -- PIL-03 line numbers',
   ...PIL01PillsOnHighlight,
 }
+
+export const PILC01OverflowStacking: Story = {
+  name: 'slice08 -- PILC-01 overflow stacking',
+  render: (args) => (
+    <ThemeProvider>
+      <div style={{ width: '500px' }}>
+        <NodePromptArea {...args} />
+      </div>
+    </ThemeProvider>
+  ),
+  args: {
+    value: 'Explain this implementation',
+    onChange: () => {},
+    isStream: false,
+    isRec: false,
+    isCycleRun: false,
+    onToggleRec: () => {},
+    onSend: () => {},
+    contextPills: Array.from({ length: 8 }, (_, i) => ({
+      id: `pill-${i + 1}`,
+      lineRange: `L${i * 2 + 1}-${i * 2 + 3}`,
+      startLine: i * 2 + 1,
+      endLine: i * 2 + 3,
+      textSnippet: `snippet ${i + 1}`,
+      filePath: '/test/file.md'
+    })),
+    onRemovePill: () => {},
+  },
+}
