@@ -1,8 +1,15 @@
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
+import { useFileEdit } from './useFileEdit'
+import CodeMirror from '@uiw/react-codemirror'
+import { markdown } from '@codemirror/lang-markdown'
+import { lineNumbers } from '@codemirror/view'
+import type { WriteQueue } from '../../shared/fs/WriteQueue'
 
 type FilePreviewProps = {
   content: string
+  writeQueue?: WriteQueue
+  filePath?: string
 }
 
 const PreviewWrap = styled.div`
@@ -11,6 +18,30 @@ const PreviewWrap = styled.div`
   background-color: ${({ theme }) => theme.colors.bgElevated};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.sm};
+`
+
+const Header = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+`
+
+const EditBtn = styled.button`
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  background-color: ${({ theme }) => theme.colors.bgHover};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.sizeXs};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bg};
+  }
 `
 
 const MarkdownContent = styled.div`
@@ -101,12 +132,70 @@ const MarkdownContent = styled.div`
   }
 `
 
-export default function FilePreview({ content }: FilePreviewProps) {
+const EditorWrap = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .cm-editor {
+    height: 100%;
+    background-color: ${({ theme }) => theme.colors.bg};
+    color: ${({ theme }) => theme.colors.text};
+    font-family: ${({ theme }) => theme.font.mono};
+    font-size: ${({ theme }) => theme.font.sizeXs};
+
+    .cm-gutters {
+      background-color: ${({ theme }) => theme.colors.bgElevated};
+      border-right: 1px solid ${({ theme }) => theme.colors.border};
+      color: ${({ theme }) => theme.colors.textMuted};
+    }
+
+    .cm-activeLineGutter {
+      background-color: ${({ theme }) => theme.colors.bgHover};
+    }
+
+    .cm-lineNumbers .cm-gutterElement {
+      padding: 0 4px;
+      min-width: 2em;
+      text-align: right;
+    }
+
+    .cm-content {
+      padding: ${({ theme }) => theme.spacing.sm};
+    }
+
+    .cm-scroller {
+      overflow: auto;
+    }
+  }
+`
+
+export default function FilePreview({ content, writeQueue, filePath = '' }: FilePreviewProps) {
+  const { isEditing, toggleEdit, saveOnBlur } = useFileEdit(content, writeQueue, filePath)
+
   return (
     <PreviewWrap data-testid="file-preview-area">
-      <MarkdownContent>
-        <ReactMarkdown>{content}</ReactMarkdown>
-      </MarkdownContent>
+      <Header>
+        <EditBtn onClick={toggleEdit} aria-label={isEditing ? 'Save' : 'Edit'}>
+          {isEditing ? 'Save' : 'Edit'}
+        </EditBtn>
+      </Header>
+
+      {isEditing ? (
+        <EditorWrap>
+          <CodeMirror
+            value={content}
+            extensions={[markdown(), lineNumbers()]}
+            onChange={saveOnBlur}
+            height="200px"
+            theme="dark"
+          />
+        </EditorWrap>
+      ) : (
+        <MarkdownContent>
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </MarkdownContent>
+      )}
     </PreviewWrap>
   )
 }

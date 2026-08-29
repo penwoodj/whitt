@@ -24,3 +24,17 @@ export const FIL02MarkdownPreview: Story = {
     content: '# Heading 1\n\n## Heading 2\n\nSome content with **bold** and *italic* text.\n\n- List item 1\n- List item 2\n\n`inline code` and:\n\n```\nconst code = "block";\n```\n\n[Link text](https://example.com)\n\n> This is a blockquote',
   },
 }
+
+export const FIL04EditToggle: Story = {
+  name: 'slice07 -- FIL-04 edit toggle',
+  args: {
+    content: '# Editable Content\n\nClick Edit to see raw mode',
+  },
+}
+
+export const FIL05BlurSaves: Story = {
+  name: 'slice07 -- FIL-05 blur saves',
+  args: {
+    content: '# Content to Edit\n\nModify this, then click Save',
+  },
+}

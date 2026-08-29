@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import FilePreview from './FilePreview'
 import { ThemeProvider } from '../../shared/ThemeProvider'
@@ -32,8 +32,41 @@ describe('FilePreview', () => {
       expect(h2).toBeInTheDocument()
       expect(h2).toHaveTextContent('Heading 2')
 
-      // Raw markdown not shown
       expect(screen.queryByText('# Heading 1')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('FIL-04 edit toggle', () => {
+    it('shows CodeMirror editor on edit click', () => {
+      const content = '# Test\n\nContent'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      expect(editBtn).toBeInTheDocument()
+      fireEvent.click(editBtn)
+
+      const editorContainer = screen.getByTestId('file-preview-area')
+      expect(editorContainer).toBeInTheDocument()
+      expect(editorContainer.innerHTML).toContain('cm-editor')
+      expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    })
+  })
+
+  describe('FIL-05 blur saves', () => {
+    it('save button toggles back to preview mode', () => {
+      const content = '# Test\n\nContent'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const saveBtn = screen.getByRole('button', { name: 'Save' })
+      expect(saveBtn).toBeInTheDocument()
+
+      fireEvent.click(saveBtn)
+
+      expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
     })
   })
 })

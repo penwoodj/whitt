@@ -14,3 +14,15 @@ Feature: File preview area
     When markdown rendered
     Then headings appear as h2 elements
     And raw markdown not shown
+
+  Scenario: FIL-04 edit toggle
+    Given preview area w/ content
+    When usr clicks edit icon
+    Then raw textarea shown w/ source md
+    And edit button becomes save
+
+  Scenario: FIL-05 blur saves
+    Given edit mode active w/ modified content
+    When usr clicks outside
+    Then save enqueued to write queue
+    And view returns to preview

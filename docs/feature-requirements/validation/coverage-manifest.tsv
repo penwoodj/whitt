@@ -91,8 +91,8 @@ AGTC-02	06	-	todo
 AGTC-03	06	-	todo
 FIL-01	07	slice07 -- FIL-01 area present	pass
 FIL-02	07	slice07 -- FIL-02 markdown preview	pass
-FIL-04	07	-	todo
-FIL-05	07	-	todo
+FIL-04	07	slice07 -- FIL-04 edit toggle	pass
+FIL-05	07	slice07 -- FIL-05 blur saves	pass
 FIL-06	07	-	todo
 FIL-07	07	-	todo
 FILC-01	07	-	todo
