@@ -94,3 +94,15 @@ export const FIL07CtrlF: Story = {
     },
   },
 }
+
+export const FILX01LineNumbers: Story = {
+  name: 'slice07 -- FILX-01 line numbers both modes',
+  args: {
+    content: '# Line Numbers Test\n\nLine 1\n\nLine 2\n\nLine 3',
+  },
+  parameters: {
+    docs: {
+      description: 'Line numbers shown in both preview and raw mode, persisted via localStorage',
+    },
+  },
+}

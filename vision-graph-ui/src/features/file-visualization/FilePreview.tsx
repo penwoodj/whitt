@@ -2,6 +2,7 @@ import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { useFileEdit } from './useFileEdit'
 import { useFileSearch } from './useFileSearch'
+import { useLineNumbers } from './useLineNumbers'
 import CodeMirror from '@uiw/react-codemirror'
 import { markdown } from '@codemirror/lang-markdown'
 import { lineNumbers } from '@codemirror/view'
@@ -282,6 +283,7 @@ const UseDiskBtn = styled.button`
 export default function FilePreview({ content, isLoading = false, writeQueue, filePath = '', onExternalChange }: FilePreviewProps) {
   const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
   const { searchQuery, matches, search } = useFileSearch()
+  const { showLineNumbers } = useLineNumbers()
 
   if (isLoading) {
     return (
@@ -334,7 +336,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
         <EditorWrap>
           <CodeMirror
             value={content}
-            extensions={[markdown(), lineNumbers()]}
+            extensions={[markdown(), ...(showLineNumbers ? [lineNumbers()] : [])]}
             onChange={saveOnBlur}
             height="200px"
             theme="dark"

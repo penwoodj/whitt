@@ -237,4 +237,18 @@ describe('FilePreview', () => {
       expect(searchMatches.textContent).toContain('3 matches')
     })
   })
+
+  describe('FILX-01 line numbers both modes', () => {
+    it('shows line numbers in raw mode', () => {
+      const content = '# Line 1\n\nLine 2\n\nLine 3'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const editBtn = screen.getByRole('button', { name: 'Edit' })
+      fireEvent.click(editBtn)
+
+      const editorContainer = screen.getByTestId('file-preview-area')
+      expect(editorContainer.innerHTML).toContain('cm-editor')
+      expect(editorContainer.innerHTML).toContain('cm-lineNumbers')
+    })
+  })
 })
