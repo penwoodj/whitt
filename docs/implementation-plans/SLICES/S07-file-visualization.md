@@ -2,7 +2,7 @@
 
 > Executes: `docs/feature-requirements/slices/07-file-visualization.md` (cases: FIL-01..07, FILC-01..04)
 > Validation spec: `docs/feature-requirements/validation/slice-07.validation.md`
-> Status: PARTIAL (Tasks 5.1-5.7 complete, FIL-03 deferred, FILX-02/03 out of scope)
+> Status: PARTIAL (core slice complete, FIL-03 deferred, FILX-02/03 out of scope)
 > Depends on: E3-fs-graph-sync
 
 ## 1. Objective
