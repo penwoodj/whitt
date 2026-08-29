@@ -53,3 +53,10 @@ Feature: File preview area
     Then close blocked
     And error shown
     And text preserved
+
+  Scenario: FIL-07 ctrl+F
+    Given preview area w/ markdown content
+    When usr opens find dialog
+    And usr types search term
+    Then all matches highlighted in preview
+    And matches remain highlighted after search

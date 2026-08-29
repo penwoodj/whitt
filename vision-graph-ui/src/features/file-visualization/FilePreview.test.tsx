@@ -215,4 +215,26 @@ describe('FilePreview', () => {
       expect(screen.queryByTestId('error-notice')).toBeInTheDocument()
     })
   })
+
+  describe('FIL-07 ctrl+F', () => {
+    it('shows find input when not editing', () => {
+      const content = '# Test\n\nThis is a test with multiple test words.'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const findInput = screen.getByTestId('find-input')
+      expect(findInput).toBeInTheDocument()
+    })
+
+    it('highlights matches in preview', () => {
+      const content = '# Test\n\nThis is a test with multiple test words.'
+      renderWithTheme(<FilePreview content={content} />)
+
+      const findInput = screen.getByTestId('find-input')
+      fireEvent.change(findInput, { target: { value: 'test' } })
+
+      const searchMatches = screen.getByTestId('search-matches')
+      expect(searchMatches).toBeInTheDocument()
+      expect(searchMatches.textContent).toContain('3 matches')
+    })
+  })
 })

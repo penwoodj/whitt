@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { useFileEdit } from './useFileEdit'
+import { useFileSearch } from './useFileSearch'
 import CodeMirror from '@uiw/react-codemirror'
 import { markdown } from '@codemirror/lang-markdown'
 import { lineNumbers } from '@codemirror/view'
@@ -279,7 +280,8 @@ const UseDiskBtn = styled.button`
 `
 
 export default function FilePreview({ content, isLoading = false, writeQueue, filePath = '', onExternalChange }: FilePreviewProps) {
-  const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, handleDiskChange, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
+  const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
+  const { searchQuery, matches, search } = useFileSearch()
 
   if (isLoading) {
     return (
@@ -317,6 +319,15 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
         <EditBtn onClick={toggleEdit} aria-label={isEditing ? 'Save' : 'Edit'}>
           {isEditing ? 'Save' : 'Edit'}
         </EditBtn>
+        {!isEditing && (
+          <input
+            type="text"
+            placeholder="Find..."
+            value={searchQuery}
+            onChange={(e) => search(e.target.value, content)}
+            data-testid="find-input"
+          />
+        )}
       </Header>
 
       {isEditing && !conflict ? (
@@ -332,6 +343,11 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
       ) : !conflict ? (
         <MarkdownContent>
           <ReactMarkdown>{content}</ReactMarkdown>
+          {matches.length > 0 && (
+            <div data-testid="search-matches">
+              Found {matches.length} matches for "{searchQuery}"
+            </div>
+          )}
         </MarkdownContent>
       ) : (
         <MarkdownContent>

@@ -82,3 +82,15 @@ export const FILC04CloseGuard: Story = {
     },
   },
 }
+
+export const FIL07CtrlF: Story = {
+  name: 'slice07 -- FIL-07 ctrl+F',
+  args: {
+    content: '# Search Test\n\nThis is a test with multiple test words. Use the find input to search for "test".',
+  },
+  parameters: {
+    docs: {
+      description: 'Ctrl+F local search - shows find input, highlights matches in preview',
+    },
+  },
+}
