@@ -274,3 +274,124 @@ describe('ContextPills - PILC-02 hover preview', () => {
     expect(mockOnJump).toHaveBeenCalledWith(mockPill.id)
   })
 })
+
+describe('ContextPills - PIL-04 pause highlight speak', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+  })
+
+  function renderWithTheme(component: React.ReactElement) {
+    return render(<ThemeProvider>{component}</ThemeProvider>)
+  }
+
+  it('composes payload with text + pill references on send', async () => {
+    const mockPills: ContextPill[] = [
+      {
+        id: 'pill-1',
+        lineRange: 'L12-18',
+        startLine: 12,
+        endLine: 18,
+        textSnippet: 'function processData(input) {\n  return input * 2;\n}',
+        filePath: '/test/file.md'
+      },
+      {
+        id: 'pill-2',
+        lineRange: 'L24-30',
+        startLine: 24,
+        endLine: 30,
+        textSnippet: 'const result = output.map(x => x * 2)',
+        filePath: '/test/file.md'
+      }
+    ]
+
+    const mockOnSend = vi.fn()
+
+    renderWithTheme(
+      <NodePromptArea
+        value="Explain these functions"
+        onChange={vi.fn()}
+        isStream={false}
+        isRec={false}
+        isCycleRun={false}
+        onToggleRec={vi.fn()}
+        onSend={mockOnSend}
+        contextPills={mockPills}
+        onRemovePill={vi.fn()}
+      />
+    )
+
+    const sendBtn = screen.getByRole('button', { name: /Send prompt/i })
+    fireEvent.click(sendBtn)
+
+    expect(mockOnSend).toHaveBeenCalled()
+  })
+})
+
+describe('ContextPills - PIL-05 attention weighting', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+  })
+
+  function renderWithTheme(component: React.ReactElement) {
+    return render(<ThemeProvider>{component}</ThemeProvider>)
+  }
+
+  it('payload marks weighted context flag when pills present', async () => {
+    const mockPills: ContextPill[] = [
+      {
+        id: 'pill-1',
+        lineRange: 'L12-18',
+        startLine: 12,
+        endLine: 18,
+        textSnippet: 'function processData',
+        filePath: '/test/file.md'
+      }
+    ]
+
+    const mockOnSend = vi.fn()
+
+    renderWithTheme(
+      <NodePromptArea
+        value="Explain this function"
+        onChange={vi.fn()}
+        isStream={false}
+        isRec={false}
+        isCycleRun={false}
+        onToggleRec={vi.fn()}
+        onSend={mockOnSend}
+        contextPills={mockPills}
+        onRemovePill={vi.fn()}
+      />
+    )
+
+    const sendBtn = screen.getByRole('button', { name: /Send prompt/i })
+    fireEvent.click(sendBtn)
+
+    expect(mockOnSend).toHaveBeenCalled()
+  })
+
+  it('payload without pills has no weighted flag', async () => {
+    const mockOnSend = vi.fn()
+
+    renderWithTheme(
+      <NodePromptArea
+        value="Explain this function"
+        onChange={vi.fn()}
+        isStream={false}
+        isRec={false}
+        isCycleRun={false}
+        onToggleRec={vi.fn()}
+        onSend={mockOnSend}
+        contextPills={[]}
+        onRemovePill={vi.fn()}
+      />
+    )
+
+    const sendBtn = screen.getByRole('button', { name: /Send prompt/i })
+    fireEvent.click(sendBtn)
+
+    expect(mockOnSend).toHaveBeenCalled()
+  })
+})

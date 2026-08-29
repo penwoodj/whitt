@@ -109,3 +109,13 @@ export const PILC02HoverPreview: Story = {
   name: 'slice08 -- PILC-02 hover preview',
   ...PIL01PillsOnHighlight,
 }
+
+export const PIL04PauseHighlightSpeak: Story = {
+  name: 'slice08 -- PIL-04 pause highlight speak',
+  ...PIL01PillsOnHighlight,
+}
+
+export const PIL05AttentionWeighting: Story = {
+  name: 'slice08 -- PIL-05 attention weighting',
+  ...PIL01PillsOnHighlight,
+}
