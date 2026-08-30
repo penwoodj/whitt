@@ -52,7 +52,11 @@
     "jsdom": "^29.1.1",
     "oxlint": "^1.75.0",
     "playwright": "latest",
+    "postcss-styled-syntax": "^0.7.2",
     "storybook": "^10.5.7",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-declaration-strict-value": "^1.12.1",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
     "vitest": "latest"

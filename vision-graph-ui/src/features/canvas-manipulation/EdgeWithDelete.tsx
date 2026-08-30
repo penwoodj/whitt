@@ -21,9 +21,9 @@ const EdgeLine = styled.line`
 
 const DeleteButton = styled.button<{ $visible: boolean }>`
   position: absolute;
-  background: white;
-  border: 1px solid #dc3545;
-  color: #dc3545;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgb(220, 53, 69);
+  color: rgb(220, 53, 69);
   border-radius: 50%;
   width: 16px;
   height: 16px;
@@ -39,7 +39,7 @@ const DeleteButton = styled.button<{ $visible: boolean }>`
 
   &:hover {
     background: #dc3545;
-    color: white;
+    color: rgb(245, 245, 245);
   }
 
   &:active {

@@ -1,10 +1,10 @@
 import { chromium } from 'playwright'
 import { spawn, execSync } from 'node:child_process'
 import { mkdirSync, writeFileSync, existsSync, rmSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const pkgDir = dirname(fileURLToPath(import.meta.url.replace(/\/scripts.*$/, '')))
+const pkgDir = fileURLToPath(new URL('..', import.meta.url))
 const repoRoot = resolve(pkgDir, '..')
 
 const arg = (name) => {
@@ -15,7 +15,7 @@ const arg = (name) => {
 const topic = arg('topic') || 'review'
 const useDev = process.argv.includes('--dev')
 const port = Number(arg('port') || (useDev ? 5173 : 4173))
-const base = `http://127.0.0.1:${port}`
+const base = `http://localhost:${port}`
 
 const stamp = new Date().toISOString().slice(0, 10)
 const outDir = resolve(repoRoot, 'docs', 'ui-reviews', `${stamp}-${topic}`)
@@ -106,7 +106,7 @@ if (await projectBtn.count()) {
 
   const node = page.locator('.react-flow__node').first()
   if (await node.count()) {
-    await node.click()
+    await node.click({ force: true })
     await page.waitForTimeout(900)
     await capture('03-node-focused')
   }

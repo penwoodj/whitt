@@ -100,7 +100,7 @@ const MakeFolderBtn = styled.button<{ $isHovered: boolean }>`
   height: 24px;
   border-radius: 50%;
   border: 2px solid #007bff;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.bgElevated};
   color: #007bff;
   font-size: 16px;
   line-height: 1;

@@ -21,7 +21,11 @@ const MicBtn = styled.button<{ $isRec: boolean }>`
     $isRec ? theme.colors.recording : theme.colors.primary};
   transition: background-color ${({ theme }) => theme.transition.base}, box-shadow ${({ theme }) => theme.transition.base};
   box-shadow: ${({ $isRec, theme }) => ($isRec ? theme.glow.recording : 'none')};
-  animation: ${({ $isRec }) => ($isRec ? css`${recordingPulse} 1.5s ease-in-out infinite` : 'none')};
+  ${({ $isRec }) =>
+    $isRec &&
+    css`
+      animation: ${recordingPulse} 1.5s ease-in-out infinite;
+    `}
 `
 
 export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicBtnProps) {
@@ -49,11 +53,12 @@ export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicB
     >
       {isRec ? (
         <svg
+          aria-hidden="true"
           width="16"
           height="16"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="white"
+          stroke="${({ theme }) => theme.colors.textInverse}"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -62,11 +67,12 @@ export default function NodeMicBtn({ isRec, onToggleRec, onStreamTxt }: NodeMicB
         </svg>
       ) : (
         <svg
+          aria-hidden="true"
           width="16"
           height="16"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="white"
+          stroke="${({ theme }) => theme.colors.textInverse}"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"

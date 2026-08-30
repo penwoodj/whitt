@@ -25,8 +25,6 @@ const Dialog = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  role: dialog;
-  aria-modal="true";
 `
 
 const DialogHeader = styled.div`
@@ -131,7 +129,7 @@ export function ConfirmDialog({ isOpen, workflow, onConfirm, onCancel }: Confirm
       $isOpen={isOpen} 
       onClick={handleOverlayClick}
     >
-      <Dialog onClick={(e) => e.stopPropagation()} data-testid="confirm-dialog">
+      <Dialog onClick={(e) => e.stopPropagation()} data-testid="confirm-dialog" role="dialog" aria-modal="true">
         <DialogHeader>
           <DialogTitle>Confirm Execution</DialogTitle>
           <CloseButton onClick={onCancel} aria-label="Close">

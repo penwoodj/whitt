@@ -1,14 +1,25 @@
 import type { FsPort } from './FsPort'
 import { WriteQueue } from './WriteQueue'
 import { CommitBuilder } from './CommitBuilder'
-import { WatcherAdapter } from './WatcherAdapter'
 
 export type ExternalChangeCallback = (event: { type: string; path: string }) => void
+
+type WatcherAdapterLike = {
+  watch(path: string): void
+  setMemoryHash(path: string, content: string): void
+  dispose(): void
+}
+
+const isNodeEnv = () =>
+  typeof process !== 'undefined' && Boolean((process as { versions?: { node?: string } }).versions?.node)
 
 export class FsGraphSync {
   private readonly writeQueue: WriteQueue
   private readonly commitBuilder: CommitBuilder
-  private readonly watcherAdapter: WatcherAdapter | null
+  private watcherAdapter: WatcherAdapterLike | null = null
+  private watcherPromise: Promise<WatcherAdapterLike | null> | null = null
+  private readonly pendingMemoryHashes = new Map<string, string>()
+  private readonly onExternalChange?: ExternalChangeCallback
   private readonly fsPort: FsPort
   private readonly git: any
 
@@ -19,11 +30,26 @@ export class FsGraphSync {
   ) {
     this.fsPort = fsPort
     this.git = git
+    this.onExternalChange = onExternalChange
     this.writeQueue = new WriteQueue(this.handleFlush.bind(this))
     this.commitBuilder = new CommitBuilder(this.git)
-    this.watcherAdapter = onExternalChange
-      ? new WatcherAdapter(this.fsPort, onExternalChange)
-      : null
+  }
+
+  private ensureWatcher(): Promise<WatcherAdapterLike | null> {
+    if (this.watcherAdapter) return Promise.resolve(this.watcherAdapter)
+    if (!this.onExternalChange || !isNodeEnv()) return Promise.resolve(null)
+    if (!this.watcherPromise) {
+      this.watcherPromise = import('./WatcherAdapter').then(({ WatcherAdapter }) => {
+        const adapter: WatcherAdapterLike = new WatcherAdapter(this.fsPort, this.onExternalChange!)
+        for (const [path, content] of this.pendingMemoryHashes) {
+          adapter.setMemoryHash(path, content)
+        }
+        this.pendingMemoryHashes.clear()
+        this.watcherAdapter = adapter
+        return adapter
+      })
+    }
+    return this.watcherPromise
   }
 
   write(path: string, content: string): void {
@@ -31,11 +57,15 @@ export class FsGraphSync {
   }
 
   watch(path: string): void {
-    this.watcherAdapter?.watch(path)
+    void this.ensureWatcher().then((adapter) => adapter?.watch(path))
   }
 
   setMemoryHash(path: string, content: string): void {
-    this.watcherAdapter?.setMemoryHash(path, content)
+    if (this.watcherAdapter) {
+      this.watcherAdapter.setMemoryHash(path, content)
+      return
+    }
+    this.pendingMemoryHashes.set(path, content)
   }
 
   getPendingWrites(): Array<{ path: string; content: string }> {
