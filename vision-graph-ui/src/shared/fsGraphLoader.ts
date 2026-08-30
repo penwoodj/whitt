@@ -71,7 +71,7 @@ function parseYaml(yaml: string): Record<string, unknown> {
 
       if (value === '') {
         currentListKey = key
-        result[key] = []
+        result[key] = null
       } else if (value === 'null') {
         result[key] = null
       } else if (value === 'true') {
@@ -87,6 +87,34 @@ function parseYaml(yaml: string): Record<string, unknown> {
   }
 
   return result
+}
+
+function resolveRelativePath(fromPath: string, ref: string): string {
+  const segments: string[] = []
+  const parts = fromPath.split('/').slice(0, -1).concat(ref.split('/'))
+
+  parts.forEach(part => {
+    if (part === '' || part === '.') return
+    if (part === '..') {
+      segments.pop()
+      return
+    }
+    segments.push(part)
+  })
+
+  return segments.join('/')
+}
+
+function withResolvedParents(nodes: FsNode[]): FsNode[] {
+  return nodes.map(node => {
+    if (!node.parent) {
+      return node
+    }
+    return {
+      ...node,
+      parent: resolveRelativePath(node.path, node.parent)
+    }
+  })
 }
 
 function buildGraphData(nodes: FsNode[]): GraphData {
@@ -123,7 +151,7 @@ function convertToFlowNodes(graphData: GraphData): {
   nodes: FlowNode[]
   edges: Edge[]
 } {
-  const nodePositions = calculateRadialLayout(graphData.nodes)
+  const nodePositions = calculateTreeLayout(graphData.nodes)
 
   const flowNodes: FlowNode[] = graphData.nodes.map(fsNode => {
     const position = nodePositions.get(fsNode.id) || { x: 0, y: 0 }
@@ -163,38 +191,32 @@ function convertToFlowNodes(graphData: GraphData): {
   return { nodes: flowNodes, edges: flowEdges }
 }
 
-function calculateRadialLayout(nodes: FsNode[]): Map<string, { x: number; y: number }> {
+function calculateTreeLayout(nodes: FsNode[]): Map<string, { x: number; y: number }> {
   const positions = new Map<string, { x: number; y: number }>()
   const rootNodes = nodes.filter(n => !n.parent)
-  
+
   if (rootNodes.length === 0) {
-    nodes.forEach(node => {
-      positions.set(node.id, { x: Math.random() * 800 - 400, y: Math.random() * 600 - 300 })
+    nodes.forEach((node, idx) => {
+      positions.set(node.id, { x: idx * 460, y: 0 })
     })
     return positions
   }
 
   rootNodes.forEach((root, rootIndex) => {
-    const rootAngle = (rootIndex / rootNodes.length) * 2 * Math.PI
-    positions.set(root.id, { x: Math.cos(rootAngle) * 100, y: Math.sin(rootAngle) * 100 })
+    const rootX = rootIndex * 1300
+    positions.set(root.id, { x: rootX, y: 0 })
 
     const children = nodes.filter(n => n.parent === root.path)
+    const childColumnX = rootX + 420
+
     children.forEach((child, childIndex) => {
-      const childAngle = (childIndex / children.length) * 2 * Math.PI
-      const childRadius = 150
-      positions.set(child.id, {
-        x: positions.get(root.id)!.x + Math.cos(childAngle) * childRadius,
-        y: positions.get(root.id)!.y + Math.sin(childAngle) * childRadius
-      })
+      const childY = (childIndex - (children.length - 1) / 2) * 260
+      positions.set(child.id, { x: childColumnX, y: childY })
 
       const grandchildren = nodes.filter(n => n.parent === child.path)
       grandchildren.forEach((grandchild, gcIndex) => {
-        const gcAngle = (gcIndex / grandchildren.length) * 2 * Math.PI
-        const gcRadius = 100
-        positions.set(grandchild.id, {
-          x: positions.get(child.id)!.x + Math.cos(gcAngle) * gcRadius,
-          y: positions.get(child.id)!.y + Math.sin(gcAngle) * gcRadius
-        })
+        const gcY = childY + (gcIndex - (grandchildren.length - 1) / 2) * 110
+        positions.set(grandchild.id, { x: childColumnX + 460, y: gcY })
       })
     })
   })
@@ -237,7 +259,7 @@ export async function loadProjectGraph(projectId: ProjectId): Promise<{
       }
     }
 
-    const graphData = buildGraphData(fsNodes)
+    const graphData = buildGraphData(withResolvedParents(fsNodes))
     const flowData = convertToFlowNodes(graphData)
 
     fsLog.info('Project graph loaded successfully', {

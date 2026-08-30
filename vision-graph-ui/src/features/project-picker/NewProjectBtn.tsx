@@ -11,13 +11,24 @@ const NewBtn = styled.button`
   font-size: ${({ theme }) => theme.font.sizeXl};
   font-weight: ${({ theme }) => theme.font.weightBold};
   cursor: pointer;
-  transition: background-color ${({ theme }) => theme.transition.fast};
+  transition:
+    background-color ${({ theme }) => theme.transition.fast},
+    box-shadow ${({ theme }) => theme.transition.fast},
+    color ${({ theme }) => theme.transition.fast};
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.bgHover};
+    color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.glow.primary};
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.glow.primary};
   }
 `
 

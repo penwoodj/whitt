@@ -11,6 +11,11 @@ const DEFAULT_TODOS: AgenticTodo[] = [
 export const useAgenticTodoCycle = (opts?: UseAgenticTodoCycleOpts): UseAgenticTodoCycle => {
   const cycleLog = useAgenticTodoCycleLogging()
   const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([])
+  const optsRef = useRef<UseAgenticTodoCycleOpts | undefined>(opts)
+
+  useEffect(() => {
+    optsRef.current = opts
+  }, [opts])
 
   const [todos, setTodos] = useState<AgenticTodo[]>(DEFAULT_TODOS)
   const [isCycleDone, setIsCycleDone] = useState(false)
@@ -33,7 +38,7 @@ export const useAgenticTodoCycle = (opts?: UseAgenticTodoCycleOpts): UseAgenticT
       if (index >= DEFAULT_TODOS.length) {
         setIsCycleDone(true)
         cycleLog.info('Cycle done')
-        opts?.onCycleDone?.()
+        optsRef.current?.onCycleDone?.()
         return
       }
 
@@ -58,7 +63,7 @@ export const useAgenticTodoCycle = (opts?: UseAgenticTodoCycleOpts): UseAgenticT
     }
 
     runTodoAtIndex(0)
-  }, [resetCycle, cycleLog, opts])
+  }, [resetCycle, cycleLog])
 
   useEffect(() => {
     return () => {

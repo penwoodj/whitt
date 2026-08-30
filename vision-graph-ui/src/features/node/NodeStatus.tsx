@@ -33,7 +33,7 @@ const StatusWrap = styled.div<{ $pulse: boolean; $status: NodeStatusType }>`
   gap: 4px;
   padding: 2px 6px;
   border-radius: ${({ theme }) => theme.radius.sm};
-  font-size: ${({ theme }) => theme.font.sizeXs};
+  font-size: ${({ theme }) => theme.font.sizeSm};
   font-weight: ${({ theme }) => theme.font.weightBold};
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.textInverse};

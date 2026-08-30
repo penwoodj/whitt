@@ -23,6 +23,13 @@ const SyncButton = styled.button`
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.colors.bgHover};
     border-color: ${({ theme }) => theme.colors.borderActive};
+    box-shadow: ${({ theme }) => theme.glow.primary};
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.borderActive};
+    box-shadow: ${({ theme }) => theme.glow.primary};
   }
 
   &:disabled {

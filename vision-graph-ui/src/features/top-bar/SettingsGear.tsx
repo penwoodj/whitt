@@ -17,6 +17,13 @@ const GearButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.bgHover};
     color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.glow.primary};
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.glow.primary};
   }
 `
 

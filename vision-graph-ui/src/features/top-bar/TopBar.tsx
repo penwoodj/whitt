@@ -9,23 +9,13 @@ import SettingsGear from './SettingsGear'
 const Bar = styled.header`
   height: 48px;
   background-color: ${({ theme }) => theme.colors.bgElevated};
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   display: flex;
   align-items: center;
   padding: 0 ${({ theme }) => theme.spacing.md};
   gap: ${({ theme }) => theme.spacing.md};
   box-shadow: ${({ theme }) => theme.shadow.sm};
   position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, ${({ theme }) => theme.colors.primary}, transparent);
-  }
 `
 
 const LeftSection = styled.div`

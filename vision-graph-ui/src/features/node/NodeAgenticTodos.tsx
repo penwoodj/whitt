@@ -44,7 +44,7 @@ const ExpandedHeader = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  font-size: 11px;
+  font-size: ${({ theme }) => theme.font.sizeSm};
   font-weight: ${({ theme }) => theme.font.weightBold};
   color: ${({ theme }) => theme.colors.text};
 `
@@ -86,7 +86,7 @@ const TodoItem = styled.li`
   align-items: center;
   gap: 6px;
   padding: 4px 0;
-  font-size: 11px;
+  font-size: ${({ theme }) => theme.font.sizeSm};
 `
 
 const StatusDot = styled.span<{ $colorKey: 'idle' | 'recording' | 'running' | 'done' }>`

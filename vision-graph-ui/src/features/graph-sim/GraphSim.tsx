@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
-import { ReactFlow, Background, Controls, MiniMap, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider } from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
+import { ReactFlow, Background, Controls, MiniMap, Handle, Position, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
@@ -15,24 +16,114 @@ import type { NodeData } from '../node/nodeTypes'
 import { buildSampleProjects } from '../project-picker/projectPickerData'
 import type { Project } from '../project-picker/projectPickerTypes'
 import { loadProjectGraph } from '../../shared/fsGraphLoader'
+import { darkTheme } from '../../shared/theme'
 import { FsGraphSync } from '../../shared/fs/FsGraphSync'
 import { FakeFsPort } from '../../shared/fs/FakeFsPort'
-import { simpleGit } from 'simple-git'
 
 const Placeholder = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: ${({ theme }) => theme.colors.textMuted};
+  color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.font.sizeLg};
+  font-weight: ${({ theme }) => theme.font.weightMedium};
+  letter-spacing: 0.02em;
 `
 
 const GraphContainer = styled.div`
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.colors.bg};
+`
+
+const FlowSurface = styled(ReactFlow)`
+  & .react-flow__viewport {
+    transform-origin: 0 0;
+  }
+
+  & .react-flow__node {
+    position: absolute;
+    width: max-content;
+  }
+
+  & .react-flow__edge-path {
+    stroke: ${({ theme }) => theme.colors.primary};
+    stroke-width: 1.5;
+  }
+
+  & .react-flow__edge.selected .react-flow__edge-path {
+    stroke: ${({ theme }) => theme.colors.borderActive};
+  }
+
+  & .react-flow__background {
+    pointer-events: none;
+  }
+`
+
+const GraphBackground = styled(Background)`
+  pointer-events: none;
+`
+
+const GraphControls = styled(Controls)`
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  overflow: hidden;
+  box-shadow: ${({ theme }) => theme.shadow.sm};
+
+  & .react-flow__controls-button {
+    background: ${({ theme }) => theme.colors.bgElevated};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+    fill: ${({ theme }) => theme.colors.textMuted};
+    width: 26px;
+    height: 26px;
+  }
+
+  & .react-flow__controls-button:hover {
+    background: ${({ theme }) => theme.colors.bgHover};
+    fill: ${({ theme }) => theme.colors.text};
+  }
+
+  & .react-flow__controls-button svg {
+    fill: currentColor;
+  }
+`
+
+const GraphMiniMap = styled(MiniMap)`
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.md};
+  overflow: hidden;
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+`
+
+const NodeHandle = styled(Handle)`
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 2px solid ${({ theme }) => theme.colors.bgElevated};
+  background: ${({ theme }) => theme.colors.borderActive};
+`
+
+const FlowNodeShell = styled.div`
+  position: relative;
+`
+
+const NodeHandleTop = styled(NodeHandle)`
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+`
+
+const NodeHandleBottom = styled(NodeHandle)`
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
 `
 
 type SimState = 'picker' | 'graph'
@@ -64,7 +155,15 @@ function GraphSimFlow({
   onNodeDragStart,
   onNodeDragStop
 }: GraphSimFlowProps) {
-  const { getViewport, setViewport } = useReactFlow()
+  const { getViewport, setViewport, fitView } = useReactFlow()
+
+  const nodeCount = nodes.length
+
+  useEffect(() => {
+    if (nodeCount > 0) {
+      fitView({ padding: 0.15, maxZoom: 1 })
+    }
+  }, [nodeCount, fitView])
 
   const handleKeyDown = useCallback((evt: React.KeyboardEvent) => {
     const activeElement = document.activeElement
@@ -160,7 +259,7 @@ function GraphSimFlow({
 
   return (
     <div data-testid="react-flow__canvas" style={{ width: '100%', height: '100%' }}>
-    <ReactFlow
+    <FlowSurface
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
@@ -175,24 +274,31 @@ function GraphSimFlow({
       panOnDrag={true}
       panActivationKeyCode={' '}
       selectionOnDrag={true}
+      proOptions={{ hideAttribution: true }}
+      defaultEdgeOptions={{
+        type: 'smoothstep',
+        style: { stroke: darkTheme.colors.primary, strokeWidth: 1.5 },
+      }}
       onNodeMouseEnter={onNodeMouseEnter}
       onNodeMouseLeave={onNodeMouseLeave}
       onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}
       onKeyDown={handleKeyDown}
     >
-      <Background color="#A6A6A6" gap={20} />
-      <Controls showFitView={true} />
-      <MiniMap
+      <GraphBackground color={darkTheme.colors.border} gap={20} />
+      <GraphControls showInteractive={false} showFitView={true} />
+      <GraphMiniMap
         pannable
         zoomable
         nodeStrokeWidth={3}
+        bgColor={darkTheme.colors.bgElevated}
+        maskColor="rgba(30, 30, 30, 0.7)"
         nodeColor={(node) => {
           const nodeData = node.data as any
-          return nodeData?.status === 'running' ? '#007ACC' : '#303031'
+          return nodeData?.status === 'running' ? darkTheme.colors.primary : darkTheme.colors.border
         }}
       />
-    </ReactFlow>
+    </FlowSurface>
     </div>
   )
 }
@@ -252,7 +358,7 @@ export default function GraphSim() {
   const [highlightPosition, setHighlightPosition] = useState<{ x: number; y: number } | null>(null)
 
   const fsPort = useMemo(() => new FakeFsPort(), [])
-  const git = useMemo(() => simpleGit(), [])
+  const git = useMemo(() => ({ add: async () => {}, commit: async () => {} }), [])
   const fsSync = useMemo(
     () =>
       new FsGraphSync(
@@ -569,7 +675,13 @@ export default function GraphSim() {
   }, [])
 
 const nodeTypes = useMemo(() => ({
-  custom: (props: any) => <Node {...props} onSend={handleNodeSend} />,
+  custom: (props: any) => (
+    <FlowNodeShell>
+      <NodeHandleTop type="target" position={Position.Top} isConnectable={false} />
+      <Node {...props} onSend={handleNodeSend} />
+      <NodeHandleBottom type="source" position={Position.Bottom} isConnectable={false} />
+    </FlowNodeShell>
+  ),
 }), [handleNodeSend])
 
   const handleNodeMouseEnter = useCallback(() => {

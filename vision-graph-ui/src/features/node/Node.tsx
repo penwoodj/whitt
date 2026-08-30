@@ -14,14 +14,21 @@ import type { NodeProps } from './nodeTypes'
 import { useNodeState } from './useNodeState'
 import { log } from '../../shared/logger'
 
-const NodeBox = styled.div<{ $minimized: boolean; $focused: boolean }>`
+const NodeBox = styled.div<{ $minimized: boolean; $focused: boolean; $expanded: boolean }>`
   background-color: ${({ theme }) => theme.colors.bgElevated};
-  border: 1px solid ${({ theme, $focused }) => ($focused ? theme.colors.borderActive : theme.colors.border)};
-  border-radius: 12px;
+  border: 1px solid
+    ${({ theme, $focused, $expanded }) =>
+      $focused || $expanded ? theme.colors.borderActive : theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
   padding: ${({ $minimized }) => ($minimized ? '6px 10px' : '12px 14px')};
   min-width: ${({ $minimized }) => ($minimized ? '120px' : '320px')};
   transition: all 240ms ease;
-  box-shadow: ${({ theme, $focused }) => ($focused ? theme.shadow.md : theme.shadow.sm)};
+  box-shadow: ${({ theme, $focused, $expanded }) =>
+    $focused
+      ? `${theme.shadow.md}, ${theme.glow.primaryStrong}`
+      : $expanded
+        ? `${theme.shadow.md}, ${theme.glow.primary}`
+        : theme.shadow.sm};
 `
 
 const NodeHeader = styled.div`
@@ -194,6 +201,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
           ref={nodeRef}
           $minimized={isMinimized}
           $focused={focused}
+          $expanded={isExpanded}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleClick}

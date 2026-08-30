@@ -162,9 +162,10 @@ const Composer = styled.div<{ $multi: boolean }>`
 const PromptInput = styled.textarea`
   flex: 1;
   resize: none;
-  border: none;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   outline: none;
-  background: transparent;
+  background-color: ${({ theme }) => theme.colors.bg};
+  border-radius: ${({ theme }) => theme.radius.sm};
   color: ${({ theme }) => theme.colors.text};
   font: ${({ theme }) => theme.font.sans};
   font-size: ${({ theme }) => theme.font.sizeMd};
@@ -172,7 +173,11 @@ const PromptInput = styled.textarea`
   min-height: 22px;
   max-height: ${MAX_HEIGHT}px;
   overflow-y: hidden;
-  padding: 4px 8px 4px 0;
+  padding: 4px 8px 4px 8px;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.borderActive};
+  }
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.textMuted};
@@ -194,13 +199,14 @@ const SendBtn = styled.button<{ $disabled: boolean }>`
   place-items: center;
   border: none;
   border-radius: 6px;
-  background-color: ${({ $disabled }) => ($disabled ? 'rgba(255,255,255,0.25)' : 'white')};
-  color: black;
+  background-color: ${({ $disabled, theme }) => ($disabled ? theme.colors.bgHover : theme.colors.primary)};
+  color: ${({ theme }) => theme.colors.textInverse};
   cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
-  transition: transform 120ms ease, opacity 120ms ease;
+  transition: transform 120ms ease, opacity 120ms ease, box-shadow 120ms ease;
 
   &:hover:not(:disabled) {
     transform: scale(1.05);
+    box-shadow: ${({ theme }) => theme.glow.primary};
   }
 `
 
