@@ -16,7 +16,7 @@ const TitleInput = styled.input`
 
 const TitleSpan = styled.span`
   font-weight: ${({ theme }) => theme.font.weightBold};
-  font-size: ${({ theme }) => theme.font.sizeMd};
+  font-size: ${({ theme }) => theme.font.sizeLg};
   color: ${({ theme }) => theme.colors.text};
   cursor: pointer;
   user-select: none;

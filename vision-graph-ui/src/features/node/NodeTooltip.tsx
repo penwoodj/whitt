@@ -13,10 +13,10 @@ const TooltipWrap = styled.div`
 
 const TooltipBox = styled.div`
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 8px;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 12px;
   padding: 8px 12px;
   background-color: ${({ theme }) => theme.colors.bgHover};
   color: ${({ theme }) => theme.colors.textInverse};
@@ -28,6 +28,17 @@ const TooltipBox = styled.div`
   transition: opacity 0.2s, visibility 0.2s;
   z-index: ${({ theme }) => theme.zIndex.tooltip};
   pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: ${({ theme }) => theme.colors.bgHover};
+    transform: translateY(-50%) rotate(45deg);
+  }
 
   ${TooltipWrap}:hover & {
     opacity: 1;

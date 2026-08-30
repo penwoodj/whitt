@@ -100,13 +100,17 @@ await capture('01-picker')
 
 const projectBtn = await page.locator('button[aria-label]').first()
 if (await projectBtn.count()) {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.waitForTimeout(300)
   await projectBtn.click()
   await page.waitForTimeout(1800)
   await capture('02-graph')
 
   const node = page.locator('.react-flow__node').first()
   if (await node.count()) {
-    await node.click({ force: true })
+    await node.hover()
+    await page.waitForTimeout(300)
+    await node.click()
     await page.waitForTimeout(900)
     await capture('03-node-focused')
   }

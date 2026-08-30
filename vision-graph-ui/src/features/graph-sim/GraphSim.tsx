@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import '@xyflow/react/dist/style.css'
-import { ReactFlow, Background, Controls, MiniMap, Handle, Position, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider } from '@xyflow/react'
+import { ReactFlow, Background, Controls, Handle, Position, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider, useNodesInitialized } from '@xyflow/react'
 import styled from 'styled-components'
 import type { Node as FlowNode, Edge } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
@@ -51,7 +51,7 @@ const FlowSurface = styled(ReactFlow)`
 
   & .react-flow__edge-path {
     stroke: ${({ theme }) => theme.colors.primary};
-    stroke-width: 1.5;
+    stroke-width: 2;
   }
 
   & .react-flow__edge.selected .react-flow__edge-path {
@@ -68,6 +68,9 @@ const GraphBackground = styled(Background)`
 `
 
 const GraphControls = styled(Controls)`
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
   overflow: hidden;
@@ -91,17 +94,6 @@ const GraphControls = styled(Controls)`
   }
 `
 
-const GraphMiniMap = styled(MiniMap)`
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radius.md};
-  overflow: hidden;
-  opacity: 0.75;
-
-  &:hover {
-    opacity: 1;
-  }
-`
-
 const NodeHandle = styled(Handle)`
   position: absolute;
   width: 8px;
@@ -114,16 +106,16 @@ const FlowNodeShell = styled.div`
   position: relative;
 `
 
-const NodeHandleTop = styled(NodeHandle)`
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
+const NodeHandleLeft = styled(NodeHandle)`
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
 `
 
-const NodeHandleBottom = styled(NodeHandle)`
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
+const NodeHandleRight = styled(NodeHandle)`
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
 `
 
 type SimState = 'picker' | 'graph'
@@ -158,12 +150,13 @@ function GraphSimFlow({
   const { getViewport, setViewport, fitView } = useReactFlow()
 
   const nodeCount = nodes.length
+  const isNodesInitialized = useNodesInitialized()
 
   useEffect(() => {
-    if (nodeCount > 0) {
+    if (isNodesInitialized && nodeCount > 0) {
       fitView({ padding: 0.15, maxZoom: 1 })
     }
-  }, [nodeCount, fitView])
+  }, [isNodesInitialized, nodeCount, fitView])
 
   const handleKeyDown = useCallback((evt: React.KeyboardEvent) => {
     const activeElement = document.activeElement
@@ -277,7 +270,7 @@ function GraphSimFlow({
       proOptions={{ hideAttribution: true }}
       defaultEdgeOptions={{
         type: 'smoothstep',
-        style: { stroke: darkTheme.colors.primary, strokeWidth: 1.5 },
+        style: { stroke: darkTheme.colors.primary, strokeWidth: 2 },
       }}
       onNodeMouseEnter={onNodeMouseEnter}
       onNodeMouseLeave={onNodeMouseLeave}
@@ -287,17 +280,6 @@ function GraphSimFlow({
     >
       <GraphBackground color={darkTheme.colors.border} gap={20} />
       <GraphControls showInteractive={false} showFitView={true} />
-      <GraphMiniMap
-        pannable
-        zoomable
-        nodeStrokeWidth={3}
-        bgColor={darkTheme.colors.bgElevated}
-        maskColor="rgba(30, 30, 30, 0.7)"
-        nodeColor={(node) => {
-          const nodeData = node.data as any
-          return nodeData?.status === 'running' ? darkTheme.colors.primary : darkTheme.colors.border
-        }}
-      />
     </FlowSurface>
     </div>
   )
@@ -677,9 +659,9 @@ export default function GraphSim() {
 const nodeTypes = useMemo(() => ({
   custom: (props: any) => (
     <FlowNodeShell>
-      <NodeHandleTop type="target" position={Position.Top} isConnectable={false} />
+      <NodeHandleLeft type="target" position={Position.Left} isConnectable={false} />
       <Node {...props} onSend={handleNodeSend} />
-      <NodeHandleBottom type="source" position={Position.Bottom} isConnectable={false} />
+      <NodeHandleRight type="source" position={Position.Right} isConnectable={false} />
     </FlowNodeShell>
   ),
 }), [handleNodeSend])

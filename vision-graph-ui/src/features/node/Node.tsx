@@ -125,7 +125,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
   }, [focused, isStream, setCollapsed])
 
   const handleClick = useCallback(() => {
-    if (nodeViewState === 'hovered') {
+    if (nodeViewState === 'hovered' || nodeViewState === 'collapsed') {
       setExpanded()
     }
   }, [nodeViewState, setExpanded])
