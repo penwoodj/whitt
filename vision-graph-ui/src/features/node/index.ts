@@ -5,6 +5,7 @@ export { default as NodeStatus } from './NodeStatus'
 export { default as NodePromptArea } from './NodePromptArea'
 export { default as NodeAgenticTodos } from './NodeAgenticTodos'
 export { default as NodeTooltip } from './NodeTooltip'
+export { default as VoiceTooltipComposer } from './VoiceTooltipComposer'
 export { default as NodeDetailPanel } from './NodeDetailPanel'
 
 export type { NodeProps, NodeData, NodeType, Todo, TodoStatus } from './nodeTypes'

@@ -31,11 +31,20 @@ export type NodeData = {
   bodyMarkdown?: string
   isStream: boolean
   streamedTxt: string
+  contextPills?: import('../context-pills/contextPillTypes').ContextPill[]
 }
 
 export type NodeProps = {
   data: NodeData
   isActive?: boolean
   onSend?: (txt: string) => void
+  onActivate?: () => void
   onTitleChange?: (title: string) => void
+  onRemovePill?: (pillId: string) => void
+  onJumpToPill?: (pillId: string) => void
+  onSendPayload?: (payload: import('../context-pills/contextPillTypes').PromptPayload) => void
+  onRetry?: (stepId: string) => void
+  executionEvents?: import('../../shared/agent/types').AgentEvt[]
+  workflow?: string
+  writeQueue?: import('../../shared/fs/WriteQueue').WriteQueue
 }

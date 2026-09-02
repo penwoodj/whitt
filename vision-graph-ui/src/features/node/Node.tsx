@@ -1,20 +1,19 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import NodeTitle from './NodeTitle'
 import NodeStatus from './NodeStatus'
-import NodePromptArea from './NodePromptArea'
-import NodeAgenticTodos from './NodeAgenticTodos'
 import NodeTooltip from './NodeTooltip'
+import VoiceTooltipComposer from './VoiceTooltipComposer'
 import NodeDetailPanel from './NodeDetailPanel'
-import { NodeModalWrapper } from './NodeModalWrapper'
-import { NodeModalBarSlot } from './NodeModalBarSlot'
-import { NodeModalContent } from './NodeModalContent'
-import { NodeModalHalo } from './NodeModalHalo'
+import { ExecutionPanel } from '../execution/ExecutionPanel'
+import { ConfirmDialog } from '../execution/ConfirmDialog'
 import type { NodeProps } from './nodeTypes'
 import { useNodeState } from './useNodeState'
 import { log } from '../../shared/logger'
+import type { PromptPayload } from '../context-pills/contextPillTypes'
+import { AgentContext } from './AgentContext'
 
-const NodeBox = styled.div<{ $minimized: boolean; $focused: boolean; $expanded: boolean }>`
+const NodeBox = styled.div<{ $minimized: boolean; $focused: boolean; $expanded: boolean; $gorse: boolean }>`
   background-color: ${({ theme }) => theme.colors.bgElevated};
   border: 1px solid
     ${({ theme, $focused, $expanded }) =>
@@ -23,12 +22,17 @@ const NodeBox = styled.div<{ $minimized: boolean; $focused: boolean; $expanded: 
   padding: ${({ $minimized }) => ($minimized ? '6px 10px' : '12px 14px')};
   min-width: ${({ $minimized }) => ($minimized ? '120px' : '320px')};
   transition: all 240ms ease;
-  box-shadow: ${({ theme, $focused, $expanded }) =>
+  box-shadow: ${({ theme, $focused, $expanded, $gorse }) =>
     $focused
       ? `${theme.shadow.md}, ${theme.glow.primaryStrong}`
       : $expanded
         ? `${theme.shadow.md}, ${theme.glow.primary}`
-        : theme.shadow.sm};
+        : $gorse
+          ? `${theme.shadow.sm}, ${theme.glow.gorse}`
+          : theme.shadow.sm};
+  @media (prefers-reduced-motion: reduce) {
+    box-shadow: ${({ theme, $gorse }) => ($gorse ? `${theme.shadow.sm}, ${theme.glow.gorseReducedMotion}` : theme.shadow.sm)};
+  }
 `
 
 const NodeHeader = styled.div`
@@ -51,58 +55,31 @@ const HeaderRight = styled.div`
   gap: 8px;
 `
 
-const CloseBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: none;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.textMuted};
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  line-height: 1;
-  transition: color 120ms ease, background-color 120ms ease;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.text};
-    background-color: ${({ theme }) => theme.colors.bgHover};
-  }
-`
-
 const nodeLog = log('Node')
 
-export default function Node({ data, onSend, onTitleChange }: NodeProps) {
+export default function Node({ data, isActive = false, onSend, onActivate, onTitleChange, onRemovePill, onJumpToPill, onSendPayload, onRetry, executionEvents, workflow, writeQueue }: NodeProps) {
   const nodeRef = useRef<HTMLDivElement>(null)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const {
-    isRec,
-    isStream,
     promptTxt,
     setPromptTxt,
-    todosExpanded,
-    streamedTxt,
     nodeViewState,
     focused,
     setHovered,
     setExpanded,
     setCollapsed,
-    toggleRec,
     sendPrompt,
-    toggleTodos,
-    isModalOpen,
-    openNodeModal,
-    closeNodeModal,
   } = useNodeState()
 
   const handleSend = useCallback(() => {
     sendPrompt()
+    const payload: PromptPayload = { text: promptTxt.trim(), contextPills: data.contextPills, weightedContext: (data.contextPills?.length ?? 0) > 0 }
+    if (onSendPayload) onSendPayload(payload)
     if (onSend) {
       onSend(promptTxt)
       nodeLog.info('Prompt sent', { promptTxt })
     }
-  }, [sendPrompt, onSend, promptTxt])
+  }, [data.contextPills, onSend, onSendPayload, promptTxt, sendPrompt])
 
   const handleTitleChange = useCallback(
     (newTitle: string) => {
@@ -119,56 +96,30 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
   }, [setHovered])
 
   const handleMouseLeave = useCallback(() => {
-    if (!focused && !isStream) {
+    if (!focused) {
       setCollapsed()
     }
-  }, [focused, isStream, setCollapsed])
+  }, [focused, setCollapsed])
 
   const handleClick = useCallback(() => {
+    onActivate?.()
     if (nodeViewState === 'hovered' || nodeViewState === 'collapsed') {
       setExpanded()
     }
-  }, [nodeViewState, setExpanded])
-
-  const handleCloseBtn = useCallback(() => {
-    setCollapsed()
-  }, [setCollapsed])
+  }, [nodeViewState, onActivate, setExpanded])
 
   const handleKeyDown = useCallback(
     (evt: React.KeyboardEvent) => {
       if (evt.key === 'Escape') {
-        // ESC precedence: tooltip → modal → node (innermost-focus-first)
-        const tooltipElement = document.querySelector('[data-testid*="tooltip"][data-focused="true"]')
-        if (tooltipElement && isModalOpen) {
-          evt.preventDefault()
-          return
-        }
-
-        if (isModalOpen) {
-          closeNodeModal()
-          return
-        }
-
         if (focused) {
           setCollapsed()
         }
       }
     },
-    [focused, setCollapsed, isModalOpen, closeNodeModal]
+    [focused, setCollapsed]
   )
 
-  const handleRightClick = useCallback(
-    (evt: React.MouseEvent) => {
-      evt.preventDefault()
-      evt.stopPropagation()
-      const nodeBox = nodeRef.current
-      if (nodeBox) {
-        const rect = nodeBox.getBoundingClientRect()
-        openNodeModal(data.id, data, { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }, false)
-      }
-    },
-    [data, openNodeModal]
-  )
+  const handleRightClick = useCallback((evt: React.MouseEvent) => { evt.preventDefault(); evt.stopPropagation(); setIsConfirmOpen(true) }, [])
 
   const handleDblClick = useCallback(() => {
     const nodeBox = nodeRef.current
@@ -180,7 +131,10 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
 
   useEffect(() => {
     const handleClickOutside = (evt: MouseEvent) => {
-      if (focused && nodeRef.current && !nodeRef.current.contains(evt.target as Node)) {
+      const target = evt.target
+      const isNodeSurface = target instanceof HTMLElement && target.closest('[data-testid="voice-composer-surface"], [data-testid="file-preview-area"]')
+      const isInsideNode = target instanceof globalThis.Node && nodeRef.current?.contains(target)
+      if (focused && nodeRef.current && !isInsideNode && !isNodeSurface) {
         setCollapsed()
       }
     }
@@ -189,10 +143,13 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [focused, setCollapsed])
 
-  const showAgentic = data.lifecycle === 'agentic-running' || data.lifecycle === 'done'
+  useEffect(() => {
+    if (isActive) setExpanded()
+  }, [isActive, setExpanded])
 
   const isMinimized = nodeViewState === 'collapsed'
-  const isExpanded = nodeViewState === 'expanded' || nodeViewState === 'hovered'
+  const isExpanded = isActive || nodeViewState === 'expanded' || nodeViewState === 'hovered'
+  const isGorse = data.status === 'idle'
 
   return (
     <>
@@ -202,6 +159,9 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
           $minimized={isMinimized}
           $focused={focused}
           $expanded={isExpanded}
+          $gorse={isGorse}
+          data-testid="node-gorse-light"
+          data-light={isGorse ? 'gorse' : 'state'}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleClick}
@@ -211,6 +171,7 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
           tabIndex={0}
           role="button"
           aria-expanded={isExpanded}
+          aria-controls={`voice-composer-${data.id}`}
         >
           <NodeHeader>
             <HeaderLeft>
@@ -218,71 +179,31 @@ export default function Node({ data, onSend, onTitleChange }: NodeProps) {
             </HeaderLeft>
             <HeaderRight>
               <NodeStatus status={data.status} />
-              {focused && <CloseBtn onClick={handleCloseBtn}>×</CloseBtn>}
             </HeaderRight>
           </NodeHeader>
 
-          {isExpanded && (
-            <>
-              <NodeAgenticTodos
-                todos={data.todos}
-                expanded={todosExpanded}
-                onToggle={toggleTodos}
-                showAgentic={showAgentic}
-              />
-
-              <NodePromptArea
-                value={promptTxt}
-                onChange={setPromptTxt}
-                streamedTxt={streamedTxt}
-                isStream={isStream}
-                isRec={isRec}
-                isCycleRun={data.isCycleRun || false}
-                onToggleRec={toggleRec}
-                onStreamTxt={setPromptTxt}
-                onSend={handleSend}
-              />
-
-              {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
-            </>
-          )}
         </NodeBox>
       </NodeTooltip>
-
-      <NodeModalWrapper
-        isOpen={Boolean(isModalOpen)}
-        onClose={closeNodeModal}
-        origin={isModalOpen ? { x: isModalOpen.originX, y: isModalOpen.originY } : undefined}
-      >
-        <NodeModalHalo state={data.status} isLive={data.lifecycle === 'agentic-running' || data.lifecycle === 'done'}>
-          <NodeModalBarSlot
-            state={isRec ? 'recording' : data.status}
-            isRec={isRec}
-            onToggleRec={toggleRec}
-            onSend={handleSend}
-          />
-          <NodeModalContent>
-            <NodeAgenticTodos
-              todos={data.todos}
-              expanded={todosExpanded}
-              onToggle={toggleTodos}
-              showAgentic={showAgentic}
-            />
-            <NodePromptArea
-              value={promptTxt}
-              onChange={setPromptTxt}
-              streamedTxt={streamedTxt}
-              isStream={isStream}
-              isRec={isRec}
-              isCycleRun={data.isCycleRun || false}
-              onToggleRec={toggleRec}
-              onStreamTxt={setPromptTxt}
-              onSend={handleSend}
-            />
-            {data.lifecycle === 'done' && <NodeDetailPanel markdown={(data as any).bodyMarkdown} />}
-          </NodeModalContent>
-        </NodeModalHalo>
-      </NodeModalWrapper>
+       <VoiceTooltipComposer
+        nodeId={data.id}
+        title={data.title}
+        status={data.status}
+        value={promptTxt}
+        onChange={setPromptTxt}
+        onSend={handleSend}
+        anchorRect={nodeRef.current?.getBoundingClientRect() ?? { left: 0, right: 160, top: 0, bottom: 60, width: 160, height: 60 }}
+        viewport={{ width: window.innerWidth, height: window.innerHeight }}
+        chatActive={isExpanded}
+       manualFocus={focused}
+        contextPills={data.contextPills}
+        onRemovePill={onRemovePill}
+         onJumpToPill={onJumpToPill}
+         contextPayload={{ text: promptTxt, contextPills: data.contextPills, weightedContext: (data.contextPills?.length ?? 0) > 0 }}
+       />
+       {isExpanded && executionEvents && <ExecutionPanel workflow={workflow ?? ''} events={executionEvents} onRetry={() => onRetry?.(executionEvents.find(event => event.kind === 'step-error')?.stepId ?? '')} writeQueue={writeQueue} />}
+       {isExpanded && <AgentContext data={data} executionEvents={executionEvents} />}
+      {data.lifecycle === 'done' && isExpanded && <NodeDetailPanel markdown={data.bodyMarkdown} writeQueue={writeQueue} filePath={`${data.id}.md`} />}
+      <ConfirmDialog isOpen={isConfirmOpen} workflow={workflow ?? ''} onConfirm={() => { setIsConfirmOpen(false); handleSend() }} onCancel={() => setIsConfirmOpen(false)} />
     </>
   )
 }

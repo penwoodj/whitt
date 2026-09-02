@@ -22,6 +22,8 @@ const createNode = (overrides: Partial<NodeData> = {}): NodeData => ({
   todosExpanded: false,
   isRec: false,
   isCycleRun: false,
+  isStream: false,
+  streamedTxt: '',
   ...overrides,
 })
 
@@ -42,6 +44,7 @@ describe('Node', () => {
     const nodeBox = screen.getByRole('button')
     fireEvent.mouseEnter(nodeBox)
 
+    fireEvent.click(screen.getByRole('button', { name: /open prompt/i }))
     expect(screen.getByPlaceholderText('Ask anything...')).toBeInTheDocument()
     expect(screen.getByLabelText('Send prompt')).toBeInTheDocument()
   })
@@ -89,7 +92,7 @@ describe('Node', () => {
     fireEvent.mouseEnter(nodeBox)
     fireEvent.click(nodeBox)
 
-    const closeBtn = screen.getByText('×')
+    const closeBtn = screen.getByRole('button', { name: 'Close composer' })
     fireEvent.click(closeBtn)
 
     expect(screen.queryByPlaceholderText('Ask anything...')).not.toBeInTheDocument()
