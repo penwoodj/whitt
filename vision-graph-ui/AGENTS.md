@@ -73,9 +73,11 @@ REFACTOR: extract per Section 5
 
 Before the component ships in the app, it MUST have a story in `src/<Component>.stories.tsx`. The story exists so the component is reviewable in isolation. Every `.feature` Scenario should map to at least one story variant. See `.opencode/skills/storybook/SKILL.md`.
 
-### Stage 5 — Promote to App (MANUAL ONLY)
+### Stage 5 — Promote to App (MANUAL ONLY, FULFILLMENT OVERRIDE)
 
-A component is added to `src/App.tsx` (or any app-level composition) ONLY when the user explicitly says so. Default = leave in Storybook. Never auto-promote.
+A component is added to `src/App.tsx` (or any app-level composition) ONLY when the user explicitly says so. For current direct user fulfillment request, user authorization covers Stage-5 app promotion for fulfillment scope. Default outside that scope = leave in Storybook. Never auto-promote.
+
+Storybook stays isolated evidence. Fulfillment readiness requires composed Vite surface plus rendered screenshots from that surface.
 
 Verbs that count as explicit instruction: "promote", "add to app", "wire into the app", "ship it", "use in the real app". If unsure, ask.
 
@@ -486,7 +488,11 @@ Override: user explicitly invokes "build now" or "don't stop" → skip questions
 
 ---
 
-Revision: 6 (2026-08-29)
+Revision: 7 (2026-08-31)
+
+Changes in Rev 7:
+- Stage 5: Current direct user fulfillment request authorizes composed Vite app promotion; Storybook remains isolated evidence; Vite screenshots required for readiness.
+- Section 17: Moved prompt interaction from node body to adaptive semantic dialog; locked voice, focus, blur, pin, motion, and recorder-transfer contract.
 
 Changes in Rev 6:
 - Section 18: Added UI Readiness Gate — screenshot evidence + bounded user review loop required before ANY UI completion claim. jsdom blind-spot documented. Self-attestation ceiling = demo.
@@ -499,24 +505,40 @@ Changes in Rev 4:
 
 ---
 
-## 17. Node Lifecycle (Minimized Box → Expanded Box)
+## 17. Node Lifecycle and Voice Dialog
 
-Per ADR-0012. Default node state = minimized box (title + state badge, small width). Hover expands to full box with composer. Click pins open (focused) until explicitly closed.
+Per ADR-0012 and current fulfillment contract. Node body stays minimal. Node body shows title, status, and light only. No composer or other prompt controls live inside node body.
 
-States:
-- collapsed: minimized box (small width ~120-180px, title + state badge, no composer)
-- hovered: expanded box (full width ~320-420px, composer visible, border subtle)
-- expanded (focused): same as hovered but border: borderActive (primary blue), box-shadow: md, stays open
+### Dialog surface
 
-Transitions:
-- collapsed → hovered: mouse enter NodeBox
-- hovered → collapsed: mouse leave (only if NOT focused AND not actively typing)
-- hovered → expanded (focused): click anywhere on NodeBox
-- expanded → collapsed: Escape OR click outside OR click close btn (X)
+- Interactive semantic surface sits beside anchor node. It owns preview, editing textarea, mic, send, context pills, transcript, and errors.
+- Surface uses `role="dialog"`, never interactive `role="tooltip"`.
+- Placement is adaptive: right-first; left when right collides with neighbor or viewport. Preserve pointer arrow direction and focus order.
+- Preview is semantic button or equivalent stateful control. Preview activation renders labelled textarea and focuses it inside dialog.
 
-Morph: 240ms ease on width, height, padding, border-color, box-shadow. Same box shape throughout (border-radius 12px).
+### State contract
 
-Details panel: ONLY appears after lifecycle='done' (full record → stream → stop → send → cycle → done flow).
+Keep these independent:
+
+- `chatActive`: conversation surface is eligible to open from node interaction.
+- `manualFocus`: user focus keeps surface open.
+- `pinned`: explicit pin keeps surface open.
+- `speechState`: `idle | permission-pending | listening | processing | denied | error | stopped`.
+
+Surface remains visible while anchor hover, surface hover, `manualFocus`, or `pinned` is true. Canvas blur hides an unpinned surface but never stops active recording. Recording continues across outside dismiss and can resume or append by contract.
+
+### Voice and motion
+
+- One active recorder only. Starting recorder B stops recorder A before B starts.
+- `listening` or recording drives amplitude-based breathing on node and bar. Reduced motion replaces breathing with persistent static recording indicator.
+- Red recording dot is decorative. Adjacent text status carries meaning. Errors use accessible alert text; live speech uses status text and transcript.
+
+### Lifecycle
+
+- collapsed: minimized box, title + status + light only.
+- hovered: dialog eligible beside node; node body remains minimal.
+- expanded/focused: dialog stays open while manual focus or pin remains.
+- Details panel appears only after `lifecycle='done'`.
 
 ---
 
@@ -691,4 +713,3 @@ Agent self-attestation ceiling: **demo**. Everything above requires the user's w
 2. Ask user 2-4 MCQs quoting ABSOLUTE screenshot paths (user views files directly).
 3. Fix per answers, re-run, re-ask. MAX 3 rounds; then stop + honest findings.
 4. NEVER screenshot Storybook as evidence for app deliverables — the composed app only.
-

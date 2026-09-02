@@ -3,6 +3,15 @@
 > Captured 2026-08-14. Deduplicated narrative flows from user vision sessions.
 > Maps flows → GWT requirement IDs (see `requirements-summary.md`).
 
+## Cross-Cutting Voice Dialog Contract
+
+- Node body shows title, status, and light only. Prompt interaction lives in interactive semantic dialog surface beside node.
+- Dialog owns preview, editing textarea, mic, send, context pills, transcript, and errors. It uses `role="dialog"`, never interactive `role="tooltip"`.
+- Placement is adaptive: right-first, left on right-side collision with neighbor or viewport. Preserve arrow direction and focus order.
+- State contract keeps `chatActive`, `manualFocus`, `pinned`, and `speechState` independent. `speechState`: `idle | permission-pending | listening | processing | denied | error | stopped`.
+- Surface stays while anchor hover, surface hover, `manualFocus`, or `pinned` is true. Canvas blur hides unpinned surface; recording continues.
+- Recording/listening drives amplitude-based node and bar breathing. Reduced motion uses persistent static recording indicator. One active recorder only; new recorder stops prior recorder.
+
 ## Flow A — First Open, New Project
 
 1. User opens app → new blank project session (like new ChatGPT chat). APP-01, APP-07
@@ -12,8 +21,8 @@
 ## Flow B — Voice Prompt → Execute → Expanded Node
 
 1. Single click bubble → STT starts invisibly; bubble color shifts + breathes w/ voice. VOX-01/02/03
-2. Mouse over node → tooltip pops, live-typed text visible. VOX-04, VOX-05
-3. Cursor onto tooltip, click in → becomes text input, STT appends at end. VOX-06/07
+2. Mouse over node → dialog surface pops, live-typed text visible. VOX-04, VOX-05
+3. Cursor onto dialog, click preview → labelled textarea focuses; STT appends at end. VOX-06/07
 4. Double left click → prompt sent immediately. VOX-14
 5. Node expands into soft-corner modal; ball → halo; recording auto-starts. EXP-01/02/03
 6. Bar of light at top; status bar below w/ minimal info. EXP-04, EXE-09
@@ -24,9 +33,9 @@
 
 ## Flow C — Edit Prompt Before Send
 
-1. While recording, tooltip input open (Flow B steps 1-3).
+1. While recording, dialog input open (Flow B steps 1-3).
 2. Click anywhere in text; highlight span; keyboard or voice type over it. VOX-08
-3. Click outside → tooltip hides, recording continues. VOX-11
+3. Click outside → unpinned dialog hides, recording continues. VOX-11
 4. Single click bubble → stop; single click again → resume, appends at end. VOX-12/13
 5. Enter sends; Shift+Enter newline. VOX-09/10
 6. Prompt debounced-saves own file in hidden `.` folder beside node. VOX-16
@@ -34,8 +43,8 @@
 ## Flow D — Manual Open + Confirm Before Execute
 
 1. Right click node → opens expanded WITHOUT STT. EXP-09
-2. Hover bar of light → input tooltip; type/keyboard-edit prompt. EXP-05
-3. Hover execution area (or status bar) → execution tooltip right of node: YAML visualizer,
+2. Hover bar of light → dialog input; type/keyboard-edit prompt. EXP-05
+3. Hover execution area (or status bar) → execution dialog right of node: YAML visualizer,
    colored expandable sections, dense padding. EXE-04/05/06/07/08, EXE-10
 4. Double left click execution area → immediate execute. EXE-02
 5. Double RIGHT click execution area → confirm what executes, then run. EXE-03
@@ -43,7 +52,7 @@
 ## Flow E — Watch Execution Live
 
 1. Execution running: status bar text + morphing loader + current step title. EXE-13/14/15
-2. Execution tooltip updates live w/ user-relevant info. EXE-16
+2. Execution dialog updates live w/ user-relevant info. EXE-16
 3. Result not right → user reacts/steers during or after. AGT-05
 
 ## Flow F — Target File Sections via Highlight + Pills
@@ -51,7 +60,7 @@
 1. Node has file content (after Flow B). FIL-01
 2. Pause STT (single click). VOX-12
 3. Ctrl multi-highlight areas; Ctrl+F search highlights. FIL-06/07
-4. Speak → STT tooltip shows context pills for highlights; pills show line numbers;
+4. Speak → STT dialog shows context pills for highlights; pills show line numbers;
    X removes on hover. PIL-01/02/03, PIL-04
 5. Send → agent focuses on pill'd areas over rest of graph. PIL-05
 
@@ -60,7 +69,7 @@
 1. Highlight multiple bubbles. GRP-01/02
 2. Right click select → box around group. GRP-03
 3. Halo forms around group (soft = temporary, hard = folder-backed). GRP-07/08
-4. Group = prompt context; tooltip appears beside group; group acts node-like. GRP-09/10
+4. Group = prompt context; dialog appears beside group; group acts node-like. GRP-09/10
 
 ## Flow H — Move + Connect Nodes
 
@@ -95,7 +104,7 @@
 
 - "Click bubble to send" (early phrasing) resolved → double click sends, single toggles STT.
   VOX-01/12/14.
-- Tooltip pin semantics stated 3× in source → single rule (cross-cutting rule 1).
+- Dialog pin semantics stated 3× in source → single rule (cross-cutting contract).
 - Breathing stated for ball + bar → one idiom (cross-cutting rule 4).
 - Right click on unexpanded node (EXP-09) distinct from double right click send (VOX-15):
   single right click context menu NOT specified in source — open question.
@@ -105,8 +114,7 @@
 ## Open Questions (not in source, flagged)
 
 1. Single right click unexpanded node → context menu? nothing? EXP
-2. ESC behavior on modal/tooltip? modal close = ESC/out/X per ADR-0012 (EXP-11); pinned tooltip close unspecified
-3. Multiple simultaneous recordings? presumably one (needs confirmation)
+2. ESC behavior on modal/dialog? modal close = ESC/out/X per ADR-0012 (EXP-11); pinned dialog close unspecified
 4. Prompt file retention/lifecycle (hidden folder growth)? VOX-16
 5. Grouping ↔ details-panel nesting interplay (GRP-11) sequencing
 6. Pill content: line numbers only, or + text snippet/filename (Cursor-style)? PIL-03
