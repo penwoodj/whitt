@@ -1,8 +1,9 @@
-# Validation — Storybook Live-System Testing
+# Validation — Layered Evidence
 
-> Per ADR-0016. Every GWT case (85 inherited + 56 new = 141) maps to exactly one
-> Storybook story; the story's play function IS the When/Then. Coverage audited by
-> `check-coverage.sh`.
+> Manifest keeps full requirement inventory. Evidence layers stay separate:
+> command-backed unit/GWT tests, composed Vite-app tests, Storybook-only states,
+> and pending browser/offline smoke. A green unit test never proves browser or
+> offline behavior.
 
 ## Infra (already in `vision-graph-ui/`)
 
@@ -38,14 +39,24 @@
 | File | Covers |
 |---|---|
 | `slice-01.validation.md` … `slice-11.validation.md` | per-slice story specs (story, play outline, asserts) |
-| `coverage-manifest.tsv` | caseID → slice → story name → status (todo/ready) |
-| `check-coverage.sh` | greps slice docs for case IDs; reports unmapped |
+| `coverage-manifest.tsv` | caseID → slice → validation reference → evidence status |
+| `check-coverage.sh` | checks complete ID inventory and TSV shape |
 
 ## Status Semantics
 
-- `todo` — spec written; story not yet implemented (default for all rows today).
-- `ready` — story exists in `vision-graph-ui/src/**/` and passes.
-- Script exits non-zero if any case ID lacks a manifest row (never on `todo`).
+- `unit-gwt` — named test or Gherkin-backed Vitest proof passed.
+- `composed-vite` — named test exercises composed `App → GraphSim → ReactFlow` path.
+- `storybook-only` — story or isolated visual state only. Not app-path proof.
+- `pending` — requirement remains registered, but proof is missing.
+- `offline-pending` — strict local/offline browser smoke still awaits T9.
+- Browser screenshots are separate T9 evidence. No status here implies screenshot pass.
+
+## Current command evidence
+
+Fresh full Vitest run: `100 files, 684 tests passed`.
+T8 records this result only beside matching test or Gherkin references. T9 owns
+desktop Vite screenshots and strict local/offline STT smoke. Adapter, fake, and
+jsdom tests cannot close offline claims.
 
 ## Out of Scope (tracked elsewhere)
 

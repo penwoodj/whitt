@@ -51,9 +51,10 @@ copied — single source of truth, no duplication). New cases carry full GWT + W
 
 ## Validation
 
-`validation/` holds per-slice Storybook validation specs + a coverage manifest +
-`check-coverage.sh` that verifies every case ID maps to a validation story.
-Approach + infra notes: `validation/README.md`.
+`validation/` holds per-slice validation specs, a complete coverage manifest, and
+`check-coverage.sh`. Manifest status separates unit/GWT proof, composed Vite-app
+proof, Storybook-only coverage, and pending browser/offline smoke. Approach +
+evidence rules: `validation/README.md`.
 
 ## Related Decisions
 
