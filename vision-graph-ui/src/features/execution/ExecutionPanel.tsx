@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import { X, RotateCcw } from 'lucide-react'
+import { Pin, X, RotateCcw } from 'lucide-react'
 import { StatusBarCard } from './StatusBarCard'
 import { MorphingLoader } from './MorphingLoader'
 import { YamlWorkflowVisualizer } from './YamlWorkflowVisualizer'
 import type { AgentEvt } from '../../shared/agent/types'
 import { isStepStart, isStepError, isRunDone, isFileWrite } from '../../shared/agent/types'
+import type { WriteQueue } from '../../shared/fs/WriteQueue'
+import FilePreview from '../file-visualization/FilePreview'
 
 const PanelContainer = styled.div`
   display: flex;
@@ -99,17 +101,6 @@ const PreviewTitle = styled.h4`
   margin: 0;
 `
 
-const PreviewContent = styled.pre`
-  font-family: ${({ theme }) => theme.font.mono};
-  font-size: ${({ theme }) => theme.font.sizeXs};
-  color: ${({ theme }) => theme.colors.textMuted};
-  white-space: pre-wrap;
-  word-break: break-all;
-  margin: 0;
-  max-height: 200px;
-  overflow-y: auto;
-`
-
 const ErrorBanner = styled.div`
   display: flex;
   align-items: center;
@@ -159,12 +150,13 @@ export interface ExecutionPanelProps {
   workflow: string
   events?: AgentEvt[]
   onRetry?: () => void
+  writeQueue?: WriteQueue
 }
 
-export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPanelProps) {
+export function ExecutionPanel({ workflow, events = [], onRetry, writeQueue }: ExecutionPanelProps) {
   const [showTooltip, setShowTooltip] = useState(false)
   const [pinned, setPinned] = useState(false)
-  const [previewContent, setPreviewContent] = useState<{ path: string; content: string } | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(true)
 
   const latestStatus = events.length > 0 ? events[events.length - 1] : null
   const stepStartEvent = events.filter(isStepStart).pop()
@@ -195,17 +187,6 @@ export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPane
     setPinned(!pinned)
   }
 
-  const handleClosePreview = () => {
-    setPreviewContent(null)
-  }
-
-  if (fileWriteEvent && !previewContent) {
-    setPreviewContent({
-      path: fileWriteEvent.path,
-      content: `Content written to ${fileWriteEvent.path}`
-    })
-  }
-
   const failedStepName = stepErrorEvent?.stepId ?? 'Unknown step'
 
   return (
@@ -215,7 +196,7 @@ export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPane
       onMouseLeave={handleMouseLeave}
     >
       <PanelHeader>
-        <StatusSection>
+        <StatusSection data-testid="execution-loading" data-status={status}>
           <MorphingLoader status={status} stepTitle={stepTitle} />
           <StatusBarCard status={status} stepTitle={stepTitle} />
         </StatusSection>
@@ -230,16 +211,17 @@ export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPane
         <PinButton 
           onClick={handleTooltipClick}
           data-testid="pin-tooltip-btn"
+          aria-label={pinned ? 'Unpin workflow' : 'Pin workflow'}
           type="button"
         >
-          {pinned ? <X size={14} /> : '📌'}
+          {pinned ? <X size={14} /> : <Pin size={14} />}
         </PinButton>
         <YamlWorkflowVisualizer workflow={workflow} />
       </TooltipContainer>
 
       {stepErrorEvent && (
         <ErrorBanner data-testid="error-banner">
-          <span>Step failed: {failedStepName}</span>
+          <span>Step failed: {failedStepName}: {stepErrorEvent.msg}</span>
           {onRetry && (
             <RetryButton onClick={onRetry} data-testid="retry-btn" type="button">
               <RotateCcw size={12} />
@@ -249,15 +231,15 @@ export function ExecutionPanel({ workflow, events = [], onRetry }: ExecutionPane
         </ErrorBanner>
       )}
 
-      {previewContent && (
+      {fileWriteEvent && isPreviewOpen && (
         <PreviewArea $visible data-testid="preview-area">
           <PreviewHeader>
-            <PreviewTitle>File Preview: {previewContent.path}</PreviewTitle>
-            <ClosePreviewButton onClick={handleClosePreview} type="button">
+            <PreviewTitle>File Preview: {fileWriteEvent.path}</PreviewTitle>
+            <ClosePreviewButton onClick={() => setIsPreviewOpen(false)} type="button" aria-label="Close file preview">
               <X size={14} />
             </ClosePreviewButton>
           </PreviewHeader>
-          <PreviewContent>{previewContent.content}</PreviewContent>
+          <FilePreview content={fileWriteEvent.content ?? ''} filePath={fileWriteEvent.path} writeQueue={writeQueue} />
         </PreviewArea>
       )}
     </PanelContainer>

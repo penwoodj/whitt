@@ -327,7 +327,7 @@ const UseDiskBtn = styled.button`
 `
 
 export default function FilePreview({ content, isLoading = false, writeQueue, filePath = '', onExternalChange }: FilePreviewProps) {
-  const { isEditing, toggleEdit, saveOnBlur, saveError, retrySave, conflict, keepMine } = useFileEdit(content, writeQueue, filePath, onExternalChange)
+  const { isEditing, content: previewContent, toggleEdit, saveOnBlur, saveError, retrySave, conflict, keepMine, useDisk } = useFileEdit(content, writeQueue, filePath, onExternalChange)
   const { searchQuery, matches, search } = useFileSearch()
   const { showLineNumbers } = useLineNumbers()
   const [isPlainText, setIsPlainText] = React.useState(false)
@@ -352,7 +352,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
     )
   }
 
-  const lines = content.split('\n')
+  const lines = previewContent.split('\n')
 
   return (
     <PreviewWrap data-testid="file-preview-area">
@@ -362,7 +362,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
           <ConflictText>File changed on disk. Choose your version:</ConflictText>
           <ConflictBtns>
             <KeepMineBtn onClick={keepMine} data-testid="keep-mine-btn">Keep Mine</KeepMineBtn>
-            <UseDiskBtn onClick={() => window.location.reload()} data-testid="use-disk-btn">Use Disk Version</UseDiskBtn>
+            <UseDiskBtn onClick={useDisk} data-testid="use-disk-btn">Use Disk Version</UseDiskBtn>
           </ConflictBtns>
         </ConflictWrap>
       ) : saveError ? (
@@ -371,7 +371,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
           <RetryBtn onClick={retrySave}>Retry</RetryBtn>
         </ErrorWrap>
       ) : null}
-        <EditBtn onClick={toggleEdit} aria-label={isEditing ? 'Save' : 'Edit'}>
+        <EditBtn onMouseDown={(event) => event.stopPropagation()} onClick={toggleEdit} aria-label={isEditing ? 'Save' : 'Edit'}>
           {isEditing ? 'Save' : 'Edit'}
         </EditBtn>
         {!isEditing && (
@@ -383,7 +383,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
               type="text"
               placeholder="Find..."
               value={searchQuery}
-              onChange={(e) => search(e.target.value, content)}
+              onChange={(e) => search(e.target.value, previewContent)}
               data-testid="find-input"
             />
           </>
@@ -393,7 +393,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
       {isEditing && !conflict ? (
         <EditorWrap>
           <CodeMirror
-            value={content}
+            value={previewContent}
             extensions={[markdown(), ...(showLineNumbers ? [lineNumbers()] : [])]}
             onChange={saveOnBlur}
             height="200px"
@@ -403,8 +403,8 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
       ) : !conflict ? (
         isPlainText ? (
           <PlainTextContent data-testid="plain-text-content">
-            {lines.map((line, index) => (
-              <LineRow key={index} data-line={index + 1}>
+              {lines.map((line, index) => (
+              <LineRow key={line || 'blank'} data-line={index + 1}>
                 {showLineNumbers && <LineNumberCell>{index + 1}</LineNumberCell>}
                 <LineContent>{line || ' '}</LineContent>
               </LineRow>
@@ -412,7 +412,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
           </PlainTextContent>
         ) : (
           <MarkdownContent>
-            <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown>{previewContent}</ReactMarkdown>
             {matches.length > 0 && (
               <div data-testid="search-matches">
                 Found {matches.length} matches for "{searchQuery}"
@@ -422,7 +422,7 @@ export default function FilePreview({ content, isLoading = false, writeQueue, fi
         )
       ) : (
         <MarkdownContent>
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown>{previewContent}</ReactMarkdown>
         </MarkdownContent>
       )}
     </PreviewWrap>

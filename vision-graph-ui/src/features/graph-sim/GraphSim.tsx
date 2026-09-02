@@ -1,13 +1,12 @@
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import '@xyflow/react/dist/style.css'
-import { ReactFlow, Background, Controls, Handle, Position, applyNodeChanges, applyEdgeChanges, useReactFlow, ReactFlowProvider, useNodesInitialized } from '@xyflow/react'
+import { applyNodeChanges, applyEdgeChanges, ReactFlowProvider } from '@xyflow/react'
 import styled from 'styled-components'
-import type { Node as FlowNode, Edge } from '@xyflow/react'
+import type { Node as FlowNode, Edge, OnConnect } from '@xyflow/react'
 import ProjectPicker from '../project-picker'
 import TopBar from '../top-bar'
 import MarkdownHighlightMenu from '../markdown-highlight-menu'
 import AppShell from '../app-shell'
-import { Node } from '../node'
 import SettingsPanel from '../settings-panel'
 import NewProjectModal from '../new-project-modal'
 import { useAgenticTodoCycle } from '../agentic-todo-cycle'
@@ -16,9 +15,12 @@ import type { NodeData } from '../node/nodeTypes'
 import { buildSampleProjects } from '../project-picker/projectPickerData'
 import type { Project } from '../project-picker/projectPickerTypes'
 import { loadProjectGraph } from '../../shared/fsGraphLoader'
-import { darkTheme } from '../../shared/theme'
 import { FsGraphSync } from '../../shared/fs/FsGraphSync'
 import { FakeFsPort } from '../../shared/fs/FakeFsPort'
+import { GraphWorkspace } from './GraphWorkspace'
+import { DagFormatCycleError, formatSelectedDag, type DagDirection } from './dagFormat'
+import type { AgentEvt } from '../../shared/agent/types'
+import type { ContextPill } from '../context-pills/contextPillTypes'
 
 const Placeholder = styled.div`
   flex: 1;
@@ -39,725 +41,141 @@ const GraphContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.bg};
 `
 
-const FlowSurface = styled(ReactFlow)`
-  & .react-flow__viewport {
-    transform-origin: 0 0;
-  }
-
-  & .react-flow__node {
-    position: absolute;
-    width: max-content;
-  }
-
-  & .react-flow__edge-path {
-    stroke: ${({ theme }) => theme.colors.primary};
-    stroke-width: 2;
-  }
-
-  & .react-flow__edge.selected .react-flow__edge-path {
-    stroke: ${({ theme }) => theme.colors.borderActive};
-  }
-
-  & .react-flow__background {
-    pointer-events: none;
-  }
-`
-
-const GraphBackground = styled(Background)`
-  pointer-events: none;
-`
-
-const GraphControls = styled(Controls)`
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radius.md};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadow.sm};
-
-  & .react-flow__controls-button {
-    background: ${({ theme }) => theme.colors.bgElevated};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-    fill: ${({ theme }) => theme.colors.textMuted};
-    width: 26px;
-    height: 26px;
-  }
-
-  & .react-flow__controls-button:hover {
-    background: ${({ theme }) => theme.colors.bgHover};
-    fill: ${({ theme }) => theme.colors.text};
-  }
-
-  & .react-flow__controls-button svg {
-    fill: currentColor;
-  }
-`
-
-const NodeHandle = styled(Handle)`
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border: 2px solid ${({ theme }) => theme.colors.bgElevated};
-  background: ${({ theme }) => theme.colors.borderActive};
-`
-
-const FlowNodeShell = styled.div`
-  position: relative;
-`
-
-const NodeHandleLeft = styled(NodeHandle)`
-  left: -4px;
-  top: 50%;
-  transform: translateY(-50%);
-`
-
-const NodeHandleRight = styled(NodeHandle)`
-  right: -4px;
-  top: 50%;
-  transform: translateY(-50%);
-`
-
 type SimState = 'picker' | 'graph'
+type Snapshot = { nodes: FlowNode[]; edges: Edge[]; graphTitle: string }
+const workflow = 'name: graph-node\nsteps:\n  - name: research web\n    action: agent\n  - name: draft outline\n    action: agent\n  - name: verify + cite\n    action: agent'
+const defaultContextPills: ContextPill[] = [{ id: 'pill-1', lineRange: 'L12-18', startLine: 12, endLine: 18, textSnippet: 'graph node context', filePath: 'index.md' }]
 
-type GraphSimFlowProps = {
-  nodes: FlowNode[]
-  edges: Edge[]
-  nodeTypes: Record<string, React.FC<any>>
-  onNodesChange: (changes: any) => void
-  onEdgesChange: (changes: any) => void
-  setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>
-  activeNodeId: string | null
-  onNodeMouseEnter: () => void
-  onNodeMouseLeave: () => void
-  onNodeDragStart: () => void
-  onNodeDragStop: () => void
-}
-
-function GraphSimFlow({
-  nodes,
-  edges,
-  nodeTypes,
-  onNodesChange,
-  onEdgesChange,
-  setNodes,
-  activeNodeId,
-  onNodeMouseEnter,
-  onNodeMouseLeave,
-  onNodeDragStart,
-  onNodeDragStop
-}: GraphSimFlowProps) {
-  const { getViewport, setViewport, fitView } = useReactFlow()
-
-  const nodeCount = nodes.length
-  const isNodesInitialized = useNodesInitialized()
-
-  useEffect(() => {
-    if (isNodesInitialized && nodeCount > 0) {
-      fitView({ padding: 0.15, maxZoom: 1 })
-    }
-  }, [isNodesInitialized, nodeCount, fitView])
-
-  const handleKeyDown = useCallback((evt: React.KeyboardEvent) => {
-    const activeElement = document.activeElement
-    const isInputFocused =
-      activeElement?.tagName === 'INPUT' ||
-      activeElement?.tagName === 'TEXTAREA' ||
-      activeElement?.getAttribute('contenteditable') === 'true'
-
-    if (isInputFocused) return
-
-    const viewport = getViewport()
-    const panDelta = 50
-
-    if (activeNodeId) {
-      const delta = evt.shiftKey ? 10 : 1
-      if (evt.key === 'ArrowRight') {
-        setNodes((prev) =>
-          prev.map((node) =>
-            node.id === activeNodeId
-              ? {
-                  ...node,
-                  position: {
-                    x: node.position.x + delta,
-                    y: node.position.y,
-                  },
-                }
-              : node
-          )
-        )
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowLeft') {
-        setNodes((prev) =>
-          prev.map((node) =>
-            node.id === activeNodeId
-              ? {
-                  ...node,
-                  position: {
-                    x: node.position.x - delta,
-                    y: node.position.y,
-                  },
-                }
-              : node
-          )
-        )
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowUp') {
-        setNodes((prev) =>
-          prev.map((node) =>
-            node.id === activeNodeId
-              ? {
-                  ...node,
-                  position: {
-                    x: node.position.x,
-                    y: node.position.y - delta,
-                  },
-                }
-              : node
-          )
-        )
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowDown') {
-        setNodes((prev) =>
-          prev.map((node) =>
-            node.id === activeNodeId
-              ? {
-                  ...node,
-                  position: {
-                    x: node.position.x,
-                    y: node.position.y + delta,
-                  },
-                }
-              : node
-          )
-        )
-        evt.preventDefault()
-      }
-    } else {
-      if (evt.key === 'ArrowRight' || evt.key === 'd' || evt.key === 'D') {
-        setViewport({ x: viewport.x - panDelta, y: viewport.y, zoom: viewport.zoom })
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowLeft' || evt.key === 'a' || evt.key === 'A') {
-        setViewport({ x: viewport.x + panDelta, y: viewport.y, zoom: viewport.zoom })
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowUp' || evt.key === 'w' || evt.key === 'W') {
-        setViewport({ x: viewport.x, y: viewport.y + panDelta, zoom: viewport.zoom })
-        evt.preventDefault()
-      } else if (evt.key === 'ArrowDown' || evt.key === 's' || evt.key === 'S') {
-        setViewport({ x: viewport.x, y: viewport.y - panDelta, zoom: viewport.zoom })
-        evt.preventDefault()
-      }
-    }
-  }, [activeNodeId, setNodes, getViewport, setViewport])
-
-  return (
-    <div data-testid="react-flow__canvas" style={{ width: '100%', height: '100%' }}>
-    <FlowSurface
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      nodeTypes={nodeTypes}
-      defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
-      minZoom={0.1}
-      maxZoom={2.5}
-      zoomOnScroll={true}
-      zoomOnPinch={true}
-      panOnScroll={false}
-      panOnDrag={true}
-      panActivationKeyCode={' '}
-      selectionOnDrag={true}
-      proOptions={{ hideAttribution: true }}
-      defaultEdgeOptions={{
-        type: 'smoothstep',
-        style: { stroke: darkTheme.colors.primary, strokeWidth: 2 },
-      }}
-      onNodeMouseEnter={onNodeMouseEnter}
-      onNodeMouseLeave={onNodeMouseLeave}
-      onNodeDragStart={onNodeDragStart}
-      onNodeDragStop={onNodeDragStop}
-      onKeyDown={handleKeyDown}
-    >
-      <GraphBackground color={darkTheme.colors.border} gap={20} />
-      <GraphControls showInteractive={false} showFitView={true} />
-    </FlowSurface>
-    </div>
-  )
-}
-
-type Snapshot = {
-  nodes: FlowNode[]
-  edges: Edge[]
-  graphTitle: string
-}
+const isNodeData = (value: unknown): value is NodeData => typeof value === 'object' && value !== null && 'id' in value && 'title' in value && 'status' in value
 
 export default function GraphSim() {
   const simLog = useGraphSimLogging()
-
   const [simState, setSimState] = useState<SimState>('picker')
-  const [activeProjectId, setActiveProjectId] = useState<string>('')
+  const [activeProjectId, setActiveProjectId] = useState('')
   const [projects, setProjects] = useState<Project[]>(buildSampleProjects())
-
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false)
-
-  const { todos, startCycle: startTodoCycle } = useAgenticTodoCycle({
-    onCycleDone: () => {
-      simLog.info('Agentic todo cycle done')
-      setNodes((prev) =>
-        prev.map((node) =>
-          node.id === activeNodeId
-            ? {
-                ...node,
-                data: {
-                  ...node.data,
-                  lifecycle: 'done',
-                  isCycleRun: false,
-                  bodyMarkdown: (node.data as any).bodyMarkdown || generatePlaceholderMarkdown(node.data.promptTxt),
-                } as NodeData,
-              }
-            : node
-        )
-      )
-    },
-  })
-
   const [nodes, setNodes] = useState<FlowNode[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null)
+  const activeNodeIdRef = useRef<string | null>(null)
+  const [selectedNodeIds, setSelectedNodeIds] = useState<readonly string[]>([])
   const [graphTitle, setGraphTitle] = useState('')
-
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error'>('idle')
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'error' | 'unavailable'>('unavailable')
   const [lastSyncLabel, setLastSyncLabel] = useState('')
-
   const [canTravelBack, setCanTravelBack] = useState(false)
   const [canTravelForward, setCanTravelForward] = useState(false)
   const [commitLabel, setCommitLabel] = useState('')
   const [snapshots, setSnapshots] = useState<Snapshot[]>([])
   const [currentSnapshotIndex, setCurrentSnapshotIndex] = useState(-1)
-
   const [selectedText, setSelectedText] = useState('')
   const [highlightPosition, setHighlightPosition] = useState<{ x: number; y: number } | null>(null)
-
+  const [executionEvents, setExecutionEvents] = useState<AgentEvt[]>([])
+  const [lastContextJump, setLastContextJump] = useState('')
+  const [lastContextPayload, setLastContextPayload] = useState('')
   const fsPort = useMemo(() => new FakeFsPort(), [])
   const git = useMemo(() => ({ add: async () => {}, commit: async () => {} }), [])
-  const fsSync = useMemo(
-    () =>
-      new FsGraphSync(
-        fsPort,
-        git,
-        (event) => {
-          simLog.info('External FS change detected', { event })
-          simLog.debug('External change would trigger reload', { path: event.path })
-        }
-      ),
-    [fsPort, git, simLog]
-  )
+  const fsSync = useMemo(() => new FsGraphSync(fsPort, git, event => simLog.info('External FS change detected', { event })), [fsPort, git, simLog])
+  useEffect(() => () => fsSync.dispose(), [fsSync])
+  const { todos, startCycle: startTodoCycle } = useAgenticTodoCycle({
+    onCycleDone: () => setNodes(prev => prev.map(node => node.id === activeNodeId ? { ...node, data: { ...node.data, lifecycle: 'done', isCycleRun: false, bodyMarkdown: typeof node.data.bodyMarkdown === 'string' ? node.data.bodyMarkdown : generatePlaceholderMarkdown(typeof node.data.promptTxt === 'string' ? node.data.promptTxt : '') } as NodeData } : node)),
+  })
 
   useEffect(() => {
-    if (activeNodeId) {
-      setNodes((prev) =>
-        prev.map((node) =>
-          node.id === activeNodeId
-            ? {
-                ...node,
-                data: {
-                  ...node.data,
-                  todos,
-                  todosExpanded: todos.length > 0,
-                } as NodeData,
-              }
-            : node
-        )
-      )
-    }
+    if (!activeNodeId) return
+    setNodes(prev => prev.map(node => node.id === activeNodeId ? { ...node, data: isNodeData(node.data) ? { ...node.data, todos, todosExpanded: todos.length > 0 } : node.data } : node))
   }, [activeNodeId, todos])
 
   const handleProjectSelect = useCallback(async (id: string) => {
     setActiveProjectId(id)
     setSimState('graph')
-    
     try {
-      const projectId = id as 'ai-frameworks' | 'local-first' | 'whitt-arch'
-      const { nodes: loadedNodes, edges: loadedEdges } = await loadProjectGraph(projectId)
-      
-      setGraphTitle(loadedNodes[0]?.data.title || 'Project Graph')
-      setNodes(loadedNodes)
-      setEdges(loadedEdges)
-      setActiveNodeId(loadedNodes[0]?.id || null)
-      setCanTravelBack(false)
-      setCanTravelForward(false)
-      setCommitLabel('')
-      setSnapshots([])
-      setCurrentSnapshotIndex(-1)
-      
-      simLog.info('Project graph loaded', { projectId, nodeCount: loadedNodes.length, edgeCount: loadedEdges.length })
+      const { nodes: loadedNodes, edges: loadedEdges } = await loadProjectGraph(id as 'ai-frameworks' | 'local-first' | 'whitt-arch')
+      setGraphTitle(typeof loadedNodes[0]?.data.title === 'string' ? loadedNodes[0].data.title : 'Project Graph')
+      const composedNodes = loadedNodes.map(node => ({ ...node, data: { ...node.data, contextPills: defaultContextPills } as NodeData }))
+      setNodes(composedNodes); setEdges(loadedEdges); setActiveNodeId(composedNodes[0]?.id || null); activeNodeIdRef.current = composedNodes[0]?.id || null
+      setExecutionEvents([])
+      setCanTravelBack(false); setCanTravelForward(false); setCommitLabel(''); setSnapshots([]); setCurrentSnapshotIndex(-1)
+      simLog.info('Project graph loaded', { projectId: id, nodeCount: loadedNodes.length, edgeCount: loadedEdges.length })
     } catch (error) {
-      simLog.error('Failed to load project graph', { projectId: id, error })
-      setGraphTitle('Error Loading Project')
-      setNodes([])
-      setEdges([])
+      simLog.error('Failed to load project graph', { projectId: id, error }); setGraphTitle('Error Loading Project'); setNodes([]); setEdges([])
     }
   }, [simLog])
 
-  const handleNewProject = useCallback(() => {
-    setIsNewProjectModalOpen(true)
-    simLog.debug('New project clicked')
+  const handleNewProject = useCallback(() => { setIsNewProjectModalOpen(true); simLog.debug('New project clicked') }, [simLog])
+  const handleCreateProject = useCallback(({ name, folder }: { name: string; folder: string }) => {
+    const newProject: Project = { id: `proj-${Date.now()}`, label: name, iconLetter: name[0].toUpperCase(), lastOpened: new Date() }
+    setProjects(prev => [...prev, newProject]); setActiveProjectId(newProject.id); setIsNewProjectModalOpen(false); setSimState('graph'); setGraphTitle(name)
+    setNodes([{ id: 'root', type: 'custom', position: { x: 0, y: 0 }, data: { id: 'root', title: 'Voice Node', status: 'idle', type: 'task', lifecycle: 'initial', nodeViewState: 'collapsed', focused: false, promptTxt: '', todos: [], lastUpdate: null, detailExpanded: false, todosExpanded: false, isRec: false, isCycleRun: false, isStream: false, streamedTxt: '' } as NodeData }])
+    setEdges([]); setActiveNodeId('root'); simLog.info('Project created', { name, folder })
   }, [simLog])
-
-  const handleCreateProject = useCallback(
-    ({ name, folder }: { name: string; folder: string }) => {
-      const newProject: Project = {
-        id: `proj-${Date.now()}`,
-        label: name,
-        iconLetter: name[0].toUpperCase(),
-        lastOpened: new Date(),
-      }
-      setProjects((prev) => [...prev, newProject])
-      setActiveProjectId(newProject.id)
-      setIsNewProjectModalOpen(false)
-      setSimState('graph')
-      setGraphTitle(name)
-      setNodes([
-        {
-          id: 'root',
-          type: 'custom',
-          position: { x: 0, y: 0 },
-        data: {
-          id: 'root',
-          title: 'Voice Node',
-          status: 'idle',
-          type: 'task',
-          lifecycle: 'initial',
-          nodeViewState: 'collapsed',
-          focused: false,
-          promptTxt: '',
-          todos: [],
-          lastUpdate: null,
-          detailExpanded: false,
-          todosExpanded: false,
-          isRec: false,
-          isCycleRun: false,
-        } as NodeData,
-        } as FlowNode,
-      ])
-      setEdges([])
-      setActiveNodeId('root')
-      simLog.info('Project created', { name, folder })
-    },
-    [simLog]
-  )
-
-  const handleCancelNewProject = useCallback(() => {
-    setIsNewProjectModalOpen(false)
-    simLog.debug('New project cancelled')
-  }, [simLog])
-
-  const handleCloseSettings = useCallback(() => {
-    setIsSettingsOpen(false)
-    simLog.debug('Settings closed')
-  }, [simLog])
-
-  const handleSync = useCallback(() => {
-    setSyncStatus('syncing')
-    simLog.info('Sync started')
-
-    fsSync.flush()
-
-    setTimeout(() => {
-      setSyncStatus('synced')
-      setLastSyncLabel('Synced just now')
-      simLog.info('Sync completed')
-
-      setTimeout(() => {
-        setLastSyncLabel('Synced 1m ago')
-      }, 60000)
-    }, 500)
-  }, [fsSync, simLog])
-
-  const handleTravelBack = useCallback(() => {
-    if (currentSnapshotIndex > 0) {
-      const newIndex = currentSnapshotIndex - 1
-      const snapshot = snapshots[newIndex]
-      setNodes(snapshot.nodes)
-      setEdges(snapshot.edges)
-      setGraphTitle(snapshot.graphTitle)
-      setCurrentSnapshotIndex(newIndex)
-      setCanTravelBack(newIndex > 0)
-      setCanTravelForward(newIndex < snapshots.length - 1)
-      simLog.info('Traveled back', { snapshotIndex: newIndex })
-    }
-  }, [currentSnapshotIndex, snapshots, simLog])
-
-  const handleTravelForward = useCallback(() => {
-    if (currentSnapshotIndex < snapshots.length - 1) {
-      const newIndex = currentSnapshotIndex + 1
-      const snapshot = snapshots[newIndex]
-      setNodes(snapshot.nodes)
-      setEdges(snapshot.edges)
-      setGraphTitle(snapshot.graphTitle)
-      setCurrentSnapshotIndex(newIndex)
-      setCanTravelBack(newIndex > 0)
-      setCanTravelForward(newIndex < snapshots.length - 1)
-      simLog.info('Traveled forward', { snapshotIndex: newIndex })
-    }
-  }, [currentSnapshotIndex, snapshots, simLog])
-
-  const handleOpenSettings = useCallback(() => {
-    setIsSettingsOpen(true)
-    simLog.debug('Settings opened')
-  }, [simLog])
-
-  const handleExpand = useCallback((text: string) => {
-    if (!activeNodeId) return
-
-    const childId = `expand-${Date.now()}`
-    const childNode: FlowNode = {
-      id: childId,
-      type: 'custom',
-      position: { x: 300, y: 400 },
-        data: {
-          id: 'root',
-          title: 'Voice Node',
-          status: 'idle',
-          type: 'task',
-          lifecycle: 'initial',
-          nodeViewState: 'collapsed',
-          focused: false,
-          promptTxt: '',
-          todos: [],
-          lastUpdate: null,
-          detailExpanded: false,
-          todosExpanded: false,
-          isRec: false,
-          isCycleRun: false,
-        } as NodeData,
-    }
-
-    const edge: Edge = {
-      id: `${activeNodeId}-${childId}`,
-      source: activeNodeId,
-      target: childId,
-      type: 'smoothstep',
-      data: { kind: 'PRODUCED' },
-    }
-
-    setNodes((prev) => [...prev, childNode])
-    setEdges((prev) => [...prev, edge])
-
-    const newSnapshot: Snapshot = {
-      nodes: [...nodes, childNode],
-      edges: [...edges, edge],
-      graphTitle,
-    }
-    setSnapshots((prev) => [...prev.slice(0, currentSnapshotIndex + 1), newSnapshot])
-    setCurrentSnapshotIndex((prev) => prev + 1)
+  const handleCancelNewProject = useCallback(() => { setIsNewProjectModalOpen(false); simLog.debug('New project cancelled') }, [simLog])
+  const handleOpenSettings = useCallback(() => { setIsSettingsOpen(true); simLog.debug('Settings opened') }, [simLog])
+  const handleCloseSettings = useCallback(() => { setIsSettingsOpen(false); simLog.debug('Settings closed') }, [simLog])
+  const handleSync = useCallback(() => { if (syncStatus === 'unavailable') return; setSyncStatus('syncing'); fsSync.flush(); setTimeout(() => { setSyncStatus('synced'); setLastSyncLabel('Synced just now'); setTimeout(() => setLastSyncLabel('Synced 1m ago'), 60000) }, 500) }, [fsSync, syncStatus])
+  const handleTravel = useCallback((step: -1 | 1) => {
+    const nextIndex = currentSnapshotIndex + step
+    if (nextIndex < 0 || nextIndex >= snapshots.length) return
+    const snapshot = snapshots[nextIndex]; setNodes(snapshot.nodes); setEdges(snapshot.edges); setGraphTitle(snapshot.graphTitle); setCurrentSnapshotIndex(nextIndex); setCanTravelBack(nextIndex > 0); setCanTravelForward(nextIndex < snapshots.length - 1)
+  }, [currentSnapshotIndex, snapshots])
+  const handleExpand = useCallback((text: string) => { if (!activeNodeId) return; const childId = `expand-${Date.now()}`; const childNode: FlowNode = { id: childId, type: 'custom', position: { x: 300, y: 400 }, data: { id: childId, title: 'Voice Node', status: 'idle', type: 'task', lifecycle: 'initial', nodeViewState: 'collapsed', focused: false, promptTxt: text, todos: [], lastUpdate: null, detailExpanded: false, todosExpanded: false, isRec: false, isCycleRun: false, isStream: false, streamedTxt: '' } as NodeData }; const edge: Edge = { id: `${activeNodeId}-${childId}`, source: activeNodeId, target: childId, type: 'default' }; setNodes(prev => [...prev, childNode]); setEdges(prev => [...prev, edge]); setCommitLabel(`Expand: ${text.slice(0, 20)}...`) }, [activeNodeId])
+  const handleNodeSend = useCallback((text: string) => {
+    const nodeId = activeNodeIdRef.current
+    if (!nodeId) return
+    const runId = `run-${Date.now()}`
+    const stepId = `step-${Date.now()}`
+    setExecutionEvents([{ kind: 'run-start', runId, nodeId, workflow }, { kind: 'step-start', runId, stepId, title: 'research web' }])
+    setSnapshots(prev => [...prev, { nodes, edges, graphTitle }])
+    setCurrentSnapshotIndex(snapshots.length)
     setCanTravelBack(true)
     setCanTravelForward(false)
-    setCommitLabel(`Expand: ${text.slice(0, 20)}...`)
-
-    simLog.info('Expand child spawned', { parentId: activeNodeId, childId, text })
-  }, [activeNodeId, nodes, edges, graphTitle, currentSnapshotIndex, simLog])
-
-  const handleRefine = useCallback((text: string) => {
-    if (!activeNodeId) return
-
-    const childId = `refine-${Date.now()}`
-    const childNode: FlowNode = {
-      id: childId,
-      type: 'custom',
-      position: { x: 300, y: 400 },
-        data: {
-          id: childId,
-          title: `Expand: ${text.slice(0, 20)}...`,
-          status: 'idle',
-          type: 'task',
-          lifecycle: 'initial',
-          nodeViewState: 'collapsed',
-          focused: false,
-          promptTxt: text,
-          todos: [],
-          lastUpdate: new Date(),
-          detailExpanded: false,
-          todosExpanded: false,
-          isRec: false,
-          isCycleRun: false,
-        } as NodeData,
+    setNodes(prev => prev.map(node => node.id === nodeId ? { ...node, data: { ...node.data, lifecycle: 'agentic-running', isCycleRun: true, promptTxt: text } as NodeData } : node))
+    if (text.toLowerCase().includes('fail')) {
+      setExecutionEvents(prev => [...prev, { kind: 'step-error', runId, stepId, msg: 'Failed to process' }, { kind: 'run-done', runId, nodeId, status: 'error' }])
+      setNodes(prev => prev.map(node => node.id === nodeId ? { ...node, data: { ...node.data, lifecycle: 'initial', isCycleRun: false } as NodeData } : node))
+      return
     }
-
-    const edge: Edge = {
-      id: `${activeNodeId}-${childId}`,
-      source: activeNodeId,
-      target: childId,
-      type: 'smoothstep',
-      data: { kind: 'PRODUCED' },
+    const finishRun = () => {
+      const content = generatePlaceholderMarkdown(text)
+      setExecutionEvents(prev => [...prev, { kind: 'step-done', runId, stepId }, { kind: 'file-write', runId, path: `${nodeId}.md`, actor: 'agent', content }, { kind: 'run-done', runId, nodeId, status: 'done' }])
+      setNodes(prev => prev.map(node => node.id === nodeId ? { ...node, data: { ...node.data, lifecycle: 'done', isCycleRun: false, bodyMarkdown: generatePlaceholderMarkdown(text) } as NodeData } : node))
     }
-
-    setNodes((prev) => [...prev, childNode])
-    setEdges((prev) => [...prev, edge])
-
-    const newSnapshot: Snapshot = {
-      nodes: [...nodes, childNode],
-      edges: [...edges, edge],
-      graphTitle,
-    }
-    setSnapshots((prev) => [...prev.slice(0, currentSnapshotIndex + 1), newSnapshot])
-    setCurrentSnapshotIndex((prev) => prev + 1)
-    setCanTravelBack(true)
-    setCanTravelForward(false)
-    setCommitLabel(`Refine: ${text.slice(0, 20)}...`)
-
-    simLog.info('Refine child spawned', { parentId: activeNodeId, childId, text })
-  }, [activeNodeId, nodes, edges, graphTitle, currentSnapshotIndex, simLog])
-
-  const handleNodeSend = useCallback((txt: string) => {
-    if (!activeNodeId) return
-
-    setNodes((prev) =>
-      prev.map((node) =>
-        node.id === activeNodeId
-          ? {
-              ...node,
-              data: {
-                ...node.data,
-                lifecycle: 'agentic-running',
-                isCycleRun: true,
-                promptTxt: txt,
-              } as NodeData,
-            }
-          : node
-      )
-    )
-
+    setTimeout(finishRun, 4500)
     startTodoCycle()
-    simLog.info('Node prompt sent, cycle started', { nodeId: activeNodeId, txt })
-  }, [activeNodeId, startTodoCycle, simLog])
-
-  const handleCloseMenu = useCallback(() => {
-    setSelectedText('')
-    setHighlightPosition(null)
-  }, [])
-
-  useEffect(() => {
-    const handleMouseUp = () => {
-      const selection = window.getSelection()
-      const text = selection?.toString() || ''
-      if (text.length > 0) {
-        const range = selection?.getRangeAt(0)
-        if (range) {
-          const rect = range.getBoundingClientRect()
-          setSelectedText(text)
-          setHighlightPosition({ x: rect.left, y: rect.bottom + 10 })
-        }
-      }
+    simLog.info('Node prompt sent, cycle started', { nodeId, text })
+  }, [edges, graphTitle, nodes, simLog, snapshots.length, startTodoCycle])
+  const handleRetry = useCallback((stepId: string) => {
+    const nodeId = activeNodeIdRef.current
+    if (!nodeId) return
+    const runId = `retry-${Date.now()}`
+    setExecutionEvents([{ kind: 'run-start', runId, nodeId, workflow }, { kind: 'step-start', runId, stepId, title: 'Retrying step' }])
+    simLog.info('Execution retry queued', { nodeId, stepId })
+  }, [simLog])
+  const handleSendPayload = useCallback((payload: import('../context-pills/contextPillTypes').PromptPayload) => { setLastContextPayload(JSON.stringify(payload)); simLog.info('Prompt context payload', payload) }, [simLog])
+  const handleRemovePill = useCallback((pillId: string) => setNodes(prev => prev.map(node => isNodeData(node.data) ? { ...node, data: { ...node.data, contextPills: node.data.contextPills?.filter(pill => pill.id !== pillId) } } : node)), [])
+  const handleJumpToPill = useCallback((pillId: string) => { setLastContextJump(pillId); simLog.info('Context pill jump', { pillId }) }, [simLog])
+  const handleSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: FlowNode[]; edges: Edge[] }) => setSelectedNodeIds(selectedNodes.map(node => node.id)), [])
+  const handleGraphNodeClick = useCallback((nodeId: string, additive: boolean) => setSelectedNodeIds(currentIds => !additive ? [nodeId] : currentIds.includes(nodeId) ? currentIds.filter(id => id !== nodeId) : [...currentIds, nodeId]), [])
+  const handleActiveNodeChange = useCallback((nodeId: string) => { activeNodeIdRef.current = nodeId; setActiveNodeId(nodeId) }, [])
+  const handleCreateNode = useCallback(() => setNodes(currentNodes => { const nodeId = `standalone-${Date.now()}`; return [...currentNodes, { id: nodeId, type: 'custom', position: { x: 200, y: 200 }, data: { id: nodeId, title: 'New Node', status: 'idle', type: 'task', lifecycle: 'initial', nodeViewState: 'collapsed', focused: false, promptTxt: '', todos: [], lastUpdate: null, detailExpanded: false, todosExpanded: false, isRec: false, isCycleRun: false, isStream: false, streamedTxt: '' } as NodeData }] }), [])
+  const handleConnect: OnConnect = useCallback(connection => { if (connection.source && connection.target) setEdges(currentEdges => [...currentEdges, { id: `${connection.source}-${connection.target}`, source: connection.source, target: connection.target, type: 'default' }]) }, [])
+  const handleCloseMenu = useCallback(() => { setSelectedText(''); setHighlightPosition(null) }, [])
+  const handleFormat = useCallback((direction: DagDirection) => {
+    if (selectedNodeIds.length === 0) return false
+    try {
+      const result = formatSelectedDag({ nodes, edges, direction, selectedNodeIds })
+      setNodes(result.nodes)
+      return true
+    } catch (error) {
+      if (error instanceof DagFormatCycleError) return false
+      throw error
     }
+  }, [edges, nodes, selectedNodeIds])
 
-    document.addEventListener('mouseup', handleMouseUp)
-    return () => document.removeEventListener('mouseup', handleMouseUp)
-  }, [])
-
-const nodeTypes = useMemo(() => ({
-  custom: (props: any) => (
-    <FlowNodeShell>
-      <NodeHandleLeft type="target" position={Position.Left} isConnectable={false} />
-      <Node {...props} onSend={handleNodeSend} />
-      <NodeHandleRight type="source" position={Position.Right} isConnectable={false} />
-    </FlowNodeShell>
-  ),
-}), [handleNodeSend])
-
-  const handleNodeMouseEnter = useCallback(() => {
-    document.body.style.cursor = 'grab'
-  }, [])
-
-  const handleNodeMouseLeave = useCallback(() => {
-    document.body.style.cursor = 'default'
-  }, [])
-
-  const handleNodeDragStart = useCallback(() => {
-    document.body.style.cursor = 'grabbing'
-  }, [])
-
-  const handleNodeDragStop = useCallback(() => {
-    document.body.style.cursor = 'grab'
-  }, [])
-
-  if (simState === 'picker') {
-    return (
-      <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
-        <ProjectPicker
-          projects={projects}
-          activeProjectId={activeProjectId}
-          onSelect={handleProjectSelect}
-          onNew={handleNewProject}
-        />
-        <Placeholder>Select or create project</Placeholder>
-        <NewProjectModal
-          isOpen={isNewProjectModalOpen}
-          onCreate={handleCreateProject}
-          onCancel={handleCancelNewProject}
-        />
-      </div>
-    )
-  }
-
-  return (
-    <AppShell
-      sidebar={
-        <ProjectPicker
-          projects={projects}
-          activeProjectId={activeProjectId}
-          onSelect={handleProjectSelect}
-          onNew={handleNewProject}
-        />
-      }
-      topbar={
-        <TopBar
-          graphTitle={graphTitle}
-          syncStatus={syncStatus}
-          lastSyncLabel={lastSyncLabel}
-          canTravelBack={canTravelBack}
-          canTravelForward={canTravelForward}
-          commitLabel={commitLabel}
-          onSync={handleSync}
-          onTravelBack={handleTravelBack}
-          onTravelForward={handleTravelForward}
-          onOpenSettings={handleOpenSettings}
-        />
-      }
-    >
-      <GraphContainer>
-        <ReactFlowProvider>
-          <GraphSimFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={(changes) => setNodes((nds) => applyNodeChanges(changes, nds))}
-            onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
-            setNodes={setNodes}
-            activeNodeId={activeNodeId}
-            onNodeMouseEnter={handleNodeMouseEnter}
-            onNodeMouseLeave={handleNodeMouseLeave}
-            onNodeDragStart={handleNodeDragStart}
-            onNodeDragStop={handleNodeDragStop}
-          />
-        </ReactFlowProvider>
-        <MarkdownHighlightMenu
-          selectedText={selectedText}
-          position={highlightPosition}
-          onExpand={handleExpand}
-          onRefine={handleRefine}
-          onClose={handleCloseMenu}
-        />
-      </GraphContainer>
-      <SettingsPanel isOpen={isSettingsOpen} onClose={handleCloseSettings} />
-      <NewProjectModal
-        isOpen={isNewProjectModalOpen}
-        onCreate={handleCreateProject}
-        onCancel={handleCancelNewProject}
-      />
-    </AppShell>
-  )
+  useEffect(() => { const handleMouseUp = () => { const selection = window.getSelection(); const text = selection?.toString() || ''; const range = selection?.rangeCount ? selection.getRangeAt(0) : null; if (text && range) { const rect = range.getBoundingClientRect(); setSelectedText(text); setHighlightPosition({ x: rect.left, y: rect.bottom + 10 }) } }; document.addEventListener('mouseup', handleMouseUp); return () => document.removeEventListener('mouseup', handleMouseUp) }, [])
+  const picker = <><ProjectPicker projects={projects} activeProjectId={activeProjectId} onSelect={handleProjectSelect} onNew={handleNewProject} /><Placeholder>Select or create project</Placeholder><NewProjectModal isOpen={isNewProjectModalOpen} onCreate={handleCreateProject} onCancel={handleCancelNewProject} /></>
+  if (simState === 'picker') return <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>{picker}</div>
+  return <AppShell sidebar={<ProjectPicker projects={projects} activeProjectId={activeProjectId} onSelect={handleProjectSelect} onNew={handleNewProject} />} topbar={<TopBar graphTitle={graphTitle} syncStatus={syncStatus} lastSyncLabel={lastSyncLabel} canTravelBack={canTravelBack} canTravelForward={canTravelForward} commitLabel={commitLabel} onSync={handleSync} onTravelBack={() => handleTravel(-1)} onTravelForward={() => handleTravel(1)} onOpenSettings={handleOpenSettings} />}><GraphContainer data-testid="graph-sim-canvas" data-last-context-jump={lastContextJump} data-last-context-payload={lastContextPayload}><ReactFlowProvider><GraphWorkspace nodes={nodes} edges={edges} onNodeSend={handleNodeSend} onSendPayload={handleSendPayload} onRetry={handleRetry} onNodesChange={changes => setNodes(currentNodes => applyNodeChanges(changes, currentNodes))} onEdgesChange={changes => setEdges(currentEdges => applyEdgeChanges(changes, currentEdges))} onSelectionChange={handleSelectionChange} setNodes={setNodes} selectedNodeIds={selectedNodeIds} onFormat={handleFormat} activeNodeId={activeNodeId} onNodeMouseEnter={() => {}} onNodeMouseLeave={() => {}} onNodeDragStart={() => {}} onNodeDragStop={() => {}} onConnect={handleConnect} onCreateNode={handleCreateNode} onNodeClick={handleGraphNodeClick} onActiveNodeChange={handleActiveNodeChange} onRemovePill={handleRemovePill} onJumpToPill={handleJumpToPill} executionEvents={executionEvents} workflow={workflow} writeQueue={fsSync.getWriteQueue()} /></ReactFlowProvider><MarkdownHighlightMenu selectedText={selectedText} position={highlightPosition} onExpand={handleExpand} onRefine={handleExpand} onClose={handleCloseMenu} /></GraphContainer><SettingsPanel isOpen={isSettingsOpen} onClose={handleCloseSettings} /><NewProjectModal isOpen={isNewProjectModalOpen} onCreate={handleCreateProject} onCancel={handleCancelNewProject} /></AppShell>
 }
 
 function generatePlaceholderMarkdown(promptTxt: string): string {

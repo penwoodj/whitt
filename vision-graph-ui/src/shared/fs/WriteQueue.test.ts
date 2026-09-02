@@ -3,7 +3,7 @@ import { WriteQueue } from './WriteQueue'
 
 describe('WriteQueue', () => {
   let queue: WriteQueue
-  let flushCallback: vi.Mock
+  let flushCallback = vi.fn()
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -162,5 +162,15 @@ describe('WriteQueue', () => {
       const pending = queue.getPendingWrites()
       expect(pending).toEqual([])
     })
+  })
+
+  it('disposes pending timer and writes', () => {
+    queue.write('test.md', 'content')
+
+    queue.dispose()
+    vi.advanceTimersByTime(2000)
+
+    expect(flushCallback).not.toHaveBeenCalled()
+    expect(queue.getPendingWrites()).toEqual([])
   })
 })

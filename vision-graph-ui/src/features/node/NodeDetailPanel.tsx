@@ -1,8 +1,11 @@
 import styled from 'styled-components'
 import FilePreview from '../file-visualization/FilePreview'
+import type { WriteQueue } from '../../shared/fs/WriteQueue'
 
 type NodeDetailPanelProps = {
   markdown?: string
+  writeQueue?: WriteQueue
+  filePath?: string
 }
 
 const defaultMarkdown = `# Node Details
@@ -23,10 +26,15 @@ const DetailWrap = styled.div`
   padding: 8px 0;
 `
 
-export default function NodeDetailPanel({ markdown = defaultMarkdown }: NodeDetailPanelProps) {
+const DetailTitle = styled.h2`
+  margin: 0 0 8px;
+`
+
+export default function NodeDetailPanel({ markdown = defaultMarkdown, writeQueue, filePath }: NodeDetailPanelProps) {
   return (
     <DetailWrap>
-      <FilePreview content={markdown} />
+      <DetailTitle>Details</DetailTitle>
+      <FilePreview content={markdown} writeQueue={writeQueue} filePath={filePath} />
     </DetailWrap>
   )
 }

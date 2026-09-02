@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { AlertTriangle, Check, LoaderCircle, Upload } from 'lucide-react'
 
 const Button = styled.button`
   position: fixed;
@@ -33,8 +34,8 @@ const Button = styled.button`
   }
 
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 122, 204, 0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(0, 122, 204, 0); }
+    0%, 100% { box-shadow: 0 0 0 0 ${({ theme }) => theme.colors.primary}66; }
+    50% { box-shadow: 0 0 0 8px ${({ theme }) => theme.colors.primary}00; }
   }
 `
 
@@ -63,27 +64,34 @@ const ErrorHint = styled.div`
   line-height: 1.4;
 `
 
+const ResolutionHint = styled(ErrorHint)`
+  margin-top: ${({ theme }) => theme.spacing.sm};
+`
+
 export interface GitSyncProps {
-  syncState: 'idle' | 'syncing' | 'error' | 'synced'
+  syncState: 'idle' | 'syncing' | 'error' | 'synced' | 'unavailable'
   syncError: string | null
   onSync: () => Promise<void>
 }
 
 export function GitSync({ syncState, syncError, onSync }: GitSyncProps) {
   const handleClick = async () => {
+    if (syncState === 'unavailable') return
     await onSync()
   }
 
   const getIcon = () => {
     switch (syncState) {
       case 'syncing':
-        return '⟳'
+        return <LoaderCircle aria-hidden="true" size={18} />
       case 'synced':
-        return '✓'
+        return <Check aria-hidden="true" size={18} />
       case 'error':
-        return '⚠'
+        return <AlertTriangle aria-hidden="true" size={18} />
+      case 'unavailable':
+        return <AlertTriangle aria-hidden="true" size={18} />
       default:
-        return '↑'
+        return <Upload aria-hidden="true" size={18} />
     }
   }
 
@@ -94,18 +102,20 @@ export function GitSync({ syncState, syncError, onSync }: GitSyncProps) {
         onClick={handleClick}
         disabled={syncState === 'syncing'}
         data-state={syncState}
+        aria-label={syncState === 'idle' ? 'Sync to remote' : `Sync ${syncState}`}
         title={syncState === 'idle' ? 'Sync to remote' : `Sync ${syncState}`}
       >
         {getIcon()}
+        {syncState === 'unavailable' && <span data-testid="git-unavailable">Git unavailable</span>}
       </Button>
 
       {syncState === 'error' && syncError && (
         <ErrorPanel>
           <ErrorTitle>Sync Failed</ErrorTitle>
           <ErrorHint>{syncError}</ErrorHint>
-          <ErrorHint style={{ marginTop: '8px' }}>
+          <ResolutionHint>
             Resolve in external git client
-          </ErrorHint>
+          </ResolutionHint>
         </ErrorPanel>
       )}
     </>

@@ -22,6 +22,7 @@ export class FsGraphSync {
   private readonly onExternalChange?: ExternalChangeCallback
   private readonly fsPort: FsPort
   private readonly git: any
+  private isDisposed = false
 
   constructor(
     fsPort: FsPort,
@@ -36,10 +37,12 @@ export class FsGraphSync {
   }
 
   private ensureWatcher(): Promise<WatcherAdapterLike | null> {
+    if (this.isDisposed) return Promise.resolve(null)
     if (this.watcherAdapter) return Promise.resolve(this.watcherAdapter)
     if (!this.onExternalChange || !isNodeEnv()) return Promise.resolve(null)
     if (!this.watcherPromise) {
       this.watcherPromise = import('./WatcherAdapter').then(({ WatcherAdapter }) => {
+        if (this.isDisposed) return null
         const adapter: WatcherAdapterLike = new WatcherAdapter(this.fsPort, this.onExternalChange!)
         for (const [path, content] of this.pendingMemoryHashes) {
           adapter.setMemoryHash(path, content)
@@ -53,6 +56,7 @@ export class FsGraphSync {
   }
 
   write(path: string, content: string): void {
+    if (this.isDisposed) return
     this.writeQueue.write(path, content)
   }
 
@@ -61,6 +65,7 @@ export class FsGraphSync {
   }
 
   setMemoryHash(path: string, content: string): void {
+    if (this.isDisposed) return
     if (this.watcherAdapter) {
       this.watcherAdapter.setMemoryHash(path, content)
       return
@@ -70,6 +75,10 @@ export class FsGraphSync {
 
   getPendingWrites(): Array<{ path: string; content: string }> {
     return this.writeQueue.getPendingWrites()
+  }
+
+  getWriteQueue(): WriteQueue {
+    return this.writeQueue
   }
 
   flush(): void {
@@ -93,6 +102,10 @@ export class FsGraphSync {
   }
 
   dispose(): void {
+    this.isDisposed = true
+    this.writeQueue.dispose()
     this.watcherAdapter?.dispose()
+    this.watcherAdapter = null
+    this.pendingMemoryHashes.clear()
   }
 }

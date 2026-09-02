@@ -1,4 +1,4 @@
-export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error'
+export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'unavailable'
 
 export type TopBarProps = {
   graphTitle: string

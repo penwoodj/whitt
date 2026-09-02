@@ -21,6 +21,7 @@ export function useFileEdit(
   retrySave: () => void
   handleDiskChange: (newContent: string) => void
   keepMine: () => void
+  useDisk: () => void
 } {
   const pendingContentRef = useRef(initialContent)
   const [state, setState] = useState<FileEditState>({
@@ -123,12 +124,18 @@ export function useFileEdit(
     }))
   }
 
+  const useDisk = () => {
+    setState(prev => ({ ...prev, content: prev.diskContent, originalContent: prev.diskContent, conflict: false }))
+    pendingContentRef.current = state.diskContent
+  }
+
   return {
     ...state,
     toggleEdit,
     saveOnBlur,
     retrySave,
     handleDiskChange,
-    keepMine
+    keepMine,
+    useDisk
   }
 }

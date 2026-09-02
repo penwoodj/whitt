@@ -61,7 +61,7 @@ export default function SyncBtn({ syncStatus, lastSyncLabel, onClick }: SyncBtnP
     <SyncContainer>
       <SyncButton onClick={onClick} disabled={isSyncing} aria-label="Sync">
         {isSyncing && <Spinner aria-hidden="true" />}
-        <span>{lastSyncLabel}</span>
+        <span data-testid={syncStatus === 'unavailable' ? 'git-unavailable' : undefined}>{syncStatus === 'unavailable' ? 'Git unavailable' : lastSyncLabel}</span>
       </SyncButton>
     </SyncContainer>
   )

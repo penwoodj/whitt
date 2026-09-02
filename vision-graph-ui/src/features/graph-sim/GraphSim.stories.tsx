@@ -18,3 +18,21 @@ export const Default: StoryFn = () => (
     <GraphSim />
   </ThemeProvider>
 )
+
+export const GorseIdle: StoryFn = () => (
+  <ThemeProvider>
+    <GraphSim />
+  </ThemeProvider>
+)
+
+export const BezierEdges: StoryFn = () => (
+  <ThemeProvider>
+    <GraphSim />
+  </ThemeProvider>
+)
+
+export const T7bComposed: StoryFn = () => (
+  <ThemeProvider>
+    <GraphSim />
+  </ThemeProvider>
+)

@@ -4,7 +4,7 @@ export type AgentEvt =
   | { kind: 'step-done'; runId: string; stepId: string }
   | { kind: 'step-error'; runId: string; stepId: string; msg: string }
   | { kind: 'log'; runId: string; level: 'info' | 'warn' | 'error'; msg: string }
-  | { kind: 'file-write'; runId: string; path: string; actor: 'agent' }
+  | { kind: 'file-write'; runId: string; path: string; actor: 'agent'; content?: string }
   | { kind: 'graph-mutation'; runId: string; mutation: GraphMutation }
   | { kind: 'run-done'; runId: string; nodeId: string; status: 'done' | 'error' }
 

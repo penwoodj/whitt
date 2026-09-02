@@ -38,6 +38,14 @@ export class WriteQueue {
     }))
   }
 
+  dispose(): void {
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer)
+      this.debounceTimer = null
+    }
+    this.pendingWrites.clear()
+  }
+
   private scheduleFlush(): void {
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer)
