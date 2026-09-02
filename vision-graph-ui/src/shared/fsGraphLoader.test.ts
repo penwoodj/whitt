@@ -54,14 +54,14 @@ describe('fsGraphLoader', () => {
         expect(edge.id).toBeTruthy()
         expect(edge.source).toBeTruthy()
         expect(edge.target).toBeTruthy()
-        expect(edge.type).toBe('smoothstep')
+        expect(edge.type).toBe('default')
       }
     })
 
     it('builds proper parent-child relationships', async () => {
       const { nodes, edges } = await loadProjectGraph('ai-frameworks')
       
-      const rootNodes = nodes.filter(n => !n.data.bodyMarkdown.includes('parent:'))
+      const rootNodes = nodes.filter(n => typeof n.data.bodyMarkdown !== 'string' || !n.data.bodyMarkdown.includes('parent:'))
       expect(rootNodes.length).toBeGreaterThan(0)
       
       const hasChildNodes = edges.some(e => 

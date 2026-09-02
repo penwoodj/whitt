@@ -32,17 +32,25 @@ function parseMd(raw: string, slug: string, path: string): FsNode {
 
   const [, yaml, body] = match
   const fields = parseYaml(yaml)
+  const id = typeof fields.id === 'string' ? fields.id : `node-${Date.now()}-${Math.random()}`
+  const title = typeof fields.title === 'string' ? fields.title : 'Untitled'
+  const parent = typeof fields.parent === 'string' ? fields.parent : null
+  const status = isFsNodeStatus(fields.status) ? fields.status : 'leaf'
 
   return {
-    id: fields.id || `node-${Date.now()}-${Math.random()}`,
-    title: fields.title || 'Untitled',
-    parent: fields.parent || null,
+    id,
+    title,
+    parent,
     children: Array.isArray(fields.children) ? fields.children : [],
     slug,
     path,
     bodyMarkdown: body.trim(),
-    status: fields.status || 'leaf'
+    status
   }
+}
+
+function isFsNodeStatus(value: unknown): value is FsNodeStatus {
+  return value === 'leaf' || value === 'expanded' || value === 'done'
 }
 
 function parseYaml(yaml: string): Record<string, unknown> {
@@ -175,6 +183,8 @@ function convertToFlowNodes(graphData: GraphData): {
         todosExpanded: false,
         isRec: false,
         isCycleRun: false,
+        isStream: false,
+        streamedTxt: '',
         bodyMarkdown: fsNode.bodyMarkdown
       } as NodeData
     }
@@ -184,7 +194,7 @@ function convertToFlowNodes(graphData: GraphData): {
     id: `${edge.source}-${edge.target}`,
     source: edge.source,
     target: edge.target,
-    type: 'smoothstep',
+    type: 'default',
     data: { kind: edge.kind }
   }))
 

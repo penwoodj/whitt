@@ -85,7 +85,7 @@ export function useGraphMutationHandler() {
           id: `${mutation.source}-${mutation.target}`,
           source: mutation.source,
           target: mutation.target,
-          type: 'smoothstep',
+          type: 'default',
           animated: true,
         },
       ]

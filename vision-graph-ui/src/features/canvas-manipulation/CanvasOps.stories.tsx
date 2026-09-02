@@ -15,6 +15,9 @@ const meta: Meta<typeof CanvasOps> = {
       </ThemeProvider>
     ),
   ],
+  parameters: {
+    a11y: { test: 'error' },
+  },
 }
 
 export default meta

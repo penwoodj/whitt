@@ -43,7 +43,7 @@ export function useSpawnPlacement() {
       id: `${source}-${target}`,
       source,
       target,
-      type: 'smoothstep' as const,
+      type: 'default' as const,
       animated: true,
     }
   }, [])

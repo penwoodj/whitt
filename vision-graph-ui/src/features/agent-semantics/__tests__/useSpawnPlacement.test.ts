@@ -61,7 +61,7 @@ describe('AGTC-02 spawn placement - parent link drawn', () => {
 
     expect(link.source).toBe('n1')
     expect(link.target).toBe('n2')
-    expect(link.type).toBe('smoothstep')
+    expect(link.type).toBe('default')
     expect(link.animated).toBe(true)
   })
 })

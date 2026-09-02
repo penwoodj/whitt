@@ -17,6 +17,7 @@ export type Theme = {
     idle: string
     running: string
     done: string
+    gorse: string
   }
   spacing: {
     xs: string
@@ -76,6 +77,8 @@ export type Theme = {
       running: string
       done: string
     }
+    gorse: string
+    gorseReducedMotion: string
   }
   fishEye: {
     transitionDuration: string
@@ -110,6 +113,7 @@ export const darkTheme = {
     idle: '#6A9955',
     running: '#4FC1FF',
     done: '#4EC9B0',
+    gorse: '#D6E84A',
   },
   spacing: {
     xs: '4px',
@@ -169,6 +173,8 @@ export const darkTheme = {
       running: '0 0 12px rgba(0, 122, 204, 0.4)',
       done: '0 0 12px rgba(78, 201, 176, 0.4)',
     },
+    gorse: '0 0 10px rgba(214, 232, 74, 0.28)',
+    gorseReducedMotion: '0 0 10px rgba(214, 232, 74, 0.28)',
   },
   fishEye: {
     transitionDuration: '400ms',
